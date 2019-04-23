@@ -1,0 +1,30 @@
+{
+  "name": "IFS-NOTE-VOCAL-SERVEUR",
+  "version": "0.0.0",
+  "description": "Serveur d'enregistrement des note vocaux",
+  "scripts": {
+    "ts": "tsc --watch",
+    "nodemon": "nodemon dist/index.js",
+    "node": "node dist/index.js",
+    "copy": "copyfiles -u 1 src/resources/**/*  dist/"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.17.0",
+    "@types/cookie-parser": "^1.4.1",
+    "@types/express": "^4.16.1",
+    "@types/express-session": "^1.15.12",
+    "@types/node": "^11.13.6",
+    "@types/sequelize": "^4.27.48",
+    "copyfiles": "^2.1.0"
+  },
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "body-parser": "^1.18.3",
+    "cookie-parser": "^1.4.4",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "express-session": "^1.16.1",
+    "mysql2": "^1.6.5",
+    "sequelize": "4.42.0"
+  }
+}
