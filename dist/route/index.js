@@ -34,16 +34,25 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+var ensureAuth_1 = __importDefault(require("../libs/ensureAuth"));
 //const passport = require('passport');
-//const validator = require("../request/"); 
+//const validator = require("../request/");  
+var signup = require('../controller/signup');
 module.exports = function (app, db) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             //controlleur de base de l'application qui vous affiche votre application  
-            app.get('/', require('../controller/index').bind({ db: db }));
+            app.get('/', ensureAuth_1.default, require('../controller/index').bind({ db: db }));
             app.get('/audio/:filename', require('../controller/notes/listen').bind({ db: db }));
             app.post('/upload', require('../controller/notes/upload').bind({ db: db }));
+            //page d'authentification 
+            app.get('/login', require('../controller/login').bind({ db: db }));
+            app.get('/signup', signup.page.bind({ db: db }));
+            app.post('/signup', signup.create.bind({ db: db }));
             return [2 /*return*/, new Promise(function (resolve) { return resolve(true); })];
         });
     });

@@ -5,7 +5,6 @@ const LocalStrategy = require('passport-local').Strategy;
 
 module.exports = function ( req : Request , res : Response , next : NextFunction ) {
 
-	/*
 	passport.use(new LocalStrategy(
 		{  usernameField: "email" },
 		function(email, password, done) {
@@ -22,6 +21,7 @@ module.exports = function ( req : Request , res : Response , next : NextFunction
 		    });
 		}
 	));
+
 	passport.use('token-local',new LocalStrategy(
 		{ usernameField: "rememberToken" },
 		function(rememberToken, password, done) {
@@ -35,12 +35,14 @@ module.exports = function ( req : Request , res : Response , next : NextFunction
 		    });
 		}
 	));
+
 	passport.serializeUser(function(user, cb) {
 	  	cb(null, user);
 	});
+
 	passport.deserializeUser(function(obj, cb) {
 	  	cb(null, obj);
 	});
-	*/
+	
 } 
 

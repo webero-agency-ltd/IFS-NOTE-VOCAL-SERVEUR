@@ -10,6 +10,7 @@ export interface VocauxAttributes {
     id?: number;
   	path?: string;
     size?: string;
+    md5?: string;
 };
 
 export interface VocauxInstance extends Sequelize.Instance<VocauxAttributes>, VocauxAttributes {  
@@ -23,6 +24,9 @@ export const VocauxFactory = (sequelize: Sequelize.Sequelize, DataTypes: Sequeli
     	path: {
       		type: DataTypes.STRING
     	},
+      md5: {
+          type: DataTypes.STRING
+      }
   	};
   	const Vocaux = sequelize.define<VocauxInstance, VocauxAttributes>('Vocaux', attributes);
     Vocaux.associate = models => {

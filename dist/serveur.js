@@ -132,10 +132,7 @@ var Serveur = /** @class */ (function () {
                     case 1:
                         route = _a.sent();
                         if (env == 'local') {
-                            server = http.createServer(function (req, res) {
-                                res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
-                                res.end();
-                            }).listen(this.port, function () {
+                            server = http.createServer(app).listen(this.port, function () {
                                 console.log('le serveur dev sur le port', _this.port);
                             });
                         }
@@ -162,31 +159,7 @@ var Serveur = /** @class */ (function () {
     };
     //lancement d'un serveur de websoket 
     Serveur.prototype.socket = function (server) {
-        var BinaryServer = require('binaryjs').BinaryServer;
-        var binsocket = BinaryServer({ server: server, port: 9001 });
-        //lors du connexion au socket pour de transfère de fichier binaire 
-        binsocket.on('connection', function (client) {
-            return __awaiter(this, void 0, void 0, function () {
-                var _a, id, type, typeId, contactId, index, deletefile;
-                return __generator(this, function (_b) {
-                    _a = require('url').parse("http://css.fr/socket/" + client._socket.upgradeReq.url, true).query, id = _a.id, type = _a.type, typeId = _a.typeId, contactId = _a.contactId;
-                    console.log('new connection---', id, type, typeId, contactId);
-                    if (!id)
-                        return [2 /*return*/];
-                    index = null;
-                    deletefile = openfile.filter(function (e, i) {
-                        index = i;
-                        return e.id == id ? true : false;
-                    });
-                    if (deletefile.length) {
-                        console.log('------------DELETE STREAM');
-                        deletefile[0].stream.destroy();
-                        openfile.splice(index, 1);
-                    }
-                    return [2 /*return*/];
-                });
-            });
-        });
+        require('./controller/binsocket')(server, db);
     };
     return Serveur;
 }());

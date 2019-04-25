@@ -6,6 +6,8 @@ const bodyParser = require('body-parser') ;
 const path = require('path') ; 
 const cookieParser = require('cookie-parser');
 const session = require('express-session'); 
+const passport = require('passport') ; 
+const flash = require('flash') ; 
 
 module.exports = async function ( app : Application , db : DBInterface ) :Promise<boolean>{
 
@@ -20,7 +22,7 @@ module.exports = async function ( app : Application , db : DBInterface ) :Promis
 
 	/*  On fait la délaration de tout les midleware ICI */
 	app.use(express.json());
-	app.use('/assets',express.static(path.join(__dirname, '../resources/asset'), {
+	app.use('/assets',express.static(path.join(__dirname, '../resources/assets'), {
 	 	maxAge : 3600000 // 3600000msec == 1hour
 	})) ;
 
@@ -36,11 +38,11 @@ module.exports = async function ( app : Application , db : DBInterface ) :Promis
 	  	resave: true
 	}));
 
-	//app.use(passport.initialize());
-	//app.use(passport.session());
-	
+	app.use(passport.initialize());
+	app.use(passport.session());
 	//app.use(require('./response')) ;
 	//app.use(require('./lang')) ;
+	app.use(flash());
 
 	return new Promise<boolean>( resolve => resolve( true ));
 };

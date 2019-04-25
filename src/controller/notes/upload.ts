@@ -2,6 +2,7 @@ import { Request , Response }  from 'express' ;
 import { DBInterface } from '../../interface/DBInterface';
 
 module.exports = function ( req:Request, res:Response ) {
+	/*
 	var { id , type , typeId , contactId } = req.query ; 
 	var index = null ; 
 	let deletefile = openfile.filter( function ( e , i ) {
@@ -25,4 +26,5 @@ module.exports = function ( req:Request, res:Response ) {
         res.status(200).json({ 'message': "File uploaded successfully." });
     });
     return req.pipe(busboy);
+	*/
 };

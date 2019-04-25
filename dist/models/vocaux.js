@@ -14,6 +14,9 @@ exports.VocauxFactory = function (sequelize, DataTypes) {
         path: {
             type: DataTypes.STRING
         },
+        md5: {
+            type: DataTypes.STRING
+        }
     };
     var Vocaux = sequelize.define('Vocaux', attributes);
     Vocaux.associate = function (models) {

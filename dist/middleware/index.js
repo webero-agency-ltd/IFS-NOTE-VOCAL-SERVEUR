@@ -43,6 +43,8 @@ var bodyParser = require('body-parser');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
+var passport = require('passport');
+var flash = require('flash');
 module.exports = function (app, db) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -56,7 +58,7 @@ module.exports = function (app, db) {
             });
             /*  On fait la délaration de tout les midleware ICI */
             app.use(express_1.default.json());
-            app.use('/assets', express_1.default.static(path.join(__dirname, '../resources/asset'), {
+            app.use('/assets', express_1.default.static(path.join(__dirname, '../resources/assets'), {
                 maxAge: 3600000 // 3600000msec == 1hour
             }));
             // parse application/x-www-form-urlencoded
@@ -69,10 +71,11 @@ module.exports = function (app, db) {
                 saveUninitialized: true,
                 resave: true
             }));
-            //app.use(passport.initialize());
-            //app.use(passport.session());
+            app.use(passport.initialize());
+            app.use(passport.session());
             //app.use(require('./response')) ;
             //app.use(require('./lang')) ;
+            app.use(flash());
             return [2 /*return*/, new Promise(function (resolve) { return resolve(true); })];
         });
     });

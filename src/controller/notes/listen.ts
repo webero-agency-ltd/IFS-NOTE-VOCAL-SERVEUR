@@ -1,17 +1,21 @@
+const path = require('path') ; 
+const fs = require('fs');
+const stream = require('../../libs/redis-stream');
 import { Request , Response }  from 'express' ; 
 import { DBInterface } from '../../interface/DBInterface';
 
 module.exports = function ( req:Request, res:Response ) {
+	/*
 	//écouter une note en particulier 
 	if (  req.param("filename") ) {
 		//Le filename représente l'ID du fichier 
-		var nameFile =  req.param("filename")+'.wav' ;
-		var filePath = path.join(__dirname, '/notes/') + nameFile ; 
+		let nameFile =  req.param("filename")+'.wav' ;
+		let filePath = path.join(__dirname, '/notes/') + nameFile ; 
 		if ( ! fs.existsSync( filePath ) ) {
 			return res.send('Fichier pas trouver');
 		}
 	    ////////////////////////////////////////////////////
-	    stat = fs.statSync(filePath);
+	    let stat = fs.statSync(filePath);
 	    const fileSize = stat.size;
 	    const range = req.headers.range;
 	    const id = req.param("filename") ; 
@@ -30,10 +34,7 @@ module.exports = function ( req:Request, res:Response ) {
 		        'Content-Type': 'video/mp4',
 		    };
 		    res.writeHead(206, head);
-		    let is = openfile.filter( e => e.id==id?true:false );
-		    if ( is.length == 0 ) {
-		    	openfile.push({id, stream : readStream }) ;
-		    }
+		    stream.openStream( id , readStream )
 		    readStream.pipe(res);
 	    } else {
 		    const head = {
@@ -42,10 +43,7 @@ module.exports = function ( req:Request, res:Response ) {
 		    };
 	      	res.writeHead(200, head);
 	      	let stream = fs.createReadStream(filePath)
-	      	let is = openfile.filter( e => e.id==id?true:false );
-		    if ( is.length == 0 ) {
-		    	openfile.push({id, stream : stream }) ;
-		    }
+	      	stream.openStream( id , stream )
 	      	stream.pipe(res);
 	    }
 	    ////////////////////////////////////////////////////
@@ -53,4 +51,5 @@ module.exports = function ( req:Request, res:Response ) {
 	}
 	// ici le fichier n'est pas trouver 
 	return res.send('Fichier pas trouver');
+	*/
 };

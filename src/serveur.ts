@@ -63,10 +63,7 @@ export default class Serveur{
 		let route = await require('./route/index')(app,db) ; 
 		let server ; 
 		if ( env =='local' ) {
-			server = http.createServer(function(req, res) {   
-			    res.writeHead(301, {"Location": "https://" + req.headers['host'] + req.url});
-			    res.end();
-			}).listen(this.port, () => {
+			server = http.createServer( app ).listen(this.port, () => {
 				console.log('le serveur dev sur le port',this.port)
 			});
 		}else{
@@ -88,28 +85,6 @@ export default class Serveur{
 	}
 	//lancement d'un serveur de websoket 
 	socket( server ){
-		let BinaryServer = require('binaryjs').BinaryServer;
-		let binsocket = BinaryServer({ server , port: 9001 });
-		//lors du connexion au socket pour de transfère de fichier binaire 
-		binsocket.on('connection', async function(client) {
-
-			//récupération des différents paramètre de l'URL
-			let { id , type , typeId , contactId } = require('url').parse( "http://css.fr/socket/"+client._socket.upgradeReq.url,true).query;  
-			console.log('new connection---', id , type , typeId , contactId  );
-			if( !id ) return ; 
-			let index = null ;
-			
-			let deletefile = openfile.filter( function ( e , i ) {
-				index = i ; 
-				return e.id==id?true:false;
-			});
-
-			if ( deletefile.length ) {
-				console.log('------------DELETE STREAM');
-				deletefile[0].stream.destroy();
-				openfile.splice(index, 1);
-			}
-
-		});
+		require('./controller/binsocket')( server , db ) ; 
 	}
 } 
