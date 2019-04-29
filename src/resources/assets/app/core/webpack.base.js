@@ -10,7 +10,7 @@ module.exports = {
     index: resolve('./page'),
   },
   output: {
-    path: path.join(__dirname, '../../../../../', 'dist/controller/assets/js'),
+    path: path.join(__dirname, '../../../../../', 'dist/resources/assets'),
     publicPath: '/',
     filename: 'js/[name].js',
     chunkFilename: 'js/[id].[name].js?[hash]',

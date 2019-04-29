@@ -6,17 +6,19 @@
     "ts": "tsc --watch",
     "nodemon": "nodemon dist/index.js",
     "node": "node dist/index.js",
-    "copy": "copyfiles -u 1 src/resources/**/*  dist/",
+    "copy": "copyfiles -u 1 src/resources/views/**/*  dist/",
     "redis": "redis-server"
   },
   "devDependencies": {
     "@types/body-parser": "^1.17.0",
+    "@types/busboy": "^0.2.3",
     "@types/cookie-parser": "^1.4.1",
     "@types/express": "^4.16.1",
     "@types/express-session": "^1.15.12",
     "@types/node": "^11.13.6",
     "@types/passport": "^1.0.0",
     "@types/redis": "^2.8.12",
+    "@types/request": "^2.48.1",
     "@types/sequelize": "^4.27.48",
     "copyfiles": "^2.1.0"
   },
@@ -24,6 +26,7 @@
     "bcrypt": "^3.0.6",
     "binaryjs": "^0.2.1",
     "body-parser": "^1.18.3",
+    "busboy": "^0.3.1",
     "cookie-parser": "^1.4.4",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
@@ -31,8 +34,13 @@
     "flash": "^1.1.0",
     "mysql2": "^1.6.5",
     "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "passport-remember-me": "0.0.1",
+    "querystring": "^0.2.0",
     "redis": "^2.8.0",
+    "request": "^2.88.0",
     "sequelize": "4.42.0",
+    "validate.js": "^0.12.0",
     "wav": "^1.0.2"
   }
 }

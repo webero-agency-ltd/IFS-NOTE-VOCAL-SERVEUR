@@ -3,20 +3,18 @@ import vueRouter from 'vue-router';
 
 Vue.use(vueRouter);
 
-import profile from '../page/profile';
-import serveur from '../page/serveur';
-import installsite from '../page/installsite';
-import manager from '../page/manager';
-import History from '../page/History';
+import home from '../page/home';
+import infusionsoft from '../page/infusionsoft';
+import notes from '../page/notes';
+import users from '../page/users';
 
 const router = new vueRouter({
 	routes : [
-		
-		{ name: 'profile', path : '/', component : profile },
-		{ name: 'manager', path : '/manager', component : manager },
-		{ name: 'history', path : '/history', component : History },
+		{ name: 'home', path : '/', component : home },
+		{ name: 'infusionsoft', path : '/:id', component : infusionsoft },
+		{ name: 'notes', path : '/:id/notes', component : notes },
+		{ name: 'users', path : '/:id/users', component : users },
 		{ path : '*', redirect : '/'},
-
 	]
 })
 

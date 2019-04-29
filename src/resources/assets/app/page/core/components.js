@@ -1,58 +1,7 @@
 import Vue from 'vue';
 
-import loader from '../../components/loader';
-Vue.component('loader', loader);
-
 import menu from '../components/menu';
 Vue.component('menu-app', menu);
-
-import Avatar from '../../components/Avatar';
-Vue.component('Avatar', Avatar);
-
-import guide from '../components/guide';
-Vue.component('guide', guide);
-
-import passJauge from '../components/passJauge';
-Vue.component('passJauge', passJauge);
-
-import inputFile from '../components/inputFile';
-Vue.component('inputFile', inputFile);
-
-import passGenerat from '../components/passGenerat';
-Vue.component('passGenerat', passGenerat);
-
-import Updateprofile from '../components/Updateprofile';
-Vue.component('Updateprofile', Updateprofile);
-
-import UpdateprofileWPCP from '../components/UpdateprofileWPCP';
-Vue.component('UpdateprofileWPCP', UpdateprofileWPCP);
-
-import UpdateprofileAPI from '../components/UpdateprofileAPI';
-Vue.component('UpdateprofileAPI', UpdateprofileAPI);
-
-import UpdateprofileSH from '../components/UpdateprofileSH';
-Vue.component('UpdateprofileSH', UpdateprofileSH);
-
-import Viewprofile from '../components/Viewprofile';
-Vue.component('Viewprofile', Viewprofile);
-
-import Filesgoogle from '../components/Filesgoogle';
-Vue.component('Filesgoogle', Filesgoogle);
-
-import Categorie from '../components/Categorie';
-Vue.component('Categorie', Categorie);
-
-import ProfileUpdateModale from '../components/ProfileUpdateModale';
-Vue.component('ProfileUpdateModale', ProfileUpdateModale);
-
-import ModalEdit from '../components/ModalEdit';
-Vue.component('ModalEdit', ModalEdit);
-
-import CategorieEdit from '../components/CategorieEdit';
-Vue.component('CategorieEdit', CategorieEdit);
-
-import ServeurEdit from '../components/ServeurEdit';
-Vue.component('ServeurEdit', ServeurEdit);
 
 import bPagination from 'bootstrap-vue/es/components/pagination/pagination';
 Vue.component('b-pagination', bPagination);
@@ -130,6 +79,12 @@ Vue.component('b-list-group-item', bListGroupItem);
 import bCard from 'bootstrap-vue/es/components/card/card';
 Vue.component('b-card', bCard);
 
+import bCardText from 'bootstrap-vue/es/components/card/card-text';
+Vue.component('b-card-text', bCardText);
+
+import bCardGroup from 'bootstrap-vue/es/components/card/card-group';
+Vue.component('b-card-group', bCardGroup);
+
 import bBadge from 'bootstrap-vue/es/components/badge/badge';
 Vue.component('b-badge', bBadge);
 
@@ -154,17 +109,10 @@ Vue.component('b-form-checkbox', bFormCheckbox);
 import bProgressBar from 'bootstrap-vue/es/components/progress/progress-bar';
 Vue.component('b-progress-bar', bProgressBar);
 
+import BPopover from 'bootstrap-vue/es/components/popover/popover'
+Vue.component('b-popover', BPopover)
 
-////////////////////////////////////////////////
-////////////////////////////////////////////////
-////////////////////////////////////////////////
-
-import TextInput from '../../components/TextInput';
-Vue.component('TextInput', TextInput);
-
-	
 let comp = {
-
 }
 
 export default comp;

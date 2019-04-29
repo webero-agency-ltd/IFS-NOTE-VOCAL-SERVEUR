@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import lang from '../../lib/lang';
+import lang from '../lib/lang';
 
 let plugLang = {};
 plugLang.install = function (Vue, options) {

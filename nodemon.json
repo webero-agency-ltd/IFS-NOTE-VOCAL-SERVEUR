@@ -1,3 +1,3 @@
 {   
-    "ignore": ["src/**/*" , "dist/config/**/*" , "README"] 
+    "ignore": ["src/**/*" , "dist/config/**/*" , "README" ,"dist/resources/assets/**/*"] 
 }

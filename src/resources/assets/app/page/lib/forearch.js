@@ -1,7 +1,5 @@
 class forearch{
-	
 	constructor(data,func){
-
 		if (typeof(data) =='number') {
 			let tempdata = [] ; 
 			for (var i = 0; i < data; i++) {
@@ -12,45 +10,36 @@ class forearch{
 		else if (typeof(data)!='object') {
 			return false;
 		}
-
 		this.progressFuncs = [];
 		this.beforeEndFuncs = [];
 		this.firstFuncs = [];
 		this.endFuncs = [];
 		this.data = data;
 		this.callFunction = func; 
-
 	}
-
 	progress(callback){
 		if (typeof(callback)=='function') {
 			this.progressFuncs.push(callback);
 		}
 	}
-
 	/*
 	beforeEnd(callback){
 		if (typeof(callback)=='function') {
 			this.beforeEndFuncs.push(callback);
 		}
 	}*/
-
 	first(callback){
 		if (typeof(callback)=='function') {
 			this.firstFuncs.push(callback);
 		}
 	}
-
 	end(callback){
 		if (typeof(callback)=='function') {
 			this.endFuncs.push(callback);
 		}
 	}
-
 	thisParcourWithFunc(){
-
 		this.callFunction(this.data[this.compteur],(res)=>{
-
 			let isReady = true;
 			if (this.compteur==0&&this.firstFuncs.length>0) {
 				isReady = false;
@@ -68,7 +57,6 @@ class forearch{
 					}
 				}
 			}
-
 			this.compteur++;
 			if (this.compteur>=this.parcour) {
 				if (isReady) {
@@ -82,14 +70,10 @@ class forearch{
 			else{
 				this.thisParcourWithFunc();
 			}
-
 		});
-
 	}
-
 	//Lancement du foreach
 	run(){
-
 		if (this.data.length==0) {
 			for (var a = 0; a < this.endFuncs.length; a++) {
 				if (typeof(this.endFuncs[a])=='function') {
@@ -100,7 +84,6 @@ class forearch{
 		}
 		this.parcour = this.data.length ; 
 		this.compteur = 0 ; 
-
 		if (typeof(this.callFunction)=='function') {
 			this.thisParcourWithFunc();
 		}else{
@@ -133,7 +116,6 @@ class forearch{
 			}
 		}
 	}
-
 }
  
 export default function (data,func) {

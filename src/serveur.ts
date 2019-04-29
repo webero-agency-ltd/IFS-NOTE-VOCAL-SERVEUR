@@ -7,6 +7,7 @@ const path = require('path') ;
 const http = require('http') ;
 const https = require('https') ;
 const fs = require('fs');
+let str = require('./libs/redis-stream');
 
 //ICI on lance le serveur en local ou en prod suivant le donner du varriable env 
 let env = 'local' ; 
@@ -30,11 +31,11 @@ db.sequelize.sync({ force: false })
 	    }).then( async function(dbUser) {
 	      	// si l'utilisateur admin n'existe pas alors on le crée 
 	      	if (!dbUser) {
-		        let full_name = 'admin' ; 
+		        let fullname = 'admin' ; 
 				let email = 'admin@gmail.com' ; 
 				let role = 'admin' ; 
 				let password = await hash('admin@gmail.com') ; 
-				User.create({full_name,email,password,role})
+				User.create({fullname,email,password,role})
 					.then(user => {
 						console.log('ADMIN OK')
 					})
@@ -55,12 +56,11 @@ export default class Serveur{
 	}
 	//Initialisation des tout les middleware de l'application 
 	async middleware(){
-		let cbl = require('./middleware/index') ; 
-		let middleware = await cbl(app,db) ; 
+		await require('./middleware/index')(app,db) ; 
 	}
 	async route(){
 		//initialisation des différents routes de l'applications 
-		let route = await require('./route/index')(app,db) ; 
+		let route = await require('./route/index')(app,db,str) ; 
 		let server ; 
 		if ( env =='local' ) {
 			server = http.createServer( app ).listen(this.port, () => {
@@ -85,6 +85,6 @@ export default class Serveur{
 	}
 	//lancement d'un serveur de websoket 
 	socket( server ){
-		require('./controller/binsocket')( server , db ) ; 
+		require('./controller/binsocket')( server , db , str ) ; 
 	}
 } 
