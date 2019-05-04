@@ -18,21 +18,28 @@ export function check( req:Request, res:Response ) {
     })
     	.then( u => {
 	    	if ( u ) {
-	    		//@TODO : récupération de tout les autres informations de la statistique qui son utile 
-				Infusionsoft.find( { where: { urlid : id } } )
+	    		Infusionsoft.find( { where: { urlid : id } } )
 					.then(i => {
 						if ( i ) {
-							return res.json( {success : true} )
+							u.getTeams( { where: { InfusionsoftId : i.id as number } })
+								.then(t => {
+									if ( t.length > 0 ) {
+										return res.json( {success : true} )
+									}
+									res.json( {error : true , code : '0001' } )
+								})
+								.catch( e => res.json({ error : true , code : '0002'}) );
+						}else{
+							res.json( {error : true , code : 'E0001' } )
 						}
-						res.json( {error : true} )
 					})
-					.catch( e => res.json({ error : true }) );
+					.catch( e => res.json({ error : true , code : 'E0002'}) );
 	    	}else{
-	    		res.json({ error : true } )
+	    		res.json({ error : true , code : '0003'} )
 	    	}
 		})
 		.catch( e => {
-	  		e => res.json({ error : true } )
+	  		e => res.json({ error : true , code : '0004'} )
 	  	});
 	
 }
@@ -120,14 +127,14 @@ export function infos( req:Request, res:Response ) {
 						}
 						res.json( reponse )
 			        }else{
-			        	res.json( { error : lang['InfusionsoftAPINull'] } ) 
+			        	res.json( { error : lang['InfusionsoftAPINull'] , code : '0011'} ) 
 			        }
 				});
 		    }else{
-		    	res.json( { error : lang['MessageAppGlobalErreur'] } ) 
+		    	res.json( { error : lang['MessageAppGlobalErreur'] , code : '0012'} ) 
 		    }
 		})
-		.catch( e => res.json( { error : lang['MessageAppGlobalErreur'] } ) );
+		.catch( e => res.json( { error : lang['MessageAppGlobalErreur'] , code : '0013'} ) );
 }
 
 //ici on a un redirection qui vien d'infusionsoft
@@ -215,33 +222,33 @@ export function create( req:Request, res:Response ) {
 					    				.then( x => {
 					    					//attache le team a infusionsoft
 							    			newteam.setUser( user )
-							    				.then( x => {
+							    				.then( x => { 
 									    			let redirect_uri = site.urlapp + '/infusionsoft/redirect?id='+I.id  ; 
 													let url = 'https://signin.infusionsoft.com/app/oauth/authorize' ; 
 													url+= '?client_id='+site.clientId+'&redirect_uri='+encodeURIComponent( redirect_uri )+'&response_type=code&scope=full';
 													return res.json({success:url});			
 									    		})
 									    		.catch( e => {
-							    					return res.json({error:lang['MessageAppGlobalErreur']});
+							    					return res.json({error:lang['MessageAppGlobalErreur'], code : '0005'});
 												});	
 							    		})
 							    		.catch( e => {
-							    			return res.json({error:lang['MessageAppGlobalErreur']});
+							    			return res.json({error:lang['MessageAppGlobalErreur'], code : '0006'});
 										});
 					    		})
 					    		.catch( e => {
-							    	return res.json({error:lang['MessageAppGlobalErreur']});
+							    	return res.json({error:lang['MessageAppGlobalErreur'], code : '0007'});
 								});
 			    		})
 			    		.catch( e => {
-							return res.json({error:lang['MessageAppGlobalErreur']});
+							return res.json({error:lang['MessageAppGlobalErreur'], code : '0008'});
 						});
 			    })
 			    .catch( e => {
-					return res.json({error:lang['MessageAppGlobalErreur']});
+					return res.json({error:lang['MessageAppGlobalErreur'], code : '0009'});
 				});
 	  	}) 
 	  	.catch( e => {
-			return res.json({error:lang['MessageAppGlobalErreur']});
+			return res.json({error:lang['MessageAppGlobalErreur'], code : '0010'});
 	  	});
 }

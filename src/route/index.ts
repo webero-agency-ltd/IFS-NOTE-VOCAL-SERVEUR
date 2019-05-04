@@ -9,6 +9,7 @@ const login = require('../controller/login') ;
 const infusionsoft = require('../controller/infusionsoft') ;
 const team = require('../controller/team') ;
 const note = require('../controller/note') ;
+const tansvase = require('../controller/tansvase') ;
 
 module.exports = async function ( app : Application , db : DBInterface , str ) : Promise<boolean> {
 
@@ -22,7 +23,8 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	app.post('/signup',signup.create.bind({db})) ;
 	app.get('/logout', function(req, res){
 		//destruction de cookie rememberToken  
-		res.clearCookie("rememberToken");
+		res.clearCookie("me_identity");
+		res.clearCookie("remember_me");
 	  	req.logout();
 	  	res.redirect('/');
 	});
@@ -49,8 +51,8 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 
 	//tansvase notes 
 	//transvase task 
-	app.get('/tansvase/notes/:id',note.item.bind({db,str})) ;
-	app.get('/tansvase/tasks/:id',note.index.bind({db,str})) ;
+	app.get('/tansvase/notes/:id',tansvase.notes.bind({db,str})) ;
+	app.get('/tansvase/tasks/:id',tansvase.tasks.bind({db,str})) ;
 	return new Promise<boolean>( resolve => resolve( true ));
 	
 } 

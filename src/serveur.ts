@@ -7,16 +7,15 @@ const path = require('path') ;
 const http = require('http') ;
 const https = require('https') ;
 const fs = require('fs');
-let str = require('./libs/redis-stream');
-
-//ICI on lance le serveur en local ou en prod suivant le donner du varriable env 
-let env = 'local' ; 
+const str = require('./libs/redis-stream');
+const site = require('./config/site') ; 
 const app = express() ; 
 
 app.set('views', path.join(__dirname, 'resources/views'));
 app.set('view enginer','ejs') ;
 
-var openfile = [] ; 
+let { env } = site ; 
+let openfile = [] ; 
 
 const db = createModels(require('./config/sequelize'));
 db.sequelize.sync({ force: false })
@@ -34,7 +33,7 @@ db.sequelize.sync({ force: false })
 		        let fullname = 'admin' ; 
 				let email = 'admin@gmail.com' ; 
 				let role = 'admin' ; 
-				let password = await hash('admin@gmail.com') ; 
+				let password = await hash('-Paspgkksyh@shgsp.kjhsn') ; 
 				User.create({fullname,email,password,role})
 					.then(user => {
 						console.log('ADMIN OK')
@@ -62,23 +61,24 @@ export default class Serveur{
 		//initialisation des différents routes de l'applications 
 		let route = await require('./route/index')(app,db,str) ; 
 		let server ; 
-		if ( env =='local' ) {
+		if ( env !=='prod' ) {
 			server = http.createServer( app ).listen(this.port, () => {
 				console.log('le serveur dev sur le port',this.port)
 			});
 		}else{
 			//création du serveur en http et redirection a https si on essayer d'accer a cette url 
 			http.createServer(function(req, res) {   
+				console.log('+++++++')
 			    res.writeHead(301, {"Location": "https://" + req.headers['host'] + req.url});
 			    res.end();
 			}).listen(80);
-			var options = {
+			let options = {
 				key: fs.readFileSync("/etc/letsencrypt/archive/therapiequantique.net/privkey1.pem"),
 			    cert: fs.readFileSync("/etc/letsencrypt/archive/therapiequantique.net/fullchain1.pem"),
 			    ca: fs.readFileSync("/etc/letsencrypt/archive/therapiequantique.net/chain1.pem"),
 			};
-			server =  https.createServer(options, app).listen(this.port, () => {
-				console.log('le serveur prod sur le port',this.port)
+			server =  https.createServer(options, app).listen(443, () => {
+				console.log('----- le serveur prod sur le port',443)
 			});
 		}
 		this.socket( server ) ; 

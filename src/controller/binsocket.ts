@@ -1,7 +1,7 @@
 let BinaryServer = require('binaryjs').BinaryServer;
 let wav = require('wav');
 let path = require('path') ; 
-import { DBInterface } from '../interface/DBInterface';
+import { DBInterface } from '../interface/DBInterface'; 
 
 module.exports = function ( server , db : DBInterface , str ) {
 	let { Note , Vocaux } = db as DBInterface ; 

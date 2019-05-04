@@ -6,7 +6,7 @@
     "ts": "tsc --watch",
     "nodemon": "nodemon dist/index.js",
     "node": "node dist/index.js",
-    "copy": "copyfiles -u 1 src/resources/views/**/*  dist/",
+    "copy": "copyfiles -u 1 src/resources/views/**/*  src/resources/assets/css/**/*  src/resources/assets/img/**/*  src/resources/assets/js/**/* dist/",
     "redis": "redis-server"
   },
   "devDependencies": {
@@ -36,6 +36,7 @@
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "passport-remember-me": "0.0.1",
+    "passport-remember-me-extended": "0.0.3",
     "querystring": "^0.2.0",
     "redis": "^2.8.0",
     "request": "^2.88.0",

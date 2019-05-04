@@ -10,6 +10,7 @@ export interface InfusionsoftAttributes {
     accessToken?: string;
     unique?: string;
   	urlid?: string;
+    InfusionsoftId?:number;
 };
 
 export interface InfusionsoftInstance extends Sequelize.Instance<InfusionsoftAttributes>, InfusionsoftAttributes { 

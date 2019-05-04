@@ -9,7 +9,4 @@ export default function strategy( req : Request , res : Response , next : NextFu
 	}else{
 		next() ; 
 	}
-	/*if ( req.cookies.rememberToken ) {
-		//passport.authenticate('token-local')(req, res, next);
-	}else */
 }

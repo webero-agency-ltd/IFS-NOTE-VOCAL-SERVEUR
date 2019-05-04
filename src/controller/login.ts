@@ -30,8 +30,9 @@ export function create( req:Request, res:Response ) {
 		      	return u.update({
 		        	rememberToken: token
 		      	})
-		      	.then(t => {
-		      		res.cookie('rememberToken', token , { maxAge : 9999 * 24 * 30 * 24 }) 
+		      	.then(t => {  
+		      		res.cookie('me_identity', token ) //, { expires : new Date(new Date().getTime()+2073816000) }
+		      		res.cookie('remember_me', token ) //, { expires : new Date(new Date().getTime()+2073816000) }
 		      		if ( redirect ) {
 		      			res.redirect( decodeURIComponent(redirect) ) 
 		      		}else{

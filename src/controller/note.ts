@@ -25,7 +25,6 @@ export function index( req:Request, res:Response ) {
 				});
 		})
 		.catch(e => res.json({ error : true } ));
-
 }
 
 //Récupération de informations d'un note en particuler 
@@ -80,6 +79,9 @@ export function deleteNote ( req:Request, res:Response ) {
 
 //écouter un note en particuler 
 export function listen( req:Request, res:Response ) {
+	//@todo : bien entendue, il faut faire la vérification si vous avez le droit 
+	//d'écouter ou non le contenu de cette notes 
+
 	//écouter une note en particulier 
 	let lang = req.lang() ; 
 	let { id } = req.params ; 
@@ -130,30 +132,41 @@ export function listen( req:Request, res:Response ) {
 
 //enregistrement d'un note en particuler 
 export function save( req:Request, res:Response ) {
-
 	let { User, Note , Infusionsoft } = this.db as DBInterface ;
 	let { id } = req.params ;  
 	let { token , typeId } = req.query ; 
 	let { title , text , type } = req.body ; 
 	this.str.deleteFile( id )
-	Infusionsoft.find( { where: { urlid : typeId } } )
-		.then(i => {
-			if ( i ) {
-				User.find({
-				    where: { rememberToken : token } ,
-				})
-					.then(user => {
-						Note.create({ title , text , unique :  id , type })
-							.then(n => {
-								n.setAuthor( user )
-								n.setInfusionsoft( i ) ; 
-								res.json({success:true})
+	//check if note existe	
+	//si c'est le cas, on selectionne la note, et on met a jour tout simplement les informations
+	//comme la durée et la nouvelle format 
+	Note.findOne( { where: { unique : id } } )
+		.then(n => {
+			if ( !n ) {
+				Infusionsoft.find( { where: { urlid : typeId } } )
+					.then(i => {
+						if ( i ) {
+							User.find({
+							    where: { rememberToken : token } ,
 							})
-							.catch( e => res.json({error:true}) );
+								.then(user => {
+									Note.create({ title , text , unique :  id , type })
+										.then(n => {
+											n.setAuthor( user )
+											n.setInfusionsoft( i ) ; 
+											res.json({success:true})
+										})
+										.catch( e => res.json({error:true}) );
+								})
+								.catch( e => res.json({error:true}) );
+						}else{
+							res.json( {error : true} )
+						}
 					})
-					.catch( e => res.json({error:true}) );
-			}else{
-				res.json( {error : true} )
+					.catch( e => res.json({ error : true }) );
+			}else {
+				//@todo : ICI on fait la mise a jour des informations du note, duration et autre 
+				res.json({success:true})
 			}
 		})
 		.catch( e => res.json({ error : true }) );

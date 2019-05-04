@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session'); 
 const passport = require('passport') ; 
 const LocalStrategy = require('passport-local').Strategy;
+const RememberMeStrategy = require('passport-remember-me').Strategy ; 
 
 module.exports = async function ( app : Application , db : DBInterface ) :Promise<boolean>{
 	//méthode de l'extenssion chrome 
@@ -32,11 +33,14 @@ module.exports = async function ( app : Application , db : DBInterface ) :Promis
 	  	secret: 'secret',
 	  	saveUninitialized: true,
 	  	resave: true
-	}));
+	})); 
+	//inection de remember token
+
 	app.use(require('./flash'));
 	app.use(require('./lang')) ;
 	app.use(passport.initialize());
 	app.use(passport.session());
+	app.use(passport.authenticate('remember-me'));
 	//app.use(require('./response')) ;
 
 	/*
@@ -58,10 +62,12 @@ module.exports = async function ( app : Application , db : DBInterface ) :Promis
 		    });
 		}
 	));
-	passport.use('token-local',new LocalStrategy(
-		{ usernameField: "rememberToken" },
-		function(rememberToken, password, done) {
-		    db.User.findOne({
+	passport.use( new RememberMeStrategy(
+		function(rememberToken, done) {
+			if (typeof rememberToken !== 'string') {
+				return done(null, rememberToken);
+			}
+		    db.User.findOne({ 
 			    where: { rememberToken }
 		    }).then(function(dbUser) {
 		    	if (!dbUser) {
@@ -69,6 +75,11 @@ module.exports = async function ( app : Application , db : DBInterface ) :Promis
 			    }
 		      	return done(null, dbUser);
 		    });
+		}, 
+		function ( user,done ) {
+			if ( user.rememberToken ) {
+				return done( null, user.rememberToken ); 
+			}
 		}
 	));
 	passport.serializeUser(function(user, cb) {
@@ -77,6 +88,5 @@ module.exports = async function ( app : Application , db : DBInterface ) :Promis
 	passport.deserializeUser(function(obj, cb) {
 	  	cb(null, obj);
 	});
-
 	return new Promise<boolean>( resolve => resolve( true ));
 };

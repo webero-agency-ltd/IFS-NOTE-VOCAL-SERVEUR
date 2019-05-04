@@ -3,4 +3,5 @@ module.exports = {
   	clientSecret : "wJ5mqRn9HE",
   	urlapp : "http://localhost:3000",
   	port : 3000 , 
+  	env : 'dev' ,//prod 
 }
