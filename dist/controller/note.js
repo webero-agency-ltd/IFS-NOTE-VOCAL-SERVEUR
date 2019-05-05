@@ -202,8 +202,11 @@ function save(req, res) {
                 .catch(function (e) { return res.json({ error: true }); });
         }
         else {
-            //@todo : ICI on fait la mise a jour des informations du note, duration et autre 
-            res.json({ success: true });
+            n.update({ text: text })
+                .then(function (n) {
+                res.json({ success: true });
+            })
+                .catch(function (e) { return res.json({ error: true }); });
         }
     })
         .catch(function (e) { return res.json({ error: true }); });

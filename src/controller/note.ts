@@ -165,8 +165,11 @@ export function save( req:Request, res:Response ) {
 					})
 					.catch( e => res.json({ error : true }) );
 			}else {
-				//@todo : ICI on fait la mise a jour des informations du note, duration et autre 
-				res.json({success:true})
+				n.update( { text } )
+					.then(n => {
+						res.json({success:true})
+					})
+				.catch( e => res.json({ error : true }) );
 			}
 		})
 		.catch( e => res.json({ error : true }) );
