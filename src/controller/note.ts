@@ -1,5 +1,6 @@
 import { Request , Response }  from 'express' ; 
 import { DBInterface } from '../interface/DBInterface';
+import forearch from '../libs/forearch';
 const path = require('path') ; 
 const fs = require('fs') ; 
 const Busboy = require('busboy');
@@ -10,8 +11,8 @@ const Busboy = require('busboy');
 export function index( req:Request, res:Response ) {
 	let lang = req.lang() ; 
 	let { id } = req.params  ;
-	let { Infusionsoft , User } = this.db as DBInterface ;
-	Infusionsoft.findOne({
+	let { Application , User } = this.db as DBInterface ;
+	Application.findOne({
 	    where: { id }
     })
     	.then( i => {
@@ -130,46 +131,124 @@ export function listen( req:Request, res:Response ) {
 	return res.send(lang['filesnoteimpty']);
 }
 
-//enregistrement d'un note en particuler 
-export function save( req:Request, res:Response ) {
-	let { User, Note , Infusionsoft } = this.db as DBInterface ;
+export function checks( req:Request, res:Response ) {
 	let { id } = req.params ;  
+	let { User, Note , Application } = this.db as DBInterface ;
+	let { urls } = req.body ; 
+	let datas = urls.split(',,,')
+	let response = [] ; 
+
+	let findnotes = forearch( datas , function ( data, next ) {
+		let urlDecode = decodeURIComponent( data.replace('https://trello.com', '') ) ; 
+		let unique = urlDecode.split('/').join('_').replace('/', '_')  ; 
+		Note.findOne( { where: { unique } } )
+			.then(n => {
+				if (n) {
+					response.push( data ) ; 
+				}
+				next()
+			})
+			.catch( e => next() );
+	}) ; 
+	findnotes.end(function (argument) {
+		return res.json( response )
+	})
+	findnotes.run() ; 
+
+	
+}
+
+export function check( req:Request, res:Response ) {
+	let { id } = req.params ;  
+	let { User, Note , Application } = this.db as DBInterface ;
+	Note.findOne( { where: { unique : id } } )
+		.then(n => {
+			if (n) {
+				return res.json( { success : true } )
+			}
+			res.status(400).json({ error : true })
+		})
+		.catch( e => res.status(400).json({ error : true }) );
+}
+
+//enregistrement d'un note en particuler 
+export async function save( req:Request, res:Response ) {
+
+	let { User, Note , Application } = this.db as DBInterface ;
+	let { id } = req.params ;   
 	let { token , typeId } = req.query ; 
-	let { title , text , type } = req.body ; 
+	let { title , text , type , newId } = req.body ; 
+
+	let where = {}
+	if ( token ) {
+		where = { rememberToken : token }
+	}else if ( req.user.id ) {
+		let id = req.user.id ;
+		where = { id }
+	}else{
+		return res.json( { error : true , code : 'NS0001' })
+	}
 	this.str.deleteFile( id )
+
+	let nameFile = id+ '.wav' ; 
+	let pathFile = path.join(__dirname, '../','/notes/') + nameFile ;  
+	if ( newId ) {
+		let rename = await this.str.renameFile( pathFile , path.join(__dirname, '../','/notes/') + newId + '.wav' ) ; 
+		if ( ! rename ) {
+			return res.json( { error : true , code : 'NS0000' })
+		}
+		id = newId ; 
+	}
 	//check if note existe	
 	//si c'est le cas, on selectionne la note, et on met a jour tout simplement les informations
 	//comme la durée et la nouvelle format 
 	Note.findOne( { where: { unique : id } } )
 		.then(n => {
 			if ( !n ) {
-				Infusionsoft.find( { where: { urlid : typeId } } )
-					.then(i => {
-						if ( i ) {
-							User.find({
-							    where: { rememberToken : token } ,
+				if (type == 'trello') {
+					User.find({
+						    where ,
+						})
+							.then(user => {
+								Note.create({ title , text , unique :  id , type })
+									.then(n => {
+										res.json( { success : true })
+									})
+									.catch( e => res.json({ error : true , code : 'NS0002' }) );
 							})
-								.then(user => {
-									Note.create({ title , text , unique :  id , type })
-										.then(n => {
-											n.setAuthor( user )
-											n.setInfusionsoft( i ) ; 
-											res.json({success:true})
-										})
-										.catch( e => res.json({error:true}) );
+							.catch( e => res.json({ error : true , code : 'NS0001' }) );
+				}else{
+					Application.find( { where: { urlid : typeId } } )
+						.then(i => {
+							if ( i ) {
+								User.find({
+								    where: { rememberToken : token } ,
 								})
-								.catch( e => res.json({error:true}) );
-						}else{
-							res.json( {error : true} )
-						}
-					})
-					.catch( e => res.json({ error : true }) );
+									.then(user => {
+										Note.create({ title , text , unique :  id , type })
+											.then(n => {
+												n.setAuthor( user )
+												n.setApplication( i ) ; 
+												res.json({success:true})
+											})
+											.catch( e => res.json({ error : true, code : 'NS0003' }) );
+									})
+									.catch( e => res.json({ error : true , code : 'NS0004' }) );
+							}else{
+								res.json( { error : true , code : 'NS0005' } )
+							}
+						})
+						.catch( e => {
+							console.log( e )
+							res.json({ error : true , code : 'NS0006' })
+						} );
+				}
 			}else {
 				n.update( { text } )
 					.then(n => {
-						res.json({success:true})
+						res.json({ success : true , code : 'NS0007' })
 					})
-				.catch( e => res.json({ error : true }) );
+					.catch( e => res.json({ error : true }) );
 			}
 		})
 		.catch( e => res.json({ error : true }) );

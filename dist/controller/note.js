@@ -34,7 +34,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+var forearch_1 = __importDefault(require("../libs/forearch"));
 var path = require('path');
 var fs = require('fs');
 var Busboy = require('busboy');
@@ -44,8 +48,8 @@ var Busboy = require('busboy');
 function index(req, res) {
     var lang = req.lang();
     var id = req.params.id;
-    var _a = this.db, Infusionsoft = _a.Infusionsoft, User = _a.User;
-    Infusionsoft.findOne({
+    var _a = this.db, Application = _a.Application, User = _a.User;
+    Application.findOne({
         where: { id: id }
     })
         .then(function (i) {
@@ -165,51 +169,138 @@ function listen(req, res) {
     return res.send(lang['filesnoteimpty']);
 }
 exports.listen = listen;
-//enregistrement d'un note en particuler 
-function save(req, res) {
-    var _a = this.db, User = _a.User, Note = _a.Note, Infusionsoft = _a.Infusionsoft;
+function checks(req, res) {
     var id = req.params.id;
-    var _b = req.query, token = _b.token, typeId = _b.typeId;
-    var _c = req.body, title = _c.title, text = _c.text, type = _c.type;
-    this.str.deleteFile(id);
-    //check if note existe	
-    //si c'est le cas, on selectionne la note, et on met a jour tout simplement les informations
-    //comme la durée et la nouvelle format 
+    var _a = this.db, User = _a.User, Note = _a.Note, Application = _a.Application;
+    var urls = req.body.urls;
+    var datas = urls.split(',,,');
+    var response = [];
+    var findnotes = forearch_1.default(datas, function (data, next) {
+        var urlDecode = decodeURIComponent(data.replace('https://trello.com', ''));
+        var unique = urlDecode.split('/').join('_').replace('/', '_');
+        Note.findOne({ where: { unique: unique } })
+            .then(function (n) {
+            if (n) {
+                response.push(data);
+            }
+            next();
+        })
+            .catch(function (e) { return next(); });
+    });
+    findnotes.end(function (argument) {
+        return res.json(response);
+    });
+    findnotes.run();
+}
+exports.checks = checks;
+function check(req, res) {
+    var id = req.params.id;
+    var _a = this.db, User = _a.User, Note = _a.Note, Application = _a.Application;
     Note.findOne({ where: { unique: id } })
         .then(function (n) {
-        if (!n) {
-            Infusionsoft.find({ where: { urlid: typeId } })
-                .then(function (i) {
-                if (i) {
-                    User.find({
-                        where: { rememberToken: token },
-                    })
-                        .then(function (user) {
-                        Note.create({ title: title, text: text, unique: id, type: type })
-                            .then(function (n) {
-                            n.setAuthor(user);
-                            n.setInfusionsoft(i);
-                            res.json({ success: true });
-                        })
-                            .catch(function (e) { return res.json({ error: true }); });
+        if (n) {
+            return res.json({ success: true });
+        }
+        res.status(400).json({ error: true });
+    })
+        .catch(function (e) { return res.status(400).json({ error: true }); });
+}
+exports.check = check;
+//enregistrement d'un note en particuler 
+function save(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var _a, User, Note, Application, id, _b, token, typeId, _c, title, text, type, newId, where, id_1, nameFile, pathFile, rename;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    _a = this.db, User = _a.User, Note = _a.Note, Application = _a.Application;
+                    id = req.params.id;
+                    _b = req.query, token = _b.token, typeId = _b.typeId;
+                    _c = req.body, title = _c.title, text = _c.text, type = _c.type, newId = _c.newId;
+                    where = {};
+                    if (token) {
+                        where = { rememberToken: token };
+                    }
+                    else if (req.user.id) {
+                        id_1 = req.user.id;
+                        where = { id: id_1 };
+                    }
+                    else {
+                        return [2 /*return*/, res.json({ error: true, code: 'NS0001' })];
+                    }
+                    this.str.deleteFile(id);
+                    nameFile = id + '.wav';
+                    pathFile = path.join(__dirname, '../', '/notes/') + nameFile;
+                    if (!newId) return [3 /*break*/, 2];
+                    return [4 /*yield*/, this.str.renameFile(pathFile, path.join(__dirname, '../', '/notes/') + newId + '.wav')];
+                case 1:
+                    rename = _d.sent();
+                    if (!rename) {
+                        return [2 /*return*/, res.json({ error: true, code: 'NS0000' })];
+                    }
+                    id = newId;
+                    _d.label = 2;
+                case 2:
+                    //check if note existe	
+                    //si c'est le cas, on selectionne la note, et on met a jour tout simplement les informations
+                    //comme la durée et la nouvelle format 
+                    Note.findOne({ where: { unique: id } })
+                        .then(function (n) {
+                        if (!n) {
+                            if (type == 'trello') {
+                                User.find({
+                                    where: where,
+                                })
+                                    .then(function (user) {
+                                    Note.create({ title: title, text: text, unique: id, type: type })
+                                        .then(function (n) {
+                                        res.json({ success: true });
+                                    })
+                                        .catch(function (e) { return res.json({ error: true, code: 'NS0002' }); });
+                                })
+                                    .catch(function (e) { return res.json({ error: true, code: 'NS0001' }); });
+                            }
+                            else {
+                                Application.find({ where: { urlid: typeId } })
+                                    .then(function (i) {
+                                    if (i) {
+                                        User.find({
+                                            where: { rememberToken: token },
+                                        })
+                                            .then(function (user) {
+                                            Note.create({ title: title, text: text, unique: id, type: type })
+                                                .then(function (n) {
+                                                n.setAuthor(user);
+                                                n.setApplication(i);
+                                                res.json({ success: true });
+                                            })
+                                                .catch(function (e) { return res.json({ error: true, code: 'NS0003' }); });
+                                        })
+                                            .catch(function (e) { return res.json({ error: true, code: 'NS0004' }); });
+                                    }
+                                    else {
+                                        res.json({ error: true, code: 'NS0005' });
+                                    }
+                                })
+                                    .catch(function (e) {
+                                    console.log(e);
+                                    res.json({ error: true, code: 'NS0006' });
+                                });
+                            }
+                        }
+                        else {
+                            n.update({ text: text })
+                                .then(function (n) {
+                                res.json({ success: true, code: 'NS0007' });
+                            })
+                                .catch(function (e) { return res.json({ error: true }); });
+                        }
                     })
                         .catch(function (e) { return res.json({ error: true }); });
-                }
-                else {
-                    res.json({ error: true });
-                }
-            })
-                .catch(function (e) { return res.json({ error: true }); });
-        }
-        else {
-            n.update({ text: text })
-                .then(function (n) {
-                res.json({ success: true });
-            })
-                .catch(function (e) { return res.json({ error: true }); });
-        }
-    })
-        .catch(function (e) { return res.json({ error: true }); });
+                    return [2 /*return*/];
+            }
+        });
+    });
 }
 exports.save = save;
 //uploade d'un audion pour l'enregistré dans vos notes  

@@ -2,7 +2,7 @@ import { Request , Response }  from 'express' ;
 import { DBInterface } from '../interface/DBInterface';
 import * as bcrypt from 'bcrypt' ;
 const passport = require('passport') ; 
-const LocalStrategy = require('passport-local').Strategy;
+const LocalStrategy = require('passport-local').Strategy; 
 
 //afficher la page login
 export function page( req:Request, res:Response ) {

@@ -1,8 +1,10 @@
 import * as Sequelize from 'sequelize';
 import { SequelizeAttributes } from '../interface/SequelizeAttributes';
 import { NoteInstance , NoteAttributes } from './note';
-import { InfusionsoftInstance , InfusionsoftAttributes } from './infusionsoft';
+import { ApplicationInstance , ApplicationAttributes } from './application';
 import { TeamInstance , TeamAttributes } from './team';
+import { PourInstance , PourAttributes } from './pour';
+
 
 export interface UserAttributes {
   	id?: number;
@@ -28,16 +30,16 @@ export interface UserInstance extends Sequelize.Instance<UserAttributes>, UserAt
 	hasNotes: Sequelize.HasManyHasAssociationsMixin<NoteInstance, NoteInstance['id']>;
 	countNotes: Sequelize.HasManyCountAssociationsMixin;
 
-  getInfusionsofts: Sequelize.HasManyGetAssociationsMixin<InfusionsoftInstance>;
-  setInfusionsofts: Sequelize.HasManySetAssociationsMixin<InfusionsoftInstance, InfusionsoftInstance['id']>;
-  addInfusionsofts: Sequelize.HasManyAddAssociationsMixin<InfusionsoftInstance, InfusionsoftInstance['id']>;
-  addInfusionsoft: Sequelize.HasManyAddAssociationMixin<InfusionsoftInstance, InfusionsoftInstance['id']>;
-  createInfusionsoft: Sequelize.HasManyCreateAssociationMixin<InfusionsoftAttributes, InfusionsoftInstance>;
-  removeInfusionsoft: Sequelize.HasManyRemoveAssociationMixin<InfusionsoftInstance, InfusionsoftInstance['id']>;
-  removeInfusionsofts: Sequelize.HasManyRemoveAssociationsMixin<InfusionsoftInstance, InfusionsoftInstance['id']>;
-  hasInfusionsoft: Sequelize.HasManyHasAssociationMixin<InfusionsoftInstance, InfusionsoftInstance['id']>;
-  hasInfusionsofts: Sequelize.HasManyHasAssociationsMixin<InfusionsoftInstance, InfusionsoftInstance['id']>;
-  countInfusionsofts: Sequelize.HasManyCountAssociationsMixin;
+  getApplications: Sequelize.HasManyGetAssociationsMixin<ApplicationInstance>;
+  setApplications: Sequelize.HasManySetAssociationsMixin<ApplicationInstance, ApplicationInstance['id']>;
+  addApplications: Sequelize.HasManyAddAssociationsMixin<ApplicationInstance, ApplicationInstance['id']>;
+  addApplication: Sequelize.HasManyAddAssociationMixin<ApplicationInstance, ApplicationInstance['id']>;
+  createApplication: Sequelize.HasManyCreateAssociationMixin<ApplicationAttributes, ApplicationInstance>;
+  removeApplication: Sequelize.HasManyRemoveAssociationMixin<ApplicationInstance, ApplicationInstance['id']>;
+  removeApplications: Sequelize.HasManyRemoveAssociationsMixin<ApplicationInstance, ApplicationInstance['id']>;
+  hasApplication: Sequelize.HasManyHasAssociationMixin<ApplicationInstance, ApplicationInstance['id']>;
+  hasApplications: Sequelize.HasManyHasAssociationsMixin<ApplicationInstance, ApplicationInstance['id']>;
+  countApplication: Sequelize.HasManyCountAssociationsMixin;
 
   getTeams: Sequelize.HasManyGetAssociationsMixin<TeamInstance>;
   setTeams: Sequelize.HasManySetAssociationsMixin<TeamInstance, TeamInstance['id']>;
@@ -49,6 +51,18 @@ export interface UserInstance extends Sequelize.Instance<UserAttributes>, UserAt
   hasTeam: Sequelize.HasManyHasAssociationMixin<TeamInstance, TeamInstance['id']>;
   hasTeams: Sequelize.HasManyHasAssociationsMixin<TeamInstance, TeamInstance['id']>;
   countTeams: Sequelize.HasManyCountAssociationsMixin;
+
+
+  getPours: Sequelize.HasManyGetAssociationsMixin<PourInstance>;
+  setPours: Sequelize.HasManySetAssociationsMixin<PourInstance, PourInstance['id']>;
+  addPours: Sequelize.HasManyAddAssociationsMixin<PourInstance, PourInstance['id']>;
+  addPour: Sequelize.HasManyAddAssociationMixin<PourInstance, PourInstance['id']>;
+  createPour: Sequelize.HasManyCreateAssociationMixin<PourAttributes, PourInstance>;
+  removePour: Sequelize.HasManyRemoveAssociationMixin<PourInstance, PourInstance['id']>;
+  removePours: Sequelize.HasManyRemoveAssociationsMixin<PourInstance, PourInstance['id']>;
+  hasPour: Sequelize.HasManyHasAssociationMixin<PourInstance, PourInstance['id']>;
+  hasPours: Sequelize.HasManyHasAssociationsMixin<PourInstance, PourInstance['id']>;
+  countPours: Sequelize.HasManyCountAssociationsMixin;
 
  /* getTeamsFromUsers: Sequelize.BelongsToManyGetAssociationsMixin<TeamInstance>;
   setTeamsFromUsers: Sequelize.BelongsToManySetAssociationsMixin<TeamInstance, TeamInstance['id'], 'PostUpvotes'>;
@@ -84,8 +98,9 @@ export const UserFactory = (sequelize: Sequelize.Sequelize, DataTypes: Sequelize
   	const User = sequelize.define<UserInstance, UserAttributes>('User', attributes);
   	User.associate = models => {
       User.hasMany(models.Note, { foreignKey: 'AuthorId' });
-      User.hasMany(models.Infusionsoft, { foreignKey: 'AuthorId' });
-	    User.hasMany(models.Team);
+      User.hasMany(models.Application, { foreignKey: 'AuthorId' });
+      User.hasMany(models.Team);
+	    User.hasMany(models.Pour, { foreignKey: 'AuthorId' });
       /*User.belongsToMany(models.Team, {
         through: 'UserTeams',
         as: 'teamsFromUsers'

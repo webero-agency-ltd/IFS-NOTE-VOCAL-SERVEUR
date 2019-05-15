@@ -9,8 +9,10 @@ const session = require('express-session');
 const passport = require('passport') ; 
 const LocalStrategy = require('passport-local').Strategy;
 const RememberMeStrategy = require('passport-remember-me').Strategy ; 
+const cors = require('cors');
 
 module.exports = async function ( app : Application , db : DBInterface ) :Promise<boolean>{
+	
 	//méthode de l'extenssion chrome 
 	app.use(function (req, res, next) {
 		res.setHeader('Access-Control-Allow-Origin', '*');
@@ -34,6 +36,9 @@ module.exports = async function ( app : Application , db : DBInterface ) :Promis
 	  	saveUninitialized: true,
 	  	resave: true
 	})); 
+
+	app.use(cors({ origin: 'https://trello.com' }));
+
 	//inection de remember token
 
 	app.use(require('./flash'));

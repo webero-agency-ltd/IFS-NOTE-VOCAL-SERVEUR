@@ -16,7 +16,12 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 var resolve = function (dir) { return path.join(__dirname, '..', '', dir); };
 module.exports = {
     entry: {
-        index: resolve('./page'),
+        index: resolve('./page/appserveur'),
+        recoder: resolve('./page/recoder'),
+        vocalNote: resolve('./page/vocalNote'),
+    },
+    node: {
+        fs: "empty"
     },
     output: {
         path: path.join(__dirname, '../../../../../', 'dist/resources/assets'),

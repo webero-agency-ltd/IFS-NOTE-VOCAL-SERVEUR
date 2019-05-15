@@ -146,11 +146,11 @@ function vocal_all(notes) {
 //transvase note
 function notes(req, res) {
     var _this = this;
-    var _a = this.db, Infusionsoft = _a.Infusionsoft, User = _a.User;
+    var _a = this.db, Application = _a.Application, User = _a.User;
     var lang = req.lang();
     var id = req.params.id;
     //récupération des info en utilisant l'API infusionsoft et l'accessToken 
-    Infusionsoft.find({ where: { id: id } })
+    Application.find({ where: { id: id } })
         .then(function (i) { return __awaiter(_this, void 0, void 0, function () {
         var token, contacts, notes_1, wat;
         return __generator(this, function (_a) {
@@ -187,11 +187,11 @@ exports.notes = notes;
 //transvase tache 
 function tasks(req, res) {
     var _this = this;
-    var _a = this.db, Infusionsoft = _a.Infusionsoft, User = _a.User;
+    var _a = this.db, Application = _a.Application, User = _a.User;
     var lang = req.lang();
     var id = req.params.id;
     //récupération des info en utilisant l'API infusionsoft et l'accessToken 
-    Infusionsoft.find({ where: { id: id } })
+    Application.find({ where: { id: id } })
         .then(function (i) { return __awaiter(_this, void 0, void 0, function () {
         var token, contacts, notes_2, wat;
         return __generator(this, function (_a) {

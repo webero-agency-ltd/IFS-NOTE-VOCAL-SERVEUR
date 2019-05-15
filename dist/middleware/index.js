@@ -54,6 +54,7 @@ var session = require('express-session');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var RememberMeStrategy = require('passport-remember-me').Strategy;
+var cors = require('cors');
 module.exports = function (app, db) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -80,6 +81,7 @@ module.exports = function (app, db) {
                 saveUninitialized: true,
                 resave: true
             }));
+            app.use(cors({ origin: 'https://trello.com' }));
             //inection de remember token
             app.use(require('./flash'));
             app.use(require('./lang'));

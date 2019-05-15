@@ -1,12 +1,14 @@
 
 import * as Sequelize from 'sequelize';
 import { SequelizeAttributes } from '../interface/SequelizeAttributes';
-import { InfusionsoftInstance , InfusionsoftAttributes } from './infusionsoft';
+import { ApplicationInstance , ApplicationAttributes } from './application';
 import { UserInstance , UserAttributes } from './user';
    
 export interface TeamAttributes {
     id?: number;
     role?: string;
+    contactid?: string;
+    type?: string;
   	active?: boolean;
     createdAt?: Date;
   	updatedAt?: Date;
@@ -14,9 +16,9 @@ export interface TeamAttributes {
 
 export interface TeamInstance extends Sequelize.Instance<TeamAttributes>, TeamAttributes {  
 
-    getInfusionsoft: Sequelize.BelongsToGetAssociationMixin<InfusionsoftInstance>;
-    setInfusionsoft: Sequelize.BelongsToSetAssociationMixin<InfusionsoftInstance, InfusionsoftInstance['id']>;
-    createInfusionsoft: Sequelize.BelongsToCreateAssociationMixin<InfusionsoftAttributes,InfusionsoftInstance>;
+    getApplication: Sequelize.BelongsToGetAssociationMixin<ApplicationInstance>;
+    setApplication: Sequelize.BelongsToSetAssociationMixin<ApplicationInstance, ApplicationInstance['id']>;
+    createApplication: Sequelize.BelongsToCreateAssociationMixin<ApplicationAttributes,ApplicationInstance>;
 
     getUser: Sequelize.BelongsToGetAssociationMixin<UserInstance>;
     setUser: Sequelize.BelongsToSetAssociationMixin<UserInstance, UserInstance['id']>;
@@ -40,19 +42,20 @@ export const TeamFactory = (sequelize: Sequelize.Sequelize, DataTypes: Sequelize
 	    role: {
             type: DataTypes.STRING 
 	    },
+        contactid: { 
+            type: DataTypes.STRING 
+        },
+        type: {
+            type: DataTypes.STRING 
+        },
         active:{
 	        type: DataTypes.BOOLEAN 
         }
   	};
   	const Team = sequelize.define<TeamInstance, TeamAttributes>('Team', attributes);
     Team.associate = models => {
-        Team.belongsTo(models.Infusionsoft);
-        //Infusionsoft.belongsTo(models.User, { as: 'author', foreignKey: 'AuthorId' });
+        Team.belongsTo(models.Application);
         Team.belongsTo(models.User);
-        /*Team.belongsToMany(models.User, {
-            through: 'UserTeams',
-            as: 'usersFromTeams'
-        });*/
     };
   	return Team;
 };

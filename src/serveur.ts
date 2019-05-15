@@ -76,6 +76,11 @@ export default class Serveur{
 				key: fs.readFileSync("/etc/letsencrypt/archive/therapiequantique.net/privkey1.pem"),
 			    cert: fs.readFileSync("/etc/letsencrypt/archive/therapiequantique.net/fullchain1.pem"),
 			    ca: fs.readFileSync("/etc/letsencrypt/archive/therapiequantique.net/chain1.pem"),
+			    /*
+					key: fs.readFileSync("/etc/letsencrypt/archive/therapiequantique.net/privkey1.pem"),
+				    cert: fs.readFileSync("/etc/letsencrypt/archive/therapiequantique.net/fullchain1.pem"),
+				    ca: fs.readFileSync("/etc/letsencrypt/archive/therapiequantique.net/chain1.pem"),
+				*/
 			};
 			server =  https.createServer(options, app).listen(443, () => {
 				console.log('----- le serveur prod sur le port',443)

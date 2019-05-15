@@ -21,7 +21,7 @@ exports.NoteFactory = function (sequelize, DataTypes) {
     Note.associate = function (models) {
         Note.belongsTo(models.User, { as: 'author', foreignKey: 'AuthorId' });
         Note.belongsTo(models.Vocaux);
-        Note.belongsTo(models.Infusionsoft);
+        Note.belongsTo(models.Application);
     };
     return Note;
 };

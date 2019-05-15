@@ -44,15 +44,21 @@ var strategy_1 = __importDefault(require("../middleware/strategy"));
 //const validator = require("../request/");  
 var signup = require('../controller/signup');
 var login = require('../controller/login');
-var infusionsoft = require('../controller/infusionsoft');
+var application = require('../controller/application');
 var team = require('../controller/team');
 var note = require('../controller/note');
 var tansvase = require('../controller/tansvase');
+var trello = require('../controller/trello');
+var home = require('../controller/index');
+var infusionsoft = require('../controller/infusionsoft');
+var external = require('../controller/external');
+var pour = require('../controller/pour');
 module.exports = function (app, db, str) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             //controlleur de base de l'application qui vous affiche votre application  
-            app.get('/', ensureAuth_1.default, require('../controller/index').bind({ db: db }));
+            app.get('/', ensureAuth_1.default, home.index.bind({ db: db }));
+            app.get('/vocal-note', ensureAuth_1.default, home.vocalNote.bind({ db: db }));
             //page d'authentification 
             app.get('/login', strategy_1.default, login.page.bind({ db: db }));
             app.post('/login', strategy_1.default, login.create.bind({ db: db }));
@@ -65,17 +71,24 @@ module.exports = function (app, db, str) {
                 req.logout();
                 res.redirect('/');
             });
-            app.get('/infusionsoft', ensureAuth_1.default, infusionsoft.index.bind({ db: db }));
-            app.get('/infusionsoft/check/:id', infusionsoft.check.bind({ db: db }));
-            app.get('/infusionsoft/item/:id', ensureAuth_1.default, infusionsoft.item.bind({ db: db }));
-            app.get('/infusionsoft/redirect', ensureAuth_1.default, infusionsoft.redirect.bind({ db: db }));
-            app.post('/infusionsoft', ensureAuth_1.default, infusionsoft.create.bind({ db: db }));
-            app.get('/infusionsoft/findid', ensureAuth_1.default, infusionsoft.create.bind({ db: db }));
-            app.get('/infusionsoft/info/:id', ensureAuth_1.default, infusionsoft.infos.bind({ db: db }));
-            app.get('/team/infusionsoft/:id', ensureAuth_1.default, team.index.bind({ db: db }));
-            app.get('/team/:id', ensureAuth_1.default, team.create.bind({ db: db }));
+            app.get('/application', ensureAuth_1.default, application.index.bind({ db: db }));
+            app.get('/application/item/:id', ensureAuth_1.default, application.item.bind({ db: db }));
+            app.get('/application/check/:id/:type', application.check.bind({ db: db }));
+            //app.get('/application/infusionsoft/findid',ensureAuth,application.create.bind({db})) ;
+            app.get('/application/infusionsoft/redirect', ensureAuth_1.default, application.redirect.bind({ db: db }));
+            app.get('/application/infusionsoft/info/:id', ensureAuth_1.default, application.infos.bind({ db: db }));
+            app.get('/application/trello/redirect/:id', application.redirectTrello.bind({ db: db, str: str }));
+            app.post('/application', ensureAuth_1.default, application.create.bind({ db: db }));
+            app.get('/application/reauthorize/:type/:id', application.reauthorize.bind({ db: db, str: str }));
+            app.get('/team/application/:id', ensureAuth_1.default, team.index.bind({ db: db }));
+            app.get('/team/:id/:type/:contactid', ensureAuth_1.default, team.create.bind({ db: db }));
+            //champ utiliser par infusionsoft 
+            app.get('/infusionsoft/membre/:id', ensureAuth_1.default, infusionsoft.membre.bind({ db: db }));
+            app.get('/infusionsoft/contacts/:id', ensureAuth_1.default, infusionsoft.contacts.bind({ db: db }));
             //route des notes
             app.get('/note/:id', note.item.bind({ db: db, str: str }));
+            app.get('/note/check/:id', note.check.bind({ db: db, str: str }));
+            app.post('/note/checks', note.checks.bind({ db: db, str: str }));
             app.get('/note/infusionsoft/:id', note.index.bind({ db: db, str: str }));
             app.get('/close/:id', ensureAuth_1.default, note.close.bind({ db: db, str: str }));
             app.get('/audio/:id', ensureAuth_1.default, note.listen.bind({ db: db, str: str }));
@@ -86,6 +99,19 @@ module.exports = function (app, db, str) {
             //transvase task 
             app.get('/tansvase/notes/:id', tansvase.notes.bind({ db: db, str: str }));
             app.get('/tansvase/tasks/:id', tansvase.tasks.bind({ db: db, str: str }));
+            //trello ICI 
+            app.get('/trello', trello.view.bind({ db: db, str: str }));
+            app.get('/trello/boards/:id', ensureAuth_1.default, trello.boards.bind({ db: db, str: str }));
+            app.get('/trello/lists/:id', ensureAuth_1.default, trello.lists.bind({ db: db, str: str }));
+            app.post('/trello/boards/:id', ensureAuth_1.default, trello.boardsUpdate.bind({ db: db, str: str }));
+            app.get('/trello/membre/:id', ensureAuth_1.default, trello.membre.bind({ db: db }));
+            app.get('/external', ensureAuth_1.default, external.index.bind({ db: db }));
+            //ici on fait la création de notes 
+            app.post('/external', ensureAuth_1.default, external.create.bind({ db: db }));
+            //application externale autre celle
+            app.get('/pour', ensureAuth_1.default, pour.index.bind({ db: db }));
+            app.post('/pour', ensureAuth_1.default, pour.create.bind({ db: db }));
+            app.delete('/pour/:id', ensureAuth_1.default, pour.delet.bind({ db: db }));
             return [2 /*return*/, new Promise(function (resolve) { return resolve(true); })];
         });
     });

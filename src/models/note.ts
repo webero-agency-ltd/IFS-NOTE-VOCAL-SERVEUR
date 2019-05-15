@@ -4,7 +4,7 @@
 import * as Sequelize from 'sequelize';
 import { SequelizeAttributes } from '../interface/SequelizeAttributes';
 import { UserInstance , UserAttributes } from './user';
-import { InfusionsoftInstance , InfusionsoftAttributes } from './infusionsoft';
+import { ApplicationInstance , ApplicationAttributes } from './application';
    
 export interface NoteAttributes {
     id?: number;
@@ -22,9 +22,9 @@ export interface NoteInstance extends Sequelize.Instance<NoteAttributes>, NoteAt
     setAuthor: Sequelize.BelongsToSetAssociationMixin<UserInstance, UserInstance['id']>;
     createAuthor: Sequelize.BelongsToCreateAssociationMixin<UserAttributes,UserInstance>;
 
-    getInfusionsoft: Sequelize.BelongsToGetAssociationMixin<InfusionsoftInstance>;
-    setInfusionsoft: Sequelize.BelongsToSetAssociationMixin<InfusionsoftInstance, InfusionsoftInstance['id']>;
-    createInfusionsoft: Sequelize.BelongsToCreateAssociationMixin<InfusionsoftAttributes,InfusionsoftInstance>;
+    getApplication: Sequelize.BelongsToGetAssociationMixin<ApplicationInstance>;
+    setApplication: Sequelize.BelongsToSetAssociationMixin<ApplicationInstance, ApplicationInstance['id']>;
+    createApplication: Sequelize.BelongsToCreateAssociationMixin<ApplicationAttributes,ApplicationInstance>;
 }; 
 
 export const NoteFactory = (sequelize: Sequelize.Sequelize, DataTypes: Sequelize.DataTypes): Sequelize.Model<NoteInstance, NoteAttributes> => {
@@ -46,7 +46,7 @@ export const NoteFactory = (sequelize: Sequelize.Sequelize, DataTypes: Sequelize
     Note.associate = models => {
         Note.belongsTo(models.User, { as: 'author', foreignKey: 'AuthorId' });
         Note.belongsTo(models.Vocaux);
-        Note.belongsTo(models.Infusionsoft);
+        Note.belongsTo(models.Application);
     };
   	return Note;
 };

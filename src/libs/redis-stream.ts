@@ -42,6 +42,17 @@ export function closeIsStream( id ) {
 	return true ;
 }
 
+//rename fichier 
+export function renameFile( ord , newf ) : Promise <boolean> {
+	return new Promise<boolean>( async (resolve) => { 
+		fs.rename( ord , newf , (err) => {
+			if (err)
+				resolve(false);
+			resolve(true);
+		});
+	});
+}
+
 export function deleteFile( id ) {
 	closeIsStream( id )
 	id = 'file'+id;

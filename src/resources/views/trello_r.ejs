@@ -1,0 +1,13 @@
+<html>
+  	<head>
+	    <script >	
+			if (window.location.href.indexOf('#') >= 0) {
+				var newurl = window.location.href.replace('#', '?');
+				window.location.href = newurl ; 
+			}else{
+				window.location.href = window.location.origin ; 
+			}
+		</script>
+  	</head>
+  	<body></body>
+</html>

@@ -7,19 +7,20 @@ exports.TeamFactory = function (sequelize, DataTypes) {
         role: {
             type: DataTypes.STRING
         },
+        contactid: {
+            type: DataTypes.STRING
+        },
+        type: {
+            type: DataTypes.STRING
+        },
         active: {
             type: DataTypes.BOOLEAN
         }
     };
     var Team = sequelize.define('Team', attributes);
     Team.associate = function (models) {
-        Team.belongsTo(models.Infusionsoft);
-        //Infusionsoft.belongsTo(models.User, { as: 'author', foreignKey: 'AuthorId' });
+        Team.belongsTo(models.Application);
         Team.belongsTo(models.User);
-        /*Team.belongsToMany(models.User, {
-            through: 'UserTeams',
-            as: 'usersFromTeams'
-        });*/
     };
     return Team;
 };

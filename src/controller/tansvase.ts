@@ -99,11 +99,11 @@ function vocal_all( notes ) {
 
 //transvase note
 export function notes( req:Request, res:Response ) {
-	let { Infusionsoft , User } = this.db as DBInterface ;
+	let { Application , User } = this.db as DBInterface ;
 	let lang = req.lang() ; 
 	let { id } = req.params ; 
 	//récupération des info en utilisant l'API infusionsoft et l'accessToken 
-	Infusionsoft.find({ where: { id } })
+	Application.find({ where: { id } })
     	.then( async i => {
     		let token : any[]; 
 			try{
@@ -126,11 +126,11 @@ export function notes( req:Request, res:Response ) {
 
 //transvase tache 
 export function tasks( req:Request, res:Response ) {
-	let { Infusionsoft , User } = this.db as DBInterface ;
+	let { Application , User } = this.db as DBInterface ;
 	let lang = req.lang() ; 
 	let { id } = req.params ; 
 	//récupération des info en utilisant l'API infusionsoft et l'accessToken 
-	Infusionsoft.find({ where: { id } })
+	Application.find({ where: { id } })
     	.then( async i => {
     		let token : any[]; 
 			try{
