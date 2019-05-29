@@ -1,15 +1,15 @@
 import { Request , Response }  from 'express' ; 
-import express from 'express' ; 
+import express from 'express' ;  
 import { createModels } from './models';
 import { DBInterface } from './interface/DBInterface';
 import hash from './libs/hash' ;
-const path = require('path') ; 
+const path = require('path') ;    
 const http = require('http') ;
 const https = require('https') ;
 const fs = require('fs');
 const str = require('./libs/redis-stream');
 const site = require('./config/site') ; 
-const app = express() ; 
+const app = express() ;  
 
 app.set('views', path.join(__dirname, 'resources/views'));
 app.set('view enginer','ejs') ;
@@ -67,8 +67,7 @@ export default class Serveur{
 			});
 		}else{
 			//création du serveur en http et redirection a https si on essayer d'accer a cette url 
-			http.createServer(function(req, res) {   
-				console.log('+++++++')
+			http.createServer(function(req, res) {   	
 			    res.writeHead(301, {"Location": "https://" + req.headers['host'] + req.url});
 			    res.end();
 			}).listen(80);

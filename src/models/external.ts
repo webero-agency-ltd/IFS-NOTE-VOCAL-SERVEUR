@@ -14,9 +14,7 @@ export interface ExternalAttributes {
 };
 
 export interface ExternalInstance extends Sequelize.Instance<ExternalAttributes>, ExternalAttributes {  
-    getAuthor: Sequelize.BelongsToGetAssociationMixin<UserInstance>;
-    setAuthor: Sequelize.BelongsToSetAssociationMixin<UserInstance, UserInstance['id']>;
-    createAuthor: Sequelize.BelongsToCreateAssociationMixin<UserAttributes,UserInstance>; 
+
 }; 
 
 export const ExternalFactory = (sequelize: Sequelize.Sequelize, DataTypes: Sequelize.DataTypes): Sequelize.Model<ExternalInstance, ExternalAttributes> => {
@@ -30,7 +28,7 @@ export const ExternalFactory = (sequelize: Sequelize.Sequelize, DataTypes: Seque
   	};
   	const External = sequelize.define<ExternalInstance, ExternalAttributes>('External', attributes);
     External.associate = models => {
-        External.belongsTo(models.User, { as: 'author', foreignKey: 'AuthorId' });
+
     };
   	return External;
 };

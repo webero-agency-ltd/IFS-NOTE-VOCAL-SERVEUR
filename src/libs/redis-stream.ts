@@ -16,6 +16,8 @@ export function openFile( id , path ) {
 	if ( !allstream[id] ) {
 		allstream[id] = path ; 
 	}
+	console.log( '_________ openFile ' )
+	console.log( allstream[id] )
 	return true;
 }
 
@@ -33,10 +35,12 @@ export function closeIsStream( id ) {
 	if ( allstream[id] && allstream[id].destroy ) {
 		allstream[id].destroy();
 		allstream[id] = null ; 
+		delete allstream[id] ;
 		return 
 	}else if (  allstream[id] && allstream[id].close ) {
 		allstream[id].close();
-		allstream[id] = null ; 
+		allstream[id] = null ;
+		delete allstream[id] ; 
 		return 
 	}
 	return true ;
@@ -58,12 +62,16 @@ export function deleteFile( id ) {
 	id = 'file'+id;
 	allstream[id] = null ; 
 	delete allstream[id] ;
+	console.log( '_________ deleteFile ' )
+	console.log( allstream[id] )
 	return true ;
 }
 
 export function closeIsFile( id ) {
 	closeIsStream( id )
 	id = 'file'+id;
+	console.log( '_________ closeIsFile ' )
+	console.log( allstream[id] )
 	if ( !allstream[id] || (allstream[id] && fs.existsSync( allstream[id] ) && fs.unlinkSync( allstream[id] )) ) {
 	    return true ;
 	}

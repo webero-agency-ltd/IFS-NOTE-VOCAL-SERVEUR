@@ -28,6 +28,25 @@
     </div>
 </template>
 <script>
+
+    import { createNamespacedHelpers } from 'vuex';
+    import store from '../store/';
+    
+    import {
+        generale,
+        mapApplicationFields ,
+        mapUsersFields ,
+        mapUsersMultiRowFields , 
+        mapTrelloMultiRowFields
+    } from '../store/pages/generale';
+    
+    if (!store.state.generale) store.registerModule(`generale`, generale);
+
+    const { 
+        mapMutations: mapApplicationMutations , 
+        mapActions: mapApplicationActions 
+    } = createNamespacedHelpers(`generale/application`);
+
 	export default {
 		props : [ ], 
 		data(){
@@ -38,69 +57,56 @@
                 fields : [
                     { key: "id", label: "ID" },
                     { key: "title", label: "Title" },
+                    { key: "url", label: "Url" },
                 ]
             }
         },
-        methods : { 
 
-            async create(){
-                console.log( this.compte ) ; 
-                if ( !this.compte ) 
-                    return
-                console.log( '---' , this.compte ) ; 
-                let url = window.urlapplication + '/trello/boards/'+this.$route.params.id ;
-                let uploadResponse = await fetch( url , {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify( { compteId : this.compte } )
-                })
-                
-                if ( uploadResponse.ok ) { 
-                    document.location.reload(true);
-                }
-            },  
+        computed: {
+            ...mapApplicationFields({ applicationsItem: `item` }),
+            ...mapTrelloMultiRowFields({ trelloBoards: `boards` }),
+        },
 
-            async findallnotes(){
+        watch : {
 
-                let url = window.urlapplication + '/trello/boards/'+this.$route.params.id ;
-                console.log( '--- Récupération de tout les boards : ' , url )
-                let find = await fetch( url )  ; 
-                if ( find.ok ) { 
-                    let data = await find.json() ; 
-                    this.items = data.map(function ( e ) {
-                        return {
-                            id: e.id,
-                            title: e.name,
-                            //email: e.email,
-                            //role: e.role,
-                        }
-                    })
-                    console.log( data )
+            applicationsItem : function () {
+                if ( this.applicationsItem ) {
+                    this.compte = this.applicationsItem.compteId ;
                 }
             },
 
-            //récupération du compte infusionsoft en question 
-            async findInfusionsoft(){
-                let url = window.urlapplication + '/application/item/' + this.$route.params.id;
-                console.log( '--- Récupération : ' , url )
-                let find = await fetch( url )  ; 
-                if ( find.ok ) { 
-                    let data = await find.json() ; 
-                    console.log( data )
-                    if ( data ) {
-                        this.infusionsoft = data; 
-                        this.compte = this.infusionsoft.compteId ;
-                        console.log( this.infusionsoft.compteId ) 
+            trelloBoards : function () {
+
+                this.items = this.trelloBoards.map(({ id , title , url }) => {
+                    return { id , title , url }
+                }) 
+
+            }
+
+        },
+
+        methods : { 
+
+            async create(){
+                let item = null ;
+                for( const i of this.items ){
+                    if ( i.id == this.compte ) {
+                        item = i ; 
                     }
                 }
+                await this.$store.dispatch('generale/trello/ADD_BOARDS' , { id : this.$route.params.id,  compte : this.compte , url : item.url ,namespace : 'generale'} ) ; 
+            },  
+
+            async init(){
+                await this.$store.dispatch('generale/application/ITEM_APPLICATION' , { id : this.$route.params.id ,namespace : 'generale' } ) ; 
+                await this.$store.dispatch('generale/trello/ALL_BOARDS' , { id : this.$route.params.id  ,namespace : 'generale' }) ; 
             }
+
         },
-		created(){
-            this.findallnotes() ; 
-            this.findInfusionsoft() ; 
+		mounted(){
+            
+            this.init() ; 
+
 		}
 	}
 </script>

@@ -1,7 +1,7 @@
 <template>
     <div class="userpage">
         <b-container>
-            <b-row style="margin-top: 2rem" v-if="type=='trello'">
+            <b-row style="margin-top: 2rem" v-if="applicationsItem.type=='trello'">
                 <b-col cols="12">
                     <h4>{{$lang('appMembreTrello')}}</h4>
                 </b-col>
@@ -20,7 +20,7 @@
                     </template>
                 </b-col>
             </b-row>
-            <b-row style="margin-top: 2rem" v-if="type=='infusionsoft'">
+            <b-row style="margin-top: 2rem" v-if="applicationsItem.type=='infusionsoft'">
                 <b-col cols="12">
                     <h4>{{$lang('appMembreInfusionsof')}}</h4>
                 </b-col>
@@ -55,17 +55,42 @@
     </div>
 </template>
 <script>
+
+    import { createNamespacedHelpers } from 'vuex';
+    import store from '../store/';
+    
+    import {
+        generale,
+        mapApplicationFields ,
+        mapUsersFields ,
+        mapUsersMultiRowFields
+    } from '../store/pages/generale';
+    
+    if (!store.state.generale) store.registerModule(`generale`, generale);
+
+    const { 
+        mapActions: mapGeneraleMutations, 
+        mapState: mapGeneraleActions 
+    } = createNamespacedHelpers(`generale`);
+
+    const { 
+        mapMutations: mapApplicationMutations , 
+        mapActions: mapApplicationActions 
+    } = createNamespacedHelpers(`generale/application`);
+
+    const { 
+        mapMutations: mapUsersMutations , 
+        mapActions: mapUsersActions 
+    } = createNamespacedHelpers(`generale/users`);
+
 	export default {
 		props : [ ], 
 		data(){
             return {
-                teams : [] , 
-                items : [],
-                urladdteams : 'xdsds' , 
-                infusionsoft : {} , 
-                type : null , 
+                urladdteams : '' , 
                 //membre équipe 
                 trellos : [] , 
+                items : [] , 
                 infusionsofts : [] , 
                 //table ici
                 fields : [
@@ -75,82 +100,91 @@
                 ]
             }
         },
-        methods : {
 
-            async findallteams(){
-                let url = window.urlapplication + '/team/application/'+this.$route.params.id ;
-                console.log( '--- ssssssssssss : ' , url )
-                let find = await fetch( url )  ; 
-                if ( find.ok ) { 
-                    let data = await find.json() ; 
-                    this.items = data.map(function ( e ) {
-                        return {
-                            id: e.id,
-                            fullname: e.fullname,
-                            email: e.email,
-                            role: e.role,
+        computed: {
+            ...mapGeneraleActions([`error`, `success`]),
+            ...mapUsersMultiRowFields({ applicationTeam: `teams` , membreTrello : `membreTrello` , membreInfusionsoft : `membreInfusionsoft` }),
+            ...mapApplicationFields({ applicationsItem: `item` }),
+        },
+
+        watch : {
+
+            membreInfusionsoft : function (argument) {
+                this.infusionsofts = this.membreInfusionsoft.map(({ id , fullName , add }) => {
+                    return { id , fullName , add }
+                }).filter(({ id }) => {
+                    let is = this.applicationTeam.filter((un) => {
+                        let unique = un.id ; 
+                        if ( id == unique ) {
+                            return true;
                         }
+                        return false ; 
                     })
-                    console.log( data )
+                    if ( is.length > 0 ) {
+                        return false
+                    }
+                    return true ; 
+                })
+            },
+
+            membreTrello : function (argument) {
+                this.trellos = this.membreTrello.map(({ id , fullName , add }) => {
+                    return { id , fullName , add }
+                }).filter(({ id }) => {
+                    let is = this.applicationTeam.filter((un) => {
+                        let unique = un.id ; 
+                        console.log( id == unique , id , unique )
+                        if ( id == unique ) {
+                            return true;
+                        }
+                        return false ; 
+                    })
+                    if ( is.length > 0 ) {
+                        return false
+                    }
+                    return true ; 
+                })
+                console.log( this.trellos )
+            },
+
+            applicationTeam :  function () {
+                this.items = this.applicationTeam.map(({ email , fullname , role }) => {
+                    return { email , fullname , role }
+                }) 
+                //récupération de l'information de l'application qui a le focus 
+                this.$store.dispatch('generale/application/ITEM_APPLICATION' , { namespace : 'generale' , id : this.$route.params.id } ) ; 
+            },
+
+            applicationsItem : function () {
+
+                if ( !this.applicationsItem ) 
+                    return ; 
+                if ( this.applicationsItem.type == "trello" ) {
+                    this.$store.dispatch('generale/users/MEMBRE_TRELLO' , { namespace : 'generale' , id : this.$route.params.id } ) ; 
+                }else{
+                    this.$store.dispatch('generale/users/MEMBRE_INFUSIONSOFT' , { namespace : 'generale' , id : this.$route.params.id } ) ; 
                 }
+                this.urladdteams = window.urlapplication + '/team/'+ this.applicationsItem.unique ; 
+
+            }
+        },
+
+        methods : {  
+
+            async init(){
+                await this.$store.dispatch('generale/users/ALL_TEAM' , { namespace : 'generale' , id : this.$route.params.id } ) ; 
             },
 
             //récupération des information trello 
-            async trellomenbre(){
-                let url = window.urlapplication + '/trello/membre/'+this.$route.params.id ;
-                let find = await fetch( url )  ; 
-                if ( find.ok ) { 
-                    let data = await find.json() ; 
-                    this.trellos = data.map(function ( e ) {
-                        return {
-                            id: e.id,
-                            fullName: e.fullName,
-                            add: e.id,
-                        }
-                    })
-                }
-            },
+            async trellomenbre(){},
 
-            async infusionsoftmenbre(){
-                let url = window.urlapplication + '/infusionsoft/membre/'+this.$route.params.id ;
-                let find = await fetch( url )  ; 
-                if ( find.ok ) { 
-                    let data = await find.json() ; 
-                    this.infusionsofts = data.map(function ( e ) {
-                        return {
-                            id: e.global_user_id,
-                            fullName: e.preferred_name,
-                            add: e.global_user_id,
-                        }
-                    }).filter(function (e) {
-                        if ( e.id ) {
-                            return true
-                        }
-                        return false
-                    }) ; 
-                }
-            },
+            async infusionsoftmenbre(){},
 
-            async findInfusionsoft(){
-                let url = window.urlapplication + '/application/item/'+this.$route.params.id ;
-                let find = await fetch( url )  ; 
-                if ( find.ok ) { 
-                    let data = await find.json() ; 
-                    if ( data.type == "trello" ) {
-                        this.type = 'trello' ;
-                        this.trellomenbre() ;
-                    }else{
-                        this.type = 'infusionsoft' ;
-                        this.infusionsoftmenbre() ;
-                    }
-                    this.infusionsoft = data.unique ; 
-                    this.urladdteams = window.urlapplication + '/team/'+ data.unique ; 
-                }
-            }
+            async findInfusionsoft(){}
+
         },
-		created(){
-            this.findInfusionsoft() ; 
-            this.findallteams() ; 
+		created(){ 
+            this.init() ; 
 		}
 	}
 </script>

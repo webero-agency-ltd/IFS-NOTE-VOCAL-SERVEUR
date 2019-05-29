@@ -3,7 +3,7 @@
         <b-container>
             <b-row>
                 <b-col cols="12">
-                    <b-button class="mt-3" @click="reauthorize">Créer</b-button>
+                    <b-button class="mt-3" @click.prevent.stop="reauthorize">Token refresh</b-button>
                 </b-col>
             </b-row>
             <b-row style="margin-top: 2rem">
@@ -25,44 +25,48 @@
     </div>
 </template>
 <script>
+
+    import { createNamespacedHelpers } from 'vuex';
+    import store from '../store/';
+    
+    import {
+        generale,
+        mapApplicationMultiRowFields ,
+    } from '../store/pages/generale';
+    
+    if (!store.state.generale) store.registerModule(`generale`, generale);
+    
+    const { 
+        mapActions: mapGeneraleMutations, 
+        mapState: mapGeneraleActions 
+    } = createNamespacedHelpers(`generale`);
+    
+    const { 
+        mapMutations: mapApplicationMutations , 
+        mapActions: mapApplicationActions 
+    } = createNamespacedHelpers(`generale/application`);
+
+
 	export default {
 		props : [ ], 
 		data(){
             return {
-                application : '' , 
+                
             }
         },
+        computed: {
+            
+        },
         methods : {
-
-            async reauthorize ( data ) {
-                
-                let url = window.urlapplication + '/application/reauthorize/' + this.application.type + '/' + this.application.id ; 
-                let find = await fetch( url )  ;  
-                if ( find.ok ) { 
-                    let data = await find.json() ; 
-                    if ( data.success ) {
-                        var win = window.open(data.success, '_blank');
-                        win.focus();
-                    } 
-                }
-
-            } , 
-
-            async init ( data ) {
-                
-                let url = window.urlapplication + '/application/item/'+this.$route.params.id; 
-                let find = await fetch( url )  ;  
-                if ( find.ok ) { 
-                    let data = await find.json() ; 
-                    this.application = data ; 
-                }
-
+            async init(){
+                await this.$store.dispatch('generale/application/ITEM_APPLICATION' , { id : this.$route.params.id , namespace : 'generale' } ) ; 
+            },
+            reauthorize () { 
+                this.$store.dispatch( 'generale/application/RE_AUTHORIZE', { id : this.$route.params.id , namespace : 'generale' }  ) ; 
             }
         },
 		created(){
-
             this.init() ; 
-            console.log( this.$route.params.id )
 		}
 	}
 </script>

@@ -20,6 +20,7 @@ exports.PourFactory = function (sequelize, DataTypes) {
     var Pour = sequelize.define('Pour', attributes);
     Pour.associate = function (models) {
         Pour.belongsTo(models.User, { as: 'author', foreignKey: 'AuthorId' });
+        Pour.belongsTo(models.Application);
     };
     return Pour;
 };

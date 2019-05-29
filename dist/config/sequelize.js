@@ -1,7 +1,7 @@
 module.exports = {
-    username: "webero",
-    database: "vocalnote",
-    password: 'aUGZyL8T67',
+    username: "root",
+    database: "vocal-note",
+    password: '',
     params: {
         host: 'localhost',
         dialect: 'mysql',

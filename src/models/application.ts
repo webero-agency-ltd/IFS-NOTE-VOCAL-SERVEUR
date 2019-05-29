@@ -3,6 +3,7 @@ import * as Sequelize from 'sequelize';
 import { SequelizeAttributes } from '../interface/SequelizeAttributes';
 import { UserInstance , UserAttributes } from './user';
 import { NoteInstance , NoteAttributes } from './note';
+import { PourInstance , PourAttributes } from './pour';
    
 export interface ApplicationAttributes {
     id?: number;
@@ -30,7 +31,7 @@ export interface ApplicationInstance extends Sequelize.Instance<ApplicationAttri
     hasNotes: Sequelize.HasManyHasAssociationsMixin<NoteInstance, NoteInstance['id']>;
     countNotes: Sequelize.HasManyCountAssociationsMixin;
 
-}; 
+};  
 
 export const ApplicationFactory = (sequelize: Sequelize.Sequelize, DataTypes: Sequelize.DataTypes): Sequelize.Model<ApplicationInstance, ApplicationAttributes> => {
   	const attributes: SequelizeAttributes<ApplicationAttributes> = {

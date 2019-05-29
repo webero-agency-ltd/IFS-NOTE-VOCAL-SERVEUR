@@ -228,6 +228,8 @@ function save(req, res) {
                     else {
                         return [2 /*return*/, res.json({ error: true, code: 'NS0001' })];
                     }
+                    console.log('-------------SAVE NOTE');
+                    console.log(id, '---', typeId, '---', type);
                     this.str.deleteFile(id);
                     nameFile = id + '.wav';
                     pathFile = path.join(__dirname, '../', '/notes/') + nameFile;
@@ -241,6 +243,7 @@ function save(req, res) {
                     id = newId;
                     _d.label = 2;
                 case 2:
+                    this.str.deleteFile(id);
                     //check if note existe	
                     //si c'est le cas, on selectionne la note, et on met a jour tout simplement les informations
                     //comme la durée et la nouvelle format 
@@ -248,20 +251,35 @@ function save(req, res) {
                         .then(function (n) {
                         if (!n) {
                             if (type == 'trello') {
-                                User.find({
-                                    where: where,
+                                var url = decodeURIComponent(typeId);
+                                Application.find({ where: { url: url } })
+                                    .then(function (i) {
+                                    if (i) {
+                                        User.find({
+                                            where: where,
+                                        })
+                                            .then(function (user) {
+                                            Note.create({ title: title, text: text, unique: id, type: type })
+                                                .then(function (n) {
+                                                n.setAuthor(user);
+                                                n.setApplication(i);
+                                                res.json({ success: true });
+                                            })
+                                                .catch(function (e) { return res.json({ error: true, code: 'NS0003' }); });
+                                        })
+                                            .catch(function (e) { return res.json({ error: true, code: 'NS0004' }); });
+                                    }
+                                    else {
+                                        res.json({ error: true, code: 'NS0005' });
+                                    }
                                 })
-                                    .then(function (user) {
-                                    Note.create({ title: title, text: text, unique: id, type: type })
-                                        .then(function (n) {
-                                        res.json({ success: true });
-                                    })
-                                        .catch(function (e) { return res.json({ error: true, code: 'NS0002' }); });
-                                })
-                                    .catch(function (e) { return res.json({ error: true, code: 'NS0001' }); });
+                                    .catch(function (e) {
+                                    console.log(e);
+                                    res.json({ error: true, code: 'NS0006' });
+                                });
                             }
                             else {
-                                Application.find({ where: { urlid: typeId } })
+                                Application.find({ where: { compteId: typeId } })
                                     .then(function (i) {
                                     if (i) {
                                         User.find({

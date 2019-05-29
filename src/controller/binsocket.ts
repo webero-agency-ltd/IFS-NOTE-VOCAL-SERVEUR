@@ -1,11 +1,11 @@
 let BinaryServer = require('binaryjs').BinaryServer;
 let wav = require('wav');
 let path = require('path') ; 
-import { DBInterface } from '../interface/DBInterface'; 
+import { DBInterface } from '../interface/DBInterface';  
 
 module.exports = function ( server , db : DBInterface , str ) {
 	let { Note , Vocaux } = db as DBInterface ; 
-	let binsocket = BinaryServer({ server , port: 9001 });
+	let binsocket = BinaryServer({ server });
 	//lors du connexion au socket pour de transfère de fichier binaire 
 	binsocket.on('connection', async function(client) {
 		//récupération des différents paramètre de l'URL
@@ -27,6 +27,7 @@ module.exports = function ( server , db : DBInterface , str ) {
 			stream.pipe(fileWriter);
 		    stream.on('end', async function() {
 		      	fileWriter.end();
+		      	console.log('µµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµ*')
 				str.openFile( unique , pathFile )
 		      	fileWriter = null ; 
 		    });
@@ -37,6 +38,7 @@ module.exports = function ( server , db : DBInterface , str ) {
 				fileWriter.end();
 		      	fileWriter = null ; 
 			}
+			console.log('--- CLOSE SOKET ' , unique )
 			str.closeIsFile( unique )
 	  	});
 	});

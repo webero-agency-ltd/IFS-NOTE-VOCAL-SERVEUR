@@ -4,8 +4,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var vue_1 = __importDefault(require("vue"));
+var pourTrello_1 = __importDefault(require("../components/pourTrello"));
+vue_1.default.component('pour-trello', pourTrello_1.default);
+var labelTrello_1 = __importDefault(require("../components/labelTrello"));
+vue_1.default.component('label-trello', labelTrello_1.default);
+var pourInfusionsoft_1 = __importDefault(require("../components/pourInfusionsoft"));
+vue_1.default.component('pour-infusionsoft', pourInfusionsoft_1.default);
 var menu_1 = __importDefault(require("../components/menu"));
 vue_1.default.component('menu-app', menu_1.default);
+var loader_1 = __importDefault(require("../components/loader"));
+vue_1.default.component('loader-app', loader_1.default);
+var menu_external_1 = __importDefault(require("../components/menu-external"));
+vue_1.default.component('menu-external', menu_external_1.default);
+var modal_1 = __importDefault(require("../components/modal"));
+vue_1.default.component('modal', modal_1.default);
+var alert_1 = __importDefault(require("../components/alert"));
+vue_1.default.component('alert', alert_1.default);
+var createApplication_1 = __importDefault(require("../components/createApplication"));
+vue_1.default.component('create-application', createApplication_1.default);
 var pagination_1 = __importDefault(require("bootstrap-vue/es/components/pagination/pagination"));
 vue_1.default.component('b-pagination', pagination_1.default);
 //Bootrap vuejs
@@ -39,8 +55,8 @@ var form_row_1 = __importDefault(require("bootstrap-vue/es/components/layout/for
 vue_1.default.component('b-form-row', form_row_1.default);
 var popover_1 = __importDefault(require("bootstrap-vue/es/components/popover/popover"));
 vue_1.default.component('b-popover', popover_1.default);
-var modal_1 = __importDefault(require("bootstrap-vue/es/components/modal/modal"));
-vue_1.default.component('b-modal', modal_1.default);
+var modal_2 = __importDefault(require("bootstrap-vue/es/components/modal/modal"));
+vue_1.default.component('b-modal', modal_2.default);
 var dropdown_1 = __importDefault(require("bootstrap-vue/es/components/dropdown/dropdown"));
 vue_1.default.component('b-dropdown', dropdown_1.default);
 var dropdown_item_1 = __importDefault(require("bootstrap-vue/es/components/dropdown/dropdown-item"));
@@ -65,8 +81,8 @@ var badge_1 = __importDefault(require("bootstrap-vue/es/components/badge/badge")
 vue_1.default.component('b-badge', badge_1.default);
 var progress_1 = __importDefault(require("bootstrap-vue/es/components/progress/progress"));
 vue_1.default.component('b-progress', progress_1.default);
-var alert_1 = __importDefault(require("bootstrap-vue/es/components/alert/alert"));
-vue_1.default.component('b-alert', alert_1.default);
+var alert_2 = __importDefault(require("bootstrap-vue/es/components/alert/alert"));
+vue_1.default.component('b-alert', alert_2.default);
 var form_textarea_1 = __importDefault(require("bootstrap-vue/es/components/form-textarea/form-textarea"));
 vue_1.default.component('b-form-textarea', form_textarea_1.default);
 var form_select_1 = __importDefault(require("bootstrap-vue/es/components/form-select/form-select"));
@@ -83,5 +99,7 @@ var form_radio_group_1 = __importDefault(require("bootstrap-vue/es/components/fo
 vue_1.default.component('b-form-radio-group', form_radio_group_1.default);
 var form_radio_1 = __importDefault(require("bootstrap-vue/es/components/form-radio/form-radio"));
 vue_1.default.component('b-form-radio', form_radio_1.default);
+var input_group_append_1 = __importDefault(require("bootstrap-vue/es/components/input-group/input-group-append"));
+vue_1.default.component('b-input-group-append', input_group_append_1.default);
 var comp = {};
 exports.default = comp;

@@ -8,8 +8,8 @@ let resolve = dir => path.join(__dirname, '..', '', dir) ;
 module.exports = {
   entry: {
     index: resolve('./page/appserveur'),
-    recoder: resolve('./page/recoder'),
-    vocalNote: resolve('./page/vocalNote'),
+    //recoder: resolve('./page/recoder'),
+    //vocalNote: resolve('./page/vocalNote'),
   },
     node: {
      fs: "empty"

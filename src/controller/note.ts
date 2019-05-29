@@ -3,7 +3,7 @@ import { DBInterface } from '../interface/DBInterface';
 import forearch from '../libs/forearch';
 const path = require('path') ; 
 const fs = require('fs') ; 
-const Busboy = require('busboy');
+const Busboy = require('busboy'); 
 
 //liste de tout les notes d'un utilisateur en particulier 
 //@todo : il faut bien avoire une session pour faire la recherche pour ne pas afficher tout les notes 
@@ -188,6 +188,8 @@ export async function save( req:Request, res:Response ) {
 	}else{
 		return res.json( { error : true , code : 'NS0001' })
 	}
+	console.log( '-------------SAVE NOTE' )
+	console.log( id , '---' , typeId, '---' , type )
 	this.str.deleteFile( id )
 
 	let nameFile = id+ '.wav' ; 
@@ -199,6 +201,9 @@ export async function save( req:Request, res:Response ) {
 		}
 		id = newId ; 
 	}
+
+	this.str.deleteFile( id )
+	
 	//check if note existe	
 	//si c'est le cas, on selectionne la note, et on met a jour tout simplement les informations
 	//comme la durée et la nouvelle format 
@@ -206,19 +211,35 @@ export async function save( req:Request, res:Response ) {
 		.then(n => {
 			if ( !n ) {
 				if (type == 'trello') {
-					User.find({
-						    where ,
-						})
-							.then(user => {
-								Note.create({ title , text , unique :  id , type })
-									.then(n => {
-										res.json( { success : true })
+					let url = decodeURIComponent( typeId ) ;
+
+					Application.find( { where: { url } } )
+						.then(i => {
+							if ( i ) {
+								User.find({
+								    where  ,
+								})
+									.then(user => {
+										Note.create({ title , text , unique :  id , type })
+											.then(n => {
+												n.setAuthor( user )
+												n.setApplication( i ) ; 
+												res.json({success:true})
+											})
+											.catch( e => res.json({ error : true, code : 'NS0003' }) );
 									})
-									.catch( e => res.json({ error : true , code : 'NS0002' }) );
-							})
-							.catch( e => res.json({ error : true , code : 'NS0001' }) );
+									.catch( e => res.json({ error : true , code : 'NS0004' }) );
+							}else{
+								res.json( { error : true , code : 'NS0005' } )
+							}
+						})
+						.catch( e => {
+							console.log( e )
+							res.json({ error : true , code : 'NS0006' })
+						} );
+
 				}else{
-					Application.find( { where: { urlid : typeId } } )
+					Application.find( { where: { compteId : typeId } } )
 						.then(i => {
 							if ( i ) {
 								User.find({

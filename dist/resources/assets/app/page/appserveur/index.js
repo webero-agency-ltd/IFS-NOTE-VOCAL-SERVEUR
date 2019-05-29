@@ -5,9 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var vue_1 = __importDefault(require("vue"));
 var plugin_1 = __importDefault(require("./core/plugin"));
-var App_vue_1 = __importDefault(require("./App.vue"));
 var router_1 = __importDefault(require("./router/router"));
 var components_1 = __importDefault(require("./core/components"));
+var App_vue_1 = __importDefault(require("./App.vue"));
 vue_1.default.config.productionTip = false;
 new vue_1.default({
     el: '#core',

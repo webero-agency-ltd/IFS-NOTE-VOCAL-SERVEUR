@@ -20,7 +20,7 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 
 	//controlleur de base de l'application qui vous affiche votre application  
 	app.get('/',ensureAuth,home.index.bind({db})) ;
-	app.get('/vocal-note',ensureAuth,home.vocalNote.bind({db})) ;
+	app.get('/vocal-note',ensureAuth,home.index.bind({db})) ;
 	
 	//page d'authentification 
 	app.get('/login',strategy,login.page.bind({db})) ;
@@ -40,7 +40,7 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	app.get('/application/check/:id/:type',application.check.bind({db})) ;
 	//app.get('/application/infusionsoft/findid',ensureAuth,application.create.bind({db})) ;
 	app.get('/application/infusionsoft/redirect',ensureAuth,application.redirect.bind({db})) ;
-	app.get('/application/infusionsoft/info/:id',ensureAuth,application.infos.bind({db})) ;
+	//app.get('/application/infusionsoft/info/:id',ensureAuth,application.infos.bind({db})) ;
 	app.get('/application/trello/redirect/:id',application.redirectTrello.bind({db,str})) ;
 	app.post('/application',ensureAuth,application.create.bind({db})) ;
 	app.get('/application/reauthorize/:type/:id',application.reauthorize.bind({db,str})) ;
@@ -73,15 +73,17 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	app.get('/trello',trello.view.bind({db,str})) ;
 	app.get('/trello/boards/:id',ensureAuth,trello.boards.bind({db,str})) ;
 	app.get('/trello/lists/:id',ensureAuth,trello.lists.bind({db,str})) ;
+	app.get('/trello/label/:id',ensureAuth,trello.label.bind({db,str})) ;
 	app.post('/trello/boards/:id',ensureAuth,trello.boardsUpdate.bind({db,str})) ;
 	app.get('/trello/membre/:id',ensureAuth,trello.membre.bind({db})) ;
 
 	app.get('/external',ensureAuth,external.index.bind({db})) ;
 	//ici on fait la création de notes 
 	app.post('/external',ensureAuth,external.create.bind({db})) ;
+	app.post('/external/note',ensureAuth,external.note.bind({db})) ;
 
 	//application externale autre celle
-	app.get('/pour',ensureAuth,pour.index.bind({db})) ;
+	app.get('/pour/:application',ensureAuth,pour.index.bind({db})) ;
 	app.post('/pour',ensureAuth,pour.create.bind({db})) ;
 	app.delete('/pour/:id',ensureAuth,pour.delet.bind({db})) ;
 

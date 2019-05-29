@@ -17,7 +17,6 @@ exports.ExternalFactory = function (sequelize, DataTypes) {
     };
     var External = sequelize.define('External', attributes);
     External.associate = function (models) {
-        External.belongsTo(models.User, { as: 'author', foreignKey: 'AuthorId' });
     };
     return External;
 };

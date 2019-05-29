@@ -6,6 +6,7 @@
 import * as Sequelize from 'sequelize';
 import { SequelizeAttributes } from '../interface/SequelizeAttributes';
 import { UserInstance , UserAttributes } from './user';
+import { ApplicationAttributes , ApplicationInstance } from './application';
    
 export interface PourAttributes {
     id?: number;
@@ -18,7 +19,12 @@ export interface PourAttributes {
 export interface PourInstance extends Sequelize.Instance<PourAttributes>, PourAttributes {  
     getAuthor: Sequelize.BelongsToGetAssociationMixin<UserInstance>;
     setAuthor: Sequelize.BelongsToSetAssociationMixin<UserInstance, UserInstance['id']>;
-    createAuthor: Sequelize.BelongsToCreateAssociationMixin<UserAttributes,UserInstance>; 
+    createAuthor: Sequelize.BelongsToCreateAssociationMixin<UserAttributes,UserInstance>
+
+    getApplication: Sequelize.BelongsToGetAssociationMixin<ApplicationInstance>;
+    setApplication: Sequelize.BelongsToSetAssociationMixin<ApplicationInstance, ApplicationInstance['id']>;
+    createApplication: Sequelize.BelongsToCreateAssociationMixin<ApplicationAttributes,ApplicationInstance>;
+    
 }; 
 
 export const PourFactory = (sequelize: Sequelize.Sequelize, DataTypes: Sequelize.DataTypes): Sequelize.Model<PourInstance, PourAttributes> => {
@@ -39,6 +45,7 @@ export const PourFactory = (sequelize: Sequelize.Sequelize, DataTypes: Sequelize
   	const Pour = sequelize.define<PourInstance, PourAttributes>('Pour', attributes);
     Pour.associate = models => {
         Pour.belongsTo(models.User, { as: 'author', foreignKey: 'AuthorId' }); 
+        Pour.belongsTo(models.Application); 
     };
   	return Pour;
 };

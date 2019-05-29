@@ -1,5 +1,5 @@
 import { Request , Response }  from 'express' ; 
-import { DBInterface } from '../interface/DBInterface';
+import { DBInterface } from '../interface/DBInterface'; 
 
 //ajouter l'utilisateur actuelle a cette infusionsoft 
 export function create( req:Request, res:Response ) {
@@ -89,17 +89,16 @@ export function index( req:Request, res:Response ) {
 						contactid : e.contactid 
 	    			})
 	    			if ( i == T.length - 1 ) {
-	    				return res.json( resp );
+	    				return  res.success( resp ); 
 	    			}
 	    		}).catch(e=>{
 	    			if ( i == T.length - 1 ) {
-	    				return res.json( resp );
+	    				return  res.success( resp ); 
 	    			}
 	    		})
 	    	})
 		})
 		.catch( e => {
-			console.log( e )
-	  		return res.json({error:lang['MessageAppGlobalErreur']});
+			return res.error('T0001') ;
 		});
 }

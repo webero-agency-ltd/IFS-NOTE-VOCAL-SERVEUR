@@ -1,5 +1,5 @@
 import { Express ,  Application }  from 'express' ; 
-import * as bcrypt from 'bcrypt' ;
+const bcrypt = require('bcrypt-nodejs') ; 
 import express from 'express' ; 
 import { DBInterface } from '../interface/DBInterface';
 const bodyParser = require('body-parser') ; 
@@ -36,13 +36,11 @@ module.exports = async function ( app : Application , db : DBInterface ) :Promis
 	  	saveUninitialized: true,
 	  	resave: true
 	})); 
-
 	app.use(cors({ origin: 'https://trello.com' }));
-
 	//inection de remember token
-
 	app.use(require('./flash'));
 	app.use(require('./lang')) ;
+	app.use(require('./response')) ;
 	app.use(passport.initialize());
 	app.use(passport.session());
 	app.use(passport.authenticate('remember-me'));

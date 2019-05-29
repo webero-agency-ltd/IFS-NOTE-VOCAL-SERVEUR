@@ -4,6 +4,7 @@ import { NoteInstance , NoteAttributes } from './note';
 import { ApplicationInstance , ApplicationAttributes } from './application';
 import { TeamInstance , TeamAttributes } from './team';
 import { PourInstance , PourAttributes } from './pour';
+import { ExternalInstance , ExternalAttributes } from './external';
 
 
 export interface UserAttributes {
@@ -75,6 +76,10 @@ export interface UserInstance extends Sequelize.Instance<UserAttributes>, UserAt
   hasTeamsFromUsers: Sequelize.BelongsToManyHasAssociationsMixin<TeamInstance, TeamInstance['id']>;
   countTeamsFromUsers: Sequelize.BelongsToManyCountAssociationsMixin;*/
 
+    getExternal: Sequelize.HasOneGetAssociationMixin<ExternalInstance>;
+    setExternal: Sequelize.HasOneSetAssociationMixin<ExternalInstance, ExternalInstance['id']>;
+    createExternal: Sequelize.HasOneCreateAssociationMixin<ExternalAttributes>;
+
 }; 
 
 export const UserFactory = (sequelize: Sequelize.Sequelize, DataTypes: Sequelize.DataTypes): Sequelize.Model<UserInstance, UserAttributes> => {
@@ -100,7 +105,9 @@ export const UserFactory = (sequelize: Sequelize.Sequelize, DataTypes: Sequelize
       User.hasMany(models.Note, { foreignKey: 'AuthorId' });
       User.hasMany(models.Application, { foreignKey: 'AuthorId' });
       User.hasMany(models.Team);
+      User.hasMany(models.Pour, { foreignKey: 'AuthorId' });
 	    User.hasMany(models.Pour, { foreignKey: 'AuthorId' });
+      User.hasOne(models.External)
       /*User.belongsToMany(models.Team, {
         through: 'UserTeams',
         as: 'teamsFromUsers'

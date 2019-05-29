@@ -1,9 +1,10 @@
-import Vue from 'vue'
+import Vue from 'vue';
 import plugin from './core/plugin';
-import App from './App.vue';
 import router from './router/router';
 import components from './core/components';
 import directives from './core/directives';
+import Vuex from 'vuex';
+import App from './App.vue';
 
 Vue.config.productionTip = false;
 

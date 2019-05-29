@@ -58,7 +58,7 @@ module.exports = function (app, db, str) {
         return __generator(this, function (_a) {
             //controlleur de base de l'application qui vous affiche votre application  
             app.get('/', ensureAuth_1.default, home.index.bind({ db: db }));
-            app.get('/vocal-note', ensureAuth_1.default, home.vocalNote.bind({ db: db }));
+            app.get('/vocal-note', ensureAuth_1.default, home.index.bind({ db: db }));
             //page d'authentification 
             app.get('/login', strategy_1.default, login.page.bind({ db: db }));
             app.post('/login', strategy_1.default, login.create.bind({ db: db }));
@@ -76,7 +76,7 @@ module.exports = function (app, db, str) {
             app.get('/application/check/:id/:type', application.check.bind({ db: db }));
             //app.get('/application/infusionsoft/findid',ensureAuth,application.create.bind({db})) ;
             app.get('/application/infusionsoft/redirect', ensureAuth_1.default, application.redirect.bind({ db: db }));
-            app.get('/application/infusionsoft/info/:id', ensureAuth_1.default, application.infos.bind({ db: db }));
+            //app.get('/application/infusionsoft/info/:id',ensureAuth,application.infos.bind({db})) ;
             app.get('/application/trello/redirect/:id', application.redirectTrello.bind({ db: db, str: str }));
             app.post('/application', ensureAuth_1.default, application.create.bind({ db: db }));
             app.get('/application/reauthorize/:type/:id', application.reauthorize.bind({ db: db, str: str }));
@@ -103,13 +103,15 @@ module.exports = function (app, db, str) {
             app.get('/trello', trello.view.bind({ db: db, str: str }));
             app.get('/trello/boards/:id', ensureAuth_1.default, trello.boards.bind({ db: db, str: str }));
             app.get('/trello/lists/:id', ensureAuth_1.default, trello.lists.bind({ db: db, str: str }));
+            app.get('/trello/label/:id', ensureAuth_1.default, trello.label.bind({ db: db, str: str }));
             app.post('/trello/boards/:id', ensureAuth_1.default, trello.boardsUpdate.bind({ db: db, str: str }));
             app.get('/trello/membre/:id', ensureAuth_1.default, trello.membre.bind({ db: db }));
             app.get('/external', ensureAuth_1.default, external.index.bind({ db: db }));
             //ici on fait la création de notes 
             app.post('/external', ensureAuth_1.default, external.create.bind({ db: db }));
+            app.post('/external/note', ensureAuth_1.default, external.note.bind({ db: db }));
             //application externale autre celle
-            app.get('/pour', ensureAuth_1.default, pour.index.bind({ db: db }));
+            app.get('/pour/:application', ensureAuth_1.default, pour.index.bind({ db: db }));
             app.post('/pour', ensureAuth_1.default, pour.create.bind({ db: db }));
             app.delete('/pour/:id', ensureAuth_1.default, pour.delet.bind({ db: db }));
             return [2 /*return*/, new Promise(function (resolve) { return resolve(true); })];

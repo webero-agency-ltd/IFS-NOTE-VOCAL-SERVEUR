@@ -34,22 +34,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var bcrypt = __importStar(require("bcrypt"));
+var bcrypt = require('bcrypt-nodejs');
 function hash(pass) {
     var _this = this;
     return new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+        var hash;
         return __generator(this, function (_a) {
-            bcrypt.hash(pass, 10, function (err, hash) {
-                resolve(hash);
-            });
+            hash = bcrypt.hashSync(pass);
+            resolve(hash);
             return [2 /*return*/];
         });
     }); });

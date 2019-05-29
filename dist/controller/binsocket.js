@@ -40,7 +40,7 @@ var wav = require('wav');
 var path = require('path');
 module.exports = function (server, db, str) {
     var _a = db, Note = _a.Note, Vocaux = _a.Vocaux;
-    var binsocket = BinaryServer({ server: server, port: 9001 });
+    var binsocket = BinaryServer({ server: server });
     //lors du connexion au socket pour de transfère de fichier binaire 
     binsocket.on('connection', function (client) {
         return __awaiter(this, void 0, void 0, function () {
@@ -65,6 +65,7 @@ module.exports = function (server, db, str) {
                         return __awaiter(this, void 0, void 0, function () {
                             return __generator(this, function (_a) {
                                 fileWriter.end();
+                                console.log('µµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµ*');
                                 str.openFile(unique, pathFile);
                                 fileWriter = null;
                                 return [2 /*return*/];
@@ -80,6 +81,7 @@ module.exports = function (server, db, str) {
                                 fileWriter.end();
                                 fileWriter = null;
                             }
+                            console.log('--- CLOSE SOKET ', unique);
                             str.closeIsFile(unique);
                             return [2 /*return*/];
                         });

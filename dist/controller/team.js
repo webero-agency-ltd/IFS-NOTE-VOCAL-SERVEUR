@@ -88,18 +88,17 @@ function index(req, res) {
                     contactid: e.contactid
                 });
                 if (i == T.length - 1) {
-                    return res.json(resp);
+                    return res.success(resp);
                 }
             }).catch(function (e) {
                 if (i == T.length - 1) {
-                    return res.json(resp);
+                    return res.success(resp);
                 }
             });
         });
     })
         .catch(function (e) {
-        console.log(e);
-        return res.json({ error: lang['MessageAppGlobalErreur'] });
+        return res.error('T0001');
     });
 }
 exports.index = index;

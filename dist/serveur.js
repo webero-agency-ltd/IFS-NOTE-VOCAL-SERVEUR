@@ -137,7 +137,6 @@ var Serveur = /** @class */ (function () {
                         else {
                             //création du serveur en http et redirection a https si on essayer d'accer a cette url 
                             http.createServer(function (req, res) {
-                                console.log('+++++++');
                                 res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
                                 res.end();
                             }).listen(80);

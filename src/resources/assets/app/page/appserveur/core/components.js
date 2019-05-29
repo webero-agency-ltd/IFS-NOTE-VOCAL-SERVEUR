@@ -1,7 +1,31 @@
 import Vue from 'vue';
 
+import pourTrello from '../components/pourTrello';
+Vue.component('pour-trello', pourTrello);
+
+import labelTrello from '../components/labelTrello'; 
+Vue.component('label-trello', labelTrello);
+
+import pourInfusionsoft from '../components/pourInfusionsoft';
+Vue.component('pour-infusionsoft', pourInfusionsoft);
+
 import menu from '../components/menu';
 Vue.component('menu-app', menu);
+
+import loader from '../components/loader';
+Vue.component('loader-app', loader);
+
+import menuExternal from '../components/menu-external';
+Vue.component('menu-external', menuExternal);
+
+import modal from '../components/modal';
+Vue.component('modal', modal);
+
+import alert from '../components/alert';
+Vue.component('alert', alert);
+
+import createApplication from '../components/createApplication';
+Vue.component('create-application', createApplication);
 
 import bPagination from 'bootstrap-vue/es/components/pagination/pagination';
 Vue.component('b-pagination', bPagination);
@@ -117,6 +141,9 @@ Vue.component('b-form-radio-group', BFormRadioGroup)
 
 import bFormRadio from 'bootstrap-vue/es/components/form-radio/form-radio'
 Vue.component('b-form-radio', bFormRadio)
+
+import bInputGroupAppend from 'bootstrap-vue/es/components/input-group/input-group-append'
+Vue.component('b-input-group-append', bInputGroupAppend)
 
 let comp = {
 }

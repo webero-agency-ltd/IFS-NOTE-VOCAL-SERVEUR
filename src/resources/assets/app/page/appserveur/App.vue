@@ -1,33 +1,30 @@
 <template>
 	<div class="cont-app">
-        <menu-app></menu-app>
+        <menu-app v-if="home"></menu-app>
+        <menu-external v-if="!home"></menu-external>
         <transition name="fade">
             <router-view></router-view> 
         </transition>
+        <modal></modal>
     </div>
 </template>
 <script>
     import 'bootstrap/dist/css/bootstrap.css'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
-    import { get, post } from './lib/api'
+    import store from './store/index';
     export default {
+        store: store, 
         name: 'App', 
         data(){
             return {
-
+                home : window.location.pathname == '/' || window.location.pathname == '' 
             }
         },
-        computed : {
-        },
-        methods : {
-            
-        },
+        computed : {},
+        methods : {},
         mounted(){
 
         },
-        created(){
-        
-        }
     }
 </script>
 <style>
