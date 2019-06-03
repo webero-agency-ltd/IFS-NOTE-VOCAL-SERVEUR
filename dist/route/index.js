@@ -59,6 +59,7 @@ module.exports = function (app, db, str) {
             //controlleur de base de l'application qui vous affiche votre application  
             app.get('/', ensureAuth_1.default, home.index.bind({ db: db }));
             app.get('/vocal-note', ensureAuth_1.default, home.index.bind({ db: db }));
+            app.get('/refresh-token', home.refreshToken.bind({ db: db }));
             //page d'authentification 
             app.get('/login', strategy_1.default, login.page.bind({ db: db }));
             app.post('/login', strategy_1.default, login.create.bind({ db: db }));

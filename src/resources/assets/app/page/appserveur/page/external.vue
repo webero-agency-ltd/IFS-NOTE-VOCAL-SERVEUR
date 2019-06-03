@@ -516,6 +516,7 @@
 
         },
         mounted(){
+            alert('sds')
             this.init() ; 
             //initialisation de la varriable date 
         },

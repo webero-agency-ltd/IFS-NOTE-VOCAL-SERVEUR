@@ -140,7 +140,6 @@ export async function note( req:Request, res:Response ) {
 		    body : JSON.stringify( body ) ,
 		    method: 'POST'
 		}, function (error, _res , body) {
-			console.log( body )
 			if (!error && _res.statusCode == 200) {
 				let reponse : any; 
 				try{
@@ -150,6 +149,7 @@ export async function note( req:Request, res:Response ) {
 				}
 	        	return res.success( reponse );
 			}
+			console.log( body )
 	    	return res.error('EN0003') ; 
 		});
 

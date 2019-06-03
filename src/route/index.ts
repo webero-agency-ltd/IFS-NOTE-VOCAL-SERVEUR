@@ -21,6 +21,7 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	//controlleur de base de l'application qui vous affiche votre application  
 	app.get('/',ensureAuth,home.index.bind({db})) ;
 	app.get('/vocal-note',ensureAuth,home.index.bind({db})) ;
+	app.get('/refresh-token',home.refreshToken.bind({db})) ;
 	
 	//page d'authentification 
 	app.get('/login',strategy,login.page.bind({db})) ;

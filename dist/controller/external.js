@@ -192,7 +192,6 @@ function note(req, res) {
                         body: JSON.stringify(body),
                         method: 'POST'
                     }, function (error, _res, body) {
-                        console.log(body);
                         if (!error && _res.statusCode == 200) {
                             var reponse = void 0;
                             try {
@@ -203,6 +202,7 @@ function note(req, res) {
                             }
                             return res.success(reponse);
                         }
+                        console.log(body);
                         return res.error('EN0003');
                     });
                     return [3 /*break*/, 5];

@@ -62,6 +62,8 @@ module.exports = {
      * Enregistrement des langues de tout les erreurs
     */
     errors: {
+        //erreur de la page index 
+        IXR0001: "Une erreur est produit *CODE:IXR0001*",
         //eurreur dans application controlleur 
         AID001: "Erreur d'autentification *CODE:AID001*",
         AID002: "Erreur de r\u00E9cup\u00E9ration de votre donner, veuille r\u00E9ssayer svp *CODE:AID002*",
