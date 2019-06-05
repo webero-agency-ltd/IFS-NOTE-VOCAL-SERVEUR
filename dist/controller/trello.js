@@ -40,18 +40,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var promise_1 = __importDefault(require("../libs/promise"));
 var url = require('url');
-var request = require('request');
 var site = require('../config/site');
-var urlAPI = 'https://api.trello.com/1/';
+var trello = require('../libs/trello');
 function view(req, res) {
     res.render('trello.ejs');
 }
 exports.view = view;
 function membre(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, lang, _b, Application, User, Team, id, err, data, i, url;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
+        var _a, lang, _b, Application, User, Team, id, err, data, i, _c, success, error;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
                 case 0:
                     lang = req.lang();
                     _b = this.db, Application = _b.Application, User = _b.User, Team = _b.Team;
@@ -60,32 +59,18 @@ function membre(req, res) {
                     data;
                     return [4 /*yield*/, promise_1.default(Application.find({ where: { id: id } }))];
                 case 1:
-                    _a = _c.sent(), err = _a[0], data = _a[1];
+                    _a = _d.sent(), err = _a[0], data = _a[1];
                     if (err) {
                         return [2 /*return*/, res.error('TMBU001')];
                     }
                     i = data;
-                    url = urlAPI + '/boards/' + i.compteId + '/members/?token=' + i.accessToken + '&key=' + site.trelloKey;
-                    console.log(url);
-                    return [2 /*return*/, request({
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            uri: url,
-                            method: 'GET'
-                        }, function (error, _res, body) {
-                            if (!error && _res.statusCode == 200) {
-                                var reponse = void 0;
-                                try {
-                                    reponse = JSON.parse(body);
-                                }
-                                catch (e) {
-                                    reponse = [];
-                                }
-                                return res.success(reponse);
-                            }
-                            return res.error('TMBU003');
-                        })];
+                    return [4 /*yield*/, trello.membres({ board: i.compteId, token: i.accessToken })];
+                case 2:
+                    _c = _d.sent(), success = _c.success, error = _c.error;
+                    if (success) {
+                        return [2 /*return*/, res.success(success)];
+                    }
+                    return [2 /*return*/, res.error('TMBU003')];
             }
         });
     });
@@ -122,12 +107,15 @@ function boardsUpdate(req, res) {
     });
 }
 exports.boardsUpdate = boardsUpdate;
-//récupération de tout les cards de trello
+/*
+ * Récupération des bord dans un application trello,
+ * et qui correspond a l'utilisateur trello qui a crée le token
+*/
 function boards(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, _b, Application, User, lang, id, err, data, i, url;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
+        var _a, _b, Application, User, lang, id, err, data, i, _c, success, error;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
                 case 0:
                     _b = this.db, Application = _b.Application, User = _b.User;
                     lang = req.lang();
@@ -136,37 +124,31 @@ function boards(req, res) {
                     data;
                     return [4 /*yield*/, promise_1.default(Application.find({ where: { id: id } }))];
                 case 1:
-                    _a = _c.sent(), err = _a[0], data = _a[1];
+                    _a = _d.sent(), err = _a[0], data = _a[1];
                     if (err) {
                         return [2 /*return*/, res.error('TMB001')];
                     }
                     i = data;
-                    url = urlAPI + 'members/me/boards?key=' + site.trelloKey + '&token=' + i.accessToken;
-                    console.log(url);
-                    request({
-                        uri: url,
-                        method: 'GET'
-                    }, function (error, _res, body) {
-                        var data;
-                        try {
-                            data = JSON.parse(body);
-                        }
-                        catch (e) {
-                            data = [];
-                        }
-                        return res.success(data);
-                    });
-                    return [2 /*return*/];
+                    return [4 /*yield*/, trello.boards({ token: i.accessToken })];
+                case 2:
+                    _c = _d.sent(), success = _c.success, error = _c.error;
+                    if (success) {
+                        return [2 /*return*/, res.success(success)];
+                    }
+                    return [2 /*return*/, res.error('TMB002')];
             }
         });
     });
 }
 exports.boards = boards;
+/*
+ * Récupération des Listes dans un application trello
+*/
 function lists(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, _b, Application, User, lang, id, err, data, i, url;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
+        var _a, _b, Application, User, lang, id, err, data, i, _c, success, error;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
                 case 0:
                     _b = this.db, Application = _b.Application, User = _b.User;
                     lang = req.lang();
@@ -175,37 +157,31 @@ function lists(req, res) {
                     data;
                     return [4 /*yield*/, promise_1.default(Application.find({ where: { id: id } }))];
                 case 1:
-                    _a = _c.sent(), err = _a[0], data = _a[1];
+                    _a = _d.sent(), err = _a[0], data = _a[1];
                     if (err) {
                         return [2 /*return*/, res.error('TML001')];
                     }
                     i = data;
-                    url = urlAPI + 'boards/' + i.compteId + '/lists?key=' + site.trelloKey + '&token=' + i.accessToken;
-                    console.log(url);
-                    request({
-                        uri: url,
-                        method: 'GET'
-                    }, function (error, _res, body) {
-                        var data;
-                        try {
-                            data = JSON.parse(body);
-                        }
-                        catch (e) {
-                            data = [];
-                        }
-                        return res.success(data);
-                    });
-                    return [2 /*return*/];
+                    return [4 /*yield*/, trello.lists({ board: i.compteId, token: i.accessToken })];
+                case 2:
+                    _c = _d.sent(), success = _c.success, error = _c.error;
+                    if (success) {
+                        return [2 /*return*/, res.success(success)];
+                    }
+                    return [2 /*return*/, res.error('TML002')];
             }
         });
     });
 }
 exports.lists = lists;
+/*
+ * Récupération des label dans un application trello
+*/
 function label(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, _b, Application, User, lang, id, err, data, i, url;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
+        var _a, _b, Application, User, lang, id, err, data, i, _c, success, error;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
                 case 0:
                     _b = this.db, Application = _b.Application, User = _b.User;
                     lang = req.lang();
@@ -214,27 +190,17 @@ function label(req, res) {
                     data;
                     return [4 /*yield*/, promise_1.default(Application.find({ where: { id: id } }))];
                 case 1:
-                    _a = _c.sent(), err = _a[0], data = _a[1];
+                    _a = _d.sent(), err = _a[0], data = _a[1];
                     if (err) {
                         return [2 /*return*/, res.error('TML001')];
                     }
                     i = data;
-                    url = urlAPI + 'boards/' + i.compteId + '/labels?fields=all&key=' + site.trelloKey + '&token=' + i.accessToken;
-                    console.log(url);
-                    request({
-                        uri: url,
-                        method: 'GET'
-                    }, function (error, _res, body) {
-                        console.log(body);
-                        var data;
-                        try {
-                            data = JSON.parse(body);
-                        }
-                        catch (e) {
-                            data = [];
-                        }
-                        return res.success(data);
-                    });
+                    return [4 /*yield*/, trello.labels({ board: i.compteId, token: i.accessToken })];
+                case 2:
+                    _c = _d.sent(), success = _c.success, error = _c.error;
+                    if (success) {
+                        return [2 /*return*/, res.success(success)];
+                    }
                     return [2 /*return*/];
             }
         });

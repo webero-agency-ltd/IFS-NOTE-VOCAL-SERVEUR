@@ -90,7 +90,9 @@ module.exports = {
         T0001: "Erreur de r\u00E9cup\u00E9ration des teams de l'applications *CODE:T0001*",
         //erreur sur la controller team  
         TMB001: "Erreur de r\u00E9cup\u00E9ration des teams de l'applications *CODE:TMB001*",
+        TMB002: "Erreur de r\u00E9cup\u00E9ration des bords trello *CODE:TMB002*",
         TML001: "Erreur de r\u00E9cup\u00E9ration des teams de l'applications *CODE:TML001*",
+        TML002: "Erreur de r\u00E9cup\u00E9ration des lists trello *CODE:TML002*",
         TMBU001: "Erreur de r\u00E9cup\u00E9ration de l'applications *CODE:TMBU001*",
         TMBU002: "Une erreur est produit *CODE:TMBU002*",
         TMBU003: "Impossible de r\u00E9cup\u00E8re les listes de trello *CODE:TMBU002*",
