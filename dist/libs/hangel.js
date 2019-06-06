@@ -35,73 +35,28 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-function api(url, methode, data) {
-    if (methode === void 0) { methode = 'GET'; }
-    if (data === void 0) { data = null; }
+function hangel(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var uploadResponse, json_1, e_1, json_2, e_2;
+        var func, e_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    url = window.urlapplication + url;
-                    uploadResponse = null;
-                    if (!(methode == 'GET')) return [3 /*break*/, 2];
-                    return [4 /*yield*/, fetch(url)];
+                    func = this.func;
+                    _a.label = 1;
                 case 1:
-                    uploadResponse = _a.sent();
-                    return [3 /*break*/, 6];
+                    _a.trys.push([1, 3, , 4]);
+                    return [4 /*yield*/, func(req, res)];
                 case 2:
-                    if (!(methode == 'POST')) return [3 /*break*/, 4];
-                    return [4 /*yield*/, fetch(url, {
-                            method: 'POST',
-                            headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(data)
-                        })];
+                    _a.sent();
+                    return [3 /*break*/, 4];
                 case 3:
-                    uploadResponse = _a.sent();
-                    return [3 /*break*/, 6];
-                case 4: return [4 /*yield*/, fetch(url, {
-                        method: methode
-                    })];
-                case 5:
-                    uploadResponse = _a.sent();
-                    _a.label = 6;
-                case 6:
-                    if (!uploadResponse.ok) return [3 /*break*/, 11];
-                    json_1 = null;
-                    _a.label = 7;
-                case 7:
-                    _a.trys.push([7, 9, , 10]);
-                    return [4 /*yield*/, uploadResponse.json()];
-                case 8:
-                    json_1 = _a.sent();
-                    return [3 /*break*/, 10];
-                case 9:
                     e_1 = _a.sent();
-                    return [2 /*return*/, [{ message: 'FORMAT ERROR' }, null]];
-                case 10:
-                    if (json_1 && json_1.type == 'ERROR') {
-                        return [2 /*return*/, [json_1, { data: null }]];
-                    }
-                    return [2 /*return*/, [null, json_1]];
-                case 11:
-                    json_2 = null;
-                    _a.label = 12;
-                case 12:
-                    _a.trys.push([12, 14, , 15]);
-                    return [4 /*yield*/, uploadResponse.json()];
-                case 13:
-                    json_2 = _a.sent();
-                    return [3 /*break*/, 15];
-                case 14:
-                    e_2 = _a.sent();
-                    return [2 /*return*/, [{ message: 'FORMAT ERROR' }, null]];
-                case 15: return [2 /*return*/, [json_2, { data: null }]];
+                    console.log(e_1);
+                    res.error(e_1.name);
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
             }
         });
     });
 }
-exports.default = api;
+exports.hangel = hangel;

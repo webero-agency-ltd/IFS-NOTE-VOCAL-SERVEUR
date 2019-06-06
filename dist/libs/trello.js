@@ -35,6 +35,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 var site = require('../config/site');
 var request = require('../libs/request');
+var json = require('../libs/json');
+var application = require('../libs/application');
+var team = require('../libs/team');
 /*
  * Classe de manipulation des actions vers trello
 */
@@ -53,19 +56,11 @@ var trello = /** @class */ (function () {
                 switch (_c.label) {
                     case 0:
                         url = this.api + 'members/' + (id ? id : 'me') + '/boards?key=' + site.trelloKey + '&token=' + token;
-                        console.log(url);
                         return [4 /*yield*/, request.get(url)];
                     case 1:
                         _b = _c.sent(), error = _b.error, info = _b.info, body = _b.body;
-                        console.log(info.statusCode);
                         if (!error && info.statusCode == 200) {
-                            data = void 0;
-                            try {
-                                data = JSON.parse(body);
-                            }
-                            catch (e) {
-                                data = [];
-                            }
+                            data = json(body, []);
                             return [2 /*return*/, { success: data }];
                         }
                         return [2 /*return*/, { error: error }];
@@ -79,24 +74,17 @@ var trello = /** @class */ (function () {
     trello.prototype.lists = function (_a) {
         var board = _a.board, token = _a.token;
         return __awaiter(this, void 0, void 0, function () {
-            var url, _b, error, info, body, data;
+            var url, _b, error, info, body, reponse;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         url = this.api + 'boards/' + board + '/lists?key=' + site.trelloKey + '&token=' + token;
-                        console.log(url);
                         return [4 /*yield*/, request.get(url)];
                     case 1:
                         _b = _c.sent(), error = _b.error, info = _b.info, body = _b.body;
                         if (!error && info.statusCode == 200) {
-                            data = void 0;
-                            try {
-                                data = JSON.parse(body);
-                            }
-                            catch (e) {
-                                data = [];
-                            }
-                            return [2 /*return*/, { success: data }];
+                            reponse = json(body, []);
+                            return [2 /*return*/, { success: reponse }];
                         }
                         return [2 /*return*/, { error: error }];
                 }
@@ -114,18 +102,11 @@ var trello = /** @class */ (function () {
                 switch (_c.label) {
                     case 0:
                         url = this.api + '/boards/' + board + '/members/?token=' + token + '&key=' + site.trelloKey;
-                        console.log(url);
                         return [4 /*yield*/, request.get(url)];
                     case 1:
                         _b = _c.sent(), error = _b.error, info = _b.info, body = _b.body;
                         if (!error && info.statusCode == 200) {
-                            reponse = void 0;
-                            try {
-                                reponse = JSON.parse(body);
-                            }
-                            catch (e) {
-                                reponse = [];
-                            }
+                            reponse = json(body, []);
                             return [2 /*return*/, { success: reponse }];
                         }
                         return [2 /*return*/, { error: error }];
@@ -147,18 +128,45 @@ var trello = /** @class */ (function () {
                         return [4 /*yield*/, request.get(url)];
                     case 1:
                         _b = _c.sent(), error = _b.error, info = _b.info, body = _b.body;
-                        console.log(url);
                         if (!error && info.statusCode == 200) {
-                            reponse = void 0;
-                            try {
-                                reponse = JSON.parse(body);
-                            }
-                            catch (e) {
-                                reponse = [];
-                            }
+                            reponse = json(body, []);
                             return [2 /*return*/, { success: reponse }];
                         }
                         return [2 /*return*/, { error: error }];
+                }
+            });
+        });
+    };
+    /*
+     * Récupération de tout les token trello
+    */
+    trello.prototype.findtoken = function (_a) {
+        var id = _a.id, token = _a.token;
+        return __awaiter(this, void 0, void 0, function () {
+            var app, url, _b, error, info, body, jsonp;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0: return [4 /*yield*/, application.item(id)];
+                    case 1:
+                        app = _c.sent();
+                        if (!app)
+                            throw new AppError('ART001');
+                        return [4 /*yield*/, application.update(id, { accessToken: token })];
+                    case 2:
+                        _c.sent();
+                        url = this.api + 'members/me?key=' + site.trelloKey + '&token=' + token;
+                        return [4 /*yield*/, request.get(url)];
+                    case 3:
+                        _b = _c.sent(), error = _b.error, info = _b.info, body = _b.body;
+                        if (error && info.statusCode != 200)
+                            throw new AppError('ART003');
+                        jsonp = json(body, []);
+                        //mise a jour de l'id utilisateur dans trello team
+                        return [4 /*yield*/, team.update({ ApplicationId: id }, { contactid: jsonp.id })];
+                    case 4:
+                        //mise a jour de l'id utilisateur dans trello team
+                        _c.sent();
+                        return [2 /*return*/, true];
                 }
             });
         });

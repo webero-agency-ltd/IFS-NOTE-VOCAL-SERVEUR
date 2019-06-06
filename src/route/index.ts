@@ -15,6 +15,7 @@ const home = require('../controller/index') ;
 const infusionsoft = require('../controller/infusionsoft') ;
 const external = require('../controller/external') ;
 const pour = require('../controller/pour') ;
+const { hangel } = require('../libs/hangel') ;
 
 module.exports = async function ( app : Application , db : DBInterface , str ) : Promise<boolean> {
 
@@ -36,15 +37,15 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	  	res.redirect('/');
 	});
 
-	app.get('/application',ensureAuth,application.index.bind({db})) ;
-	app.get('/application/item/:id',ensureAuth,application.item.bind({db})) ;
-	app.get('/application/check/:id/:type',application.check.bind({db})) ;
+	app.get('/application',ensureAuth, hangel.bind( { func : application.index.bind({db}) } )) ;
+	app.get('/application/item/:id',ensureAuth,hangel.bind({ func : application.item.bind({db}) })) ;
+	app.get('/application/check/:id/:type',hangel.bind({ func : application.check.bind({db}) })) ;
 	//app.get('/application/infusionsoft/findid',ensureAuth,application.create.bind({db})) ;
-	app.get('/application/infusionsoft/redirect',ensureAuth,application.redirect.bind({db})) ;
+	app.get('/application/infusionsoft/redirect',ensureAuth,hangel.bind({ func : application.redirect.bind({db}) })) ;
 	//app.get('/application/infusionsoft/info/:id',ensureAuth,application.infos.bind({db})) ;
-	app.get('/application/trello/redirect/:id',application.redirectTrello.bind({db,str})) ;
-	app.post('/application',ensureAuth,application.create.bind({db})) ;
-	app.get('/application/reauthorize/:type/:id',application.reauthorize.bind({db,str})) ;
+	app.get('/application/trello/redirect/:id',ensureAuth,hangel.bind({ func : application.redirectTrello.bind({db}) })) ;
+	app.post('/application',ensureAuth,hangel.bind({ func : application.create.bind({db}) })) ;
+	app.get('/application/reauthorize/:type/:id',ensureAuth,hangel.bind({ func : application.reauthorize.bind({db,str}) })) ;
 	
 	app.get('/team/application/:id',ensureAuth,team.index.bind({db})) ;
 	app.get('/team/:id/:type/:contactid',ensureAuth,team.create.bind({db})) ;

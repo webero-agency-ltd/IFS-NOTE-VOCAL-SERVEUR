@@ -5,8 +5,8 @@ import { ApplicationAttributes , ApplicationInstance } from '../models/applicati
 import to from '../libs/promise'; 
 
 const url = require('url');
-const site = require('../config/site') ;
 const trello = require('../libs/trello');
+const application = require('../libs/application');
 
 
 export function view( req:Request, res:Response ) {	

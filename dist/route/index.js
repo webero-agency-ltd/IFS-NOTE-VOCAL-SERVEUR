@@ -53,6 +53,7 @@ var home = require('../controller/index');
 var infusionsoft = require('../controller/infusionsoft');
 var external = require('../controller/external');
 var pour = require('../controller/pour');
+var hangel = require('../libs/hangel').hangel;
 module.exports = function (app, db, str) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -72,15 +73,15 @@ module.exports = function (app, db, str) {
                 req.logout();
                 res.redirect('/');
             });
-            app.get('/application', ensureAuth_1.default, application.index.bind({ db: db }));
-            app.get('/application/item/:id', ensureAuth_1.default, application.item.bind({ db: db }));
-            app.get('/application/check/:id/:type', application.check.bind({ db: db }));
+            app.get('/application', ensureAuth_1.default, hangel.bind({ func: application.index.bind({ db: db }) }));
+            app.get('/application/item/:id', ensureAuth_1.default, hangel.bind({ func: application.item.bind({ db: db }) }));
+            app.get('/application/check/:id/:type', hangel.bind({ func: application.check.bind({ db: db }) }));
             //app.get('/application/infusionsoft/findid',ensureAuth,application.create.bind({db})) ;
-            app.get('/application/infusionsoft/redirect', ensureAuth_1.default, application.redirect.bind({ db: db }));
+            app.get('/application/infusionsoft/redirect', ensureAuth_1.default, hangel.bind({ func: application.redirect.bind({ db: db }) }));
             //app.get('/application/infusionsoft/info/:id',ensureAuth,application.infos.bind({db})) ;
-            app.get('/application/trello/redirect/:id', application.redirectTrello.bind({ db: db, str: str }));
-            app.post('/application', ensureAuth_1.default, application.create.bind({ db: db }));
-            app.get('/application/reauthorize/:type/:id', application.reauthorize.bind({ db: db, str: str }));
+            app.get('/application/trello/redirect/:id', ensureAuth_1.default, hangel.bind({ func: application.redirectTrello.bind({ db: db }) }));
+            app.post('/application', ensureAuth_1.default, hangel.bind({ func: application.create.bind({ db: db }) }));
+            app.get('/application/reauthorize/:type/:id', ensureAuth_1.default, hangel.bind({ func: application.reauthorize.bind({ db: db, str: str }) }));
             app.get('/team/application/:id', ensureAuth_1.default, team.index.bind({ db: db }));
             app.get('/team/:id/:type/:contactid', ensureAuth_1.default, team.create.bind({ db: db }));
             //champ utiliser par infusionsoft 

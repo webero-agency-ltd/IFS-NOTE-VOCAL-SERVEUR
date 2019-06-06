@@ -40,8 +40,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var promise_1 = __importDefault(require("../libs/promise"));
 var url = require('url');
-var site = require('../config/site');
 var trello = require('../libs/trello');
+var application = require('../libs/application');
 function view(req, res) {
     res.render('trello.ejs');
 }

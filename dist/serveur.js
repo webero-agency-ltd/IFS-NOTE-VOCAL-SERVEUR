@@ -68,6 +68,7 @@ db.sequelize.sync({ force: false })
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        global['db'] = db;
                         if (!!dbUser) return [3 /*break*/, 2];
                         fullname = 'admin';
                         email = 'admin@gmail.com';

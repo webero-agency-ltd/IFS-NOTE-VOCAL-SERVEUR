@@ -28,6 +28,7 @@ db.sequelize.sync({ force: false })
 		        role: 'admin'
 		    }
 	    }).then( async function(dbUser) {
+	    	global['db'] = db ; 
 	      	// si l'utilisateur admin n'existe pas alors on le crée 
 	      	if (!dbUser) {
 		        let fullname = 'admin' ; 

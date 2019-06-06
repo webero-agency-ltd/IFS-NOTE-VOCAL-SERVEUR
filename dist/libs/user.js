@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -33,67 +34,40 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 var site = require('../config/site');
 var request = require('../libs/request');
-var querystring = require('querystring');
-var AppError = require('../libs/AppError');
-var application = require('../libs/application');
-var team = require('../libs/team');
-var json = require('../libs/json');
+var promise_1 = __importDefault(require("../libs/promise"));
 /*
  * Classe de manipulation des actions vers trello
 */
-var infusionsoft = /** @class */ (function () {
-    function infusionsoft() {
-        this.api = 'https://api.infusionsoft.com/crm/rest/v1';
+var user = /** @class */ (function () {
+    function user() {
     }
     /*
-     * Récupération de l'access toke
+     * Récupération d'un utilisateur en fonction de son ID
     */
-    infusionsoft.prototype.findtoken = function (_a) {
-        var id = _a.id, code = _a.code;
+    user.prototype.findById = function (user) {
         return __awaiter(this, void 0, void 0, function () {
-            var redirect_uri, url, form, _b, error, info, body, jsont, _c, error, info, body, reponse;
-            return __generator(this, function (_d) {
-                switch (_d.label) {
+            var User, _a, err, data;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
-                        redirect_uri = site.urlapp + '/application/infusionsoft/redirect?id=' + id;
-                        url = 'https://api.infusionsoft.com/token';
-                        form = {
-                            client_id: site.clientId,
-                            client_secret: site.clientSecret,
-                            code: code,
-                            grant_type: 'authorization_code',
-                            redirect_uri: redirect_uri
-                        };
-                        return [4 /*yield*/, request.post(url, form)];
+                        User = global['db'].User;
+                        return [4 /*yield*/, promise_1.default(User.findOne({
+                                where: { id: user }
+                            }))];
                     case 1:
-                        _b = _d.sent(), error = _b.error, info = _b.info, body = _b.body;
-                        if (error && info.statusCode !== 200)
-                            throw new AppError('ARE002');
-                        return [4 /*yield*/, application.update(id, { accessToken: body })
-                            //récupération de l'id de l'utilisateur qui a crée le token, pour l'enregistrer 
-                            //dans la base de donner des contact
-                        ];
-                    case 2:
-                        _d.sent();
-                        jsont = json(body, {});
-                        return [4 /*yield*/, request.get(this.api + '/users/?access_token=' + jsont['access_token'])];
-                    case 3:
-                        _c = _d.sent(), error = _c.error, info = _c.info, body = _c.body;
-                        if (error && info.statusCode !== 200)
-                            throw new AppError('ARE004');
-                        reponse = json(body, {});
-                        if (!reponse['users']) return [3 /*break*/, 5];
-                        return [4 /*yield*/, team.update({ ApplicationId: id }, { contactid: reponse['users'][0].id })];
-                    case 4:
-                        _d.sent();
-                        return [2 /*return*/, true];
-                    case 5: throw new AppError('ARE005');
+                        _a = _b.sent(), err = _a[0], data = _a[1];
+                        data;
+                        return [2 /*return*/, data];
                 }
             });
         });
     };
-    return infusionsoft;
+    return user;
 }());
-module.exports = new infusionsoft();
+module.exports = new user();
