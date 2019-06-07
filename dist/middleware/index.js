@@ -64,10 +64,10 @@ module.exports = function (app, db) {
             app.use('/assets', express_1.default.static(path.join(__dirname, '../resources/assets'), {
                 maxAge: 3600000 // 3600000msec == 1hour
             }));
-            // parse application/x-www-form-urlencoded
-            app.use(bodyParser.urlencoded({ extended: false }));
             // parse application/json
             app.use(bodyParser.json());
+            // parse application/x-www-form-urlencoded
+            app.use(bodyParser.urlencoded());
             app.use(cookieParser());
             app.use(session({
                 secret: 'secret',

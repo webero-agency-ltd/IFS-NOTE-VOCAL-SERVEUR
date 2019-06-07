@@ -84,23 +84,23 @@ module.exports = function (app, db, str) {
             app.get('/application/reauthorize/:type/:id', ensureAuth_1.default, hangel.bind({ func: application.reauthorize.bind({ db: db, str: str }) }));
             app.get('/team/application/:id', ensureAuth_1.default, team.index.bind({ db: db }));
             app.get('/team/:id/:type/:contactid', ensureAuth_1.default, team.create.bind({ db: db }));
-            //champ utiliser par infusionsoft 
-            app.get('/infusionsoft/membre/:id', ensureAuth_1.default, infusionsoft.membre.bind({ db: db }));
-            app.get('/infusionsoft/contacts/:id', ensureAuth_1.default, infusionsoft.contacts.bind({ db: db }));
+            //champ utiliser par infusionsoft membre
+            app.get('/infusionsoft/membre/:id', ensureAuth_1.default, hangel.bind({ func: infusionsoft.membre.bind({ db: db }) }));
+            app.get('/infusionsoft/contacts/:id', ensureAuth_1.default, hangel.bind({ func: infusionsoft.contacts.bind({ db: db }) }));
             //route des notes
             app.get('/note/:id', note.item.bind({ db: db, str: str }));
             app.get('/note/check/:id', note.check.bind({ db: db, str: str }));
             app.post('/note/checks', note.checks.bind({ db: db, str: str }));
             app.get('/note/infusionsoft/:id', note.index.bind({ db: db, str: str }));
-            app.get('/close/:id', ensureAuth_1.default, note.close.bind({ db: db, str: str }));
+            //app.get('/close/:id',ensureAuth,note.close.bind({db,str})) ;
             app.get('/audio/:id', ensureAuth_1.default, note.listen.bind({ db: db, str: str }));
-            app.get('/audio/delete/:id', ensureAuth_1.default, note.deleteNote.bind({ db: db, str: str }));
-            app.post('/upload', ensureAuth_1.default, note.upload.bind({ db: db, str: str }));
-            app.post('/save/:id', note.save.bind({ db: db, str: str }));
+            //app.get('/audio/delete/:id',ensureAuth,note.deleteNote.bind({db,str})) ;
+            app.post('/upload', ensureAuth_1.default, hangel.bind({ func: note.upload.bind({ db: db, str: str }) }));
+            //app.post('/save/:id',note.save.bind({db,str})) ;
             //tansvase notes 
             //transvase task 
-            app.get('/tansvase/notes/:id', tansvase.notes.bind({ db: db, str: str }));
-            app.get('/tansvase/tasks/:id', tansvase.tasks.bind({ db: db, str: str }));
+            //app.get('/tansvase/notes/:id',tansvase.notes.bind({db,str})) ;
+            //app.get('/tansvase/tasks/:id',tansvase.tasks.bind({db,str})) ;
             //trello ICI 
             app.get('/trello', trello.view.bind({ db: db, str: str }));
             app.get('/trello/boards/:id', ensureAuth_1.default, trello.boards.bind({ db: db, str: str }));

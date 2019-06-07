@@ -22,6 +22,8 @@ var alert_1 = __importDefault(require("../components/alert"));
 vue_1.default.component('alert', alert_1.default);
 var createApplication_1 = __importDefault(require("../components/createApplication"));
 vue_1.default.component('create-application', createApplication_1.default);
+var noteVocal_1 = __importDefault(require("../components/noteVocal"));
+vue_1.default.component('note-vocal', noteVocal_1.default);
 var pagination_1 = __importDefault(require("bootstrap-vue/es/components/pagination/pagination"));
 vue_1.default.component('b-pagination', pagination_1.default);
 //Bootrap vuejs

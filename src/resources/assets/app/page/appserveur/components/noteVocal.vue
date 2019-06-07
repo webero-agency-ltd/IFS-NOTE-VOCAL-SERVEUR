@@ -69,7 +69,10 @@
                     }
                     //enregistrement ok a uploader
                     vo.upload = function ( file ) {
-                        console.log(' STOP RECORDER ')
+                        alert('POSSIBILITER ECOUTER DIRECTEMENT ONLINE')
+                        var url = URL.createObjectURL(blob);
+                        new listen( 'vocale-listen' , url , 'audio-liste-note-record' )
+                        $that.emit('note-vocal-changed', file )
                     }
                 }
                 //initialisation des evenements d'écoute de changement de vitesse 

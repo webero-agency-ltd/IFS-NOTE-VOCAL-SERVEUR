@@ -79,6 +79,7 @@ var trello = /** @class */ (function () {
                 switch (_c.label) {
                     case 0:
                         url = this.api + 'boards/' + board + '/lists?key=' + site.trelloKey + '&token=' + token;
+                        console.log(url);
                         return [4 /*yield*/, request.get(url)];
                     case 1:
                         _b = _c.sent(), error = _b.error, info = _b.info, body = _b.body;

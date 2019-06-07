@@ -179,7 +179,11 @@ function note(req, res) {
                     if (data) {
                         label = data.appId;
                     }
-                    body = { idLabels: label, idList: p.cardId, name: title, desc: description, due: moment(date, 'YYYY-MM-DDTHH:mm:ssZ').clone().format('YYYY-MM-DD') };
+                    body = { idList: p.cardId, name: title, desc: description, due: moment(date, 'YYYY-MM-DDTHH:mm:ssZ').clone().format('YYYY-MM-DD') };
+                    if (label) {
+                        body['idLabels'] = label;
+                    }
+                    console.log(label);
                     if (p.appId !== 'generale') {
                         body['idMembers'] = p.appId;
                     }
@@ -192,6 +196,7 @@ function note(req, res) {
                         body: JSON.stringify(body),
                         method: 'POST'
                     }, function (error, _res, body) {
+                        console.log(error, body);
                         if (!error && _res.statusCode == 200) {
                             var reponse = void 0;
                             try {

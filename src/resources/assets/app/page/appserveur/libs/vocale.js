@@ -24,6 +24,7 @@ export class Vocale {
         var stopButton = document.getElementById("stopButton");
         var pauseButton = document.getElementById("pauseButton");
         var logoRecorder = document.getElementById("logo-recorded");
+        var recorderInfo = document.getElementById("recorder-info");
 
         recordButton.addEventListener("click", startRecording);
         stopButton.addEventListener("click", stopRecording);
@@ -45,6 +46,7 @@ export class Vocale {
                 rec = new Recorder(input,{numChannels:1})
                 rec.record()
                 chrono.start() ;
+                recorderInfo.style.display = 'block';
                 //logoRecorder.addClass('active') ;
                 // element.classList.add("mystyle"); 
             }).catch(function(err) {
@@ -79,6 +81,7 @@ export class Vocale {
             chrono.stop() ; 
             gumStream.getAudioTracks()[0].stop();
             rec.exportWAV(createDownloadLink);
+            recorderInfo.style.display = 'none';
         }
 
         let $this = this ; 
@@ -122,18 +125,27 @@ export class Vocale {
 
     static
     init( content ) {
-        let tpl = `<div style="display: flex;">
-            <div id="logo-recorded" class="recorder-style"></div>
+        let tpl = `<div id="recorder-info" style="display: none;">
+            <div style="display: flex;">
+                <div id="logo-recorded" class="recorder-style active "></div>
             <input id="counter-recorded" style="width: 100px; margin-left: 6px;" disabled="disabled" name="timer" type="text" value="00 : 00" />
+            </div>
         </div>
-        <div id="controls">
-            <button id="recordButton">Record</button>
+        <div id="controls" style="display:flex;">
+            <button class="btn btn-info btn-block" id="recordButton">Record</button>
             <!--<button id="pauseButton" disabled>Pause</button>-->
-            <button id="stopButton" disabled>Stop</button>
+            <button class="btn btn-info btn-block" id="stopButton" disabled>Stop</button>
             <!--<button id="deleteButton" disabled>Effacer</button>-->
-            <button id="uploadButton">Télécharger</button>
+            <button class="btn btn-info btn-block" id="uploadButton">Télécharger</button>
             <input style="position: absolute; top: -30000px; left: -30000px;" type="file" id="audio-upload" name="avatar" accept="audio/*">
         </div>
+        <style>
+            .btn-info.disabled, .btn-info:disabled {
+                color: #191919 !important;
+                background-color: #b3d1e0 !important;
+                border-color: #191919 !important;
+            }
+        </style>
         <div id="recordingsList"></div>`;
         let c = document.getElementById( content ) ; 
         if ( c ) {

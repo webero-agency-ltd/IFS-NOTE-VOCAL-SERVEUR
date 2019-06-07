@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -45,64 +34,25 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var promise_1 = __importDefault(require("../libs/promise"));
 var site = require('../config/site');
 var request = require('request');
 var querystring = require('querystring');
+var infusionsoft = require('../libs/infusionsoft');
 var urlAPI = 'https://api.infusionsoft.com/crm/rest/v1';
 function membre(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, lang, _b, Application, User, Team, id, err, data, i, token, url;
+        var lang, id, _a, _b;
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
                     lang = req.lang();
-                    _b = this.db, Application = _b.Application, User = _b.User, Team = _b.Team;
                     id = req.params.id;
-                    //récupération des utilisateur courant 
-                    data;
-                    return [4 /*yield*/, promise_1.default(Application.find({ where: { id: id } }))];
+                    _b = (_a = res).success;
+                    return [4 /*yield*/, infusionsoft.membre(id)];
                 case 1:
-                    _a = _c.sent(), err = _a[0], data = _a[1];
-                    if (err) {
-                        return [2 /*return*/, res.error('IM0001')];
-                    }
-                    i = data;
-                    try {
-                        token = JSON.parse(i.accessToken);
-                    }
-                    catch (e) {
-                        token = null;
-                    }
-                    if (!token || !token['access_token']) {
-                        return [2 /*return*/, res.error('IM0002')];
-                    }
-                    url = urlAPI + '/users/?access_token=' + token['access_token'];
-                    return [2 /*return*/, request({
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            uri: url,
-                            method: 'GET'
-                        }, function (error, _res, body) {
-                            if (!error && _res.statusCode == 200) {
-                                var reponse = void 0;
-                                try {
-                                    reponse = JSON.parse(body);
-                                }
-                                catch (e) {
-                                    reponse = [];
-                                }
-                                res.success(reponse['users'] ? reponse['users'] : []);
-                            }
-                            else {
-                                return res.error('IM0003');
-                            }
-                        })];
+                    _b.apply(_a, [_c.sent()]);
+                    return [2 /*return*/];
             }
         });
     });
@@ -110,106 +60,20 @@ function membre(req, res) {
 exports.membre = membre;
 function contacts(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, lang, _b, Application, User, Team, id, err, data, i, token, url;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
+        var lang, _a, Application, User, Team, id, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
                 case 0:
                     lang = req.lang();
-                    _b = this.db, Application = _b.Application, User = _b.User, Team = _b.Team;
+                    _a = this.db, Application = _a.Application, User = _a.User, Team = _a.Team;
                     id = req.params.id;
-                    //récupération des utilisateur courant 
-                    data;
-                    return [4 /*yield*/, promise_1.default(Application.find({ where: { id: id } }))];
+                    _c = (_b = res).success;
+                    return [4 /*yield*/, infusionsoft.contacts(id)];
                 case 1:
-                    _a = _c.sent(), err = _a[0], data = _a[1];
-                    if (err) {
-                        return [2 /*return*/, res.error('IC0001')];
-                    }
-                    i = data;
-                    try {
-                        token = JSON.parse(i.accessToken);
-                    }
-                    catch (e) {
-                        token = null;
-                    }
-                    if (!token || !token['access_token']) {
-                        return [2 /*return*/, res.error('IC0002')];
-                    }
-                    url = urlAPI + '/contacts/?access_token=' + token['access_token'];
-                    console.log(url);
-                    return [2 /*return*/, request({
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            uri: url,
-                            method: 'GET'
-                        }, function (error, _res, body) {
-                            if (!error && _res.statusCode == 200) {
-                                var reponse = void 0;
-                                try {
-                                    reponse = JSON.parse(body);
-                                }
-                                catch (e) {
-                                    reponse = [];
-                                }
-                                if (reponse['contacts']) {
-                                    res.success(reponse['contacts'].map(function (e) {
-                                        return __assign({ text: e.family_name + ' ' + e.given_name, value: e.id }, e);
-                                    }));
-                                }
-                                else {
-                                    res.success([]);
-                                }
-                            }
-                            else {
-                                return res.error('IC0003');
-                            }
-                        })];
+                    _c.apply(_b, [_d.sent()]);
+                    return [2 /*return*/];
             }
         });
     });
 }
 exports.contacts = contacts;
-/*
-    //Récupération des différent information d'Infusionsoft
-    export function infos( req:Request, res:Response ) {
-        let { Application , User } = this.db as DBInterface ;
-        let lang = req.lang() ;
-        let { id } = req.params ;
-        //récupération des info en utilisant l'API infusionsoft et l'accessToken
-        Application.find({ where: { id } })
-            .then(i => {
-                let token : any[];
-                try{
-                    token = JSON.parse( i.accessToken ) ;
-                }catch( e ){
-                    token = [] ;
-                }
-                if ( i && token && token['access_token']) {
-                    let url = urlAPI + '/merchants/?access_token='+token['access_token']  ;
-                    request({
-                        headers: {
-                          'Content-Type': 'application/json'
-                        },
-                        uri:url,
-                        method: 'GET'
-                    }, function (error, _res, body) {
-                        if (!error && _res.statusCode == 200) {
-                            let reponse : any[];
-                            try{
-                                reponse = JSON.parse( body ) ;
-                            }catch( e ){
-                                reponse = [] ;
-                            }
-                            res.json( reponse )
-                        }else{
-                            res.json( { error : lang['InfusionsoftAPINull'] , code : '0011'} )
-                        }
-                    });
-                }else{
-                    res.json( { error : lang['MessageAppGlobalErreur'] , code : '0012'} )
-                }
-            })
-            .catch( e => res.json( { error : lang['MessageAppGlobalErreur'] , code : '0013'} ) );
-    }
-*/ 

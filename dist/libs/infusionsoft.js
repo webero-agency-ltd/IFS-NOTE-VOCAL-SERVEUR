@@ -1,3 +1,14 @@
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -47,6 +58,54 @@ var infusionsoft = /** @class */ (function () {
     function infusionsoft() {
         this.api = 'https://api.infusionsoft.com/crm/rest/v1';
     }
+    /*
+     * Récupération des membres d'infusionsoft
+    */
+    infusionsoft.prototype.membre = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var app, jsont, _a, error, info, body, reponse;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4 /*yield*/, application.item(id)];
+                    case 1:
+                        app = _b.sent();
+                        jsont = json(app.accessToken, {});
+                        return [4 /*yield*/, request.get(this.api + '/users/?access_token=' + jsont['access_token'])];
+                    case 2:
+                        _a = _b.sent(), error = _a.error, info = _a.info, body = _a.body;
+                        if (error && info.statusCode !== 200)
+                            throw new AppError('IM0003');
+                        reponse = json(body, {});
+                        return [2 /*return*/, reponse['users'] ? reponse['users'] : []];
+                }
+            });
+        });
+    };
+    /*
+     * Récupération des listes des contacts d'infusionsoft
+    */
+    infusionsoft.prototype.contacts = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var app, token, _a, error, info, body, reponse;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4 /*yield*/, application.item(id)];
+                    case 1:
+                        app = _b.sent();
+                        token = json(app.accessToken, {});
+                        return [4 /*yield*/, request.get(this.api + '/contacts/?access_token=' + token['access_token'])];
+                    case 2:
+                        _a = _b.sent(), error = _a.error, info = _a.info, body = _a.body;
+                        if (error && info.statusCode !== 200)
+                            throw new AppError('IC0003');
+                        reponse = json(body, {});
+                        return [2 /*return*/, reponse['contacts'] ? reponse['contacts'].map(function (e) {
+                                return __assign({ text: e.family_name + ' ' + e.given_name, value: e.id }, e);
+                            }) : []];
+                }
+            });
+        });
+    };
     /*
      * Récupération de l'access toke
     */

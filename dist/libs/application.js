@@ -59,22 +59,24 @@ var AppError = require('../libs/AppError');
 /*
  * Classe de manipulation des actions vers trello
 */
-var application = /** @class */ (function () {
-    function application() {
+var app = /** @class */ (function () {
+    function app() {
     }
     /*
      * Récupération de tout les information d'un application en particulier
      * et ce avec tout les statistique qui va avec
     */
-    application.prototype.item = function (id) {
+    app.prototype.item = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var Application, _a, err, data;
+            var where, Application, _a, err, data;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
+                        where = {};
+                        typeof (id) == "object" ? where = id : where['id'] = id;
                         Application = global['db'].Application;
                         return [4 /*yield*/, promise_1.default(Application.findOne({
-                                where: { id: id }
+                                where: where
                             }))];
                     case 1:
                         _a = _b.sent(), err = _a[0], data = _a[1];
@@ -92,9 +94,9 @@ var application = /** @class */ (function () {
      * ou si la fonction na pas d'utilisateur passer en paramètre
      * on cherche tout les applications de cette platforme
     */
-    application.prototype.all = function (id) {
+    app.prototype.all = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var teams, apps, _i, teams_1, e, _a, err, data, app;
+            var teams, apps, _i, teams_1, e, _a, err, data, app_1;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0: return [4 /*yield*/, team.all(id)];
@@ -113,10 +115,10 @@ var application = /** @class */ (function () {
                     case 3:
                         _a = _b.sent(), err = _a[0], data = _a[1];
                         if (!err) {
-                            app = data.toJSON();
+                            app_1 = data.toJSON();
                             //ajout de role dans l'objectapplication qui est récupére 
-                            app = __assign({ user_role: e.role }, app);
-                            apps = [app].concat(apps);
+                            app_1 = __assign({ user_role: e.role }, app_1);
+                            apps = [app_1].concat(apps);
                         }
                         _b.label = 4;
                     case 4:
@@ -130,7 +132,7 @@ var application = /** @class */ (function () {
     /*
      * Mise a jour d'un information d'un application en question
     */
-    application.prototype.update = function (id, objs) {
+    app.prototype.update = function (id, objs) {
         return __awaiter(this, void 0, void 0, function () {
             var _a, where, Application, _b, err, data, i;
             return __generator(this, function (_c) {
@@ -159,7 +161,7 @@ var application = /** @class */ (function () {
     /*
      * Création d'application
     */
-    application.prototype.create = function (obj, user_id) {
+    app.prototype.create = function (obj, user_id) {
         return __awaiter(this, void 0, void 0, function () {
             var _a, _b, _c, unique, Application, _d, err, data, app, u, newteam, url, redirect_uri, redirect_uri;
             return __generator(this, function (_e) {
@@ -222,7 +224,7 @@ var application = /** @class */ (function () {
     /*
      * Création de l'URL de réauthorisation de token
     */
-    application.prototype.reauthorize = function (id) {
+    app.prototype.reauthorize = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var url, app, redirect_uri, redirect_uri;
             return __generator(this, function (_a) {
@@ -248,6 +250,6 @@ var application = /** @class */ (function () {
             });
         });
     };
-    return application;
+    return app;
 }());
-module.exports = new application();
+module.exports = new app();

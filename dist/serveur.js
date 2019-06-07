@@ -158,7 +158,7 @@ var Serveur = /** @class */ (function () {
     };
     //lancement d'un serveur de websoket 
     Serveur.prototype.socket = function (server) {
-        require('./controller/binsocket')(server, db, str);
+        //require('./controller/binsocket')( server , db , str ) ; 
     };
     return Serveur;
 }());

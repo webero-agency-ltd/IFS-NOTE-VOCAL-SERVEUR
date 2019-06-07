@@ -127,7 +127,11 @@ export async function note( req:Request, res:Response ) {
 			label = data.appId ; 
 		}
 		//création de note trello
-	    let body = { idLabels : label , idList : p.cardId , name : title , desc : description , due : moment( date , 'YYYY-MM-DDTHH:mm:ssZ' ).clone().format('YYYY-MM-DD') } ; 
+	    let body = { idList : p.cardId , name : title , desc : description , due : moment( date , 'YYYY-MM-DDTHH:mm:ssZ' ).clone().format('YYYY-MM-DD') } ; 
+		if ( label ) {
+			body['idLabels'] = label ; 
+		}
+		console.log(  label )
 		if ( p.appId !== 'generale' ) {
 			body['idMembers'] = p.appId ; 
 		}
@@ -140,6 +144,7 @@ export async function note( req:Request, res:Response ) {
 		    body : JSON.stringify( body ) ,
 		    method: 'POST'
 		}, function (error, _res , body) {
+			console.log( error , body )
 			if (!error && _res.statusCode == 200) {
 				let reponse : any; 
 				try{

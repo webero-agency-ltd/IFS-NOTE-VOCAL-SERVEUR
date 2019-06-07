@@ -42,6 +42,7 @@ var forearch_1 = __importDefault(require("../libs/forearch"));
 var path = require('path');
 var fs = require('fs');
 var Busboy = require('busboy');
+var note = require('../libs/note');
 //liste de tout les notes d'un utilisateur en particulier 
 //@todo : il faut bien avoire une session pour faire la recherche pour ne pas afficher tout les notes 
 //d'un utilisateur qui n'est pas la votre
@@ -91,31 +92,6 @@ function item(req, res) {
         .catch(function (e) { return res.json({ error: true }); });
 }
 exports.item = item;
-/*
-* 	si le fichier dans l'URL n'est pas enregistré, on le suprime
-*/
-function close(req, res) {
-    var id = req.params.id;
-    if (id && this.str.closeIsFile(id)) {
-        return res.json({ success: true });
-    }
-    res.json({ error: true });
-}
-exports.close = close;
-//supression d'un note dque l'on vient juste d'enregistré 
-function deleteNote(req, res) {
-    var lang = req.lang();
-    var id = req.params.id;
-    if (id && this.str.closeIsStream(id)) {
-        var nameFile = id + '.wav';
-        var filePath = path.join(__dirname, '../', '/notes/') + nameFile;
-        if (fs.existsSync(filePath) && fs.unlinkSync(filePath)) {
-            return res.json({ success: true });
-        }
-    }
-    res.json({ error: true });
-}
-exports.deleteNote = deleteNote;
 //écouter un note en particuler 
 function listen(req, res) {
     //@todo : bien entendue, il faut faire la vérification si vous avez le droit 
@@ -169,6 +145,9 @@ function listen(req, res) {
     return res.send(lang['filesnoteimpty']);
 }
 exports.listen = listen;
+/*
+ * Chercher si les notes ici ce sont des notes trello
+*/
 function checks(req, res) {
     var id = req.params.id;
     var _a = this.db, User = _a.User, Note = _a.Note, Application = _a.Application;
@@ -206,140 +185,65 @@ function check(req, res) {
         .catch(function (e) { return res.status(400).json({ error: true }); });
 }
 exports.check = check;
-//enregistrement d'un note en particuler 
-function save(req, res) {
+//uploade d'un audion pour l'enregistré dans vos notes  
+function upload(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, User, Note, Application, id, _b, token, typeId, _c, title, text, type, newId, where, id_1, nameFile, pathFile, rename;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
+        var _a, file, NOTEID, type, appId, newId, title, text, token, busboy, filePath, userwhere, id, newPath, rename;
+        var _this = this;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
-                    _a = this.db, User = _a.User, Note = _a.Note, Application = _a.Application;
-                    id = req.params.id;
-                    _b = req.query, token = _b.token, typeId = _b.typeId;
-                    _c = req.body, title = _c.title, text = _c.text, type = _c.type, newId = _c.newId;
-                    where = {};
+                    _a = req.query, file = _a.file, NOTEID = _a.NOTEID, type = _a.type, appId = _a.appId, newId = _a.newId, title = _a.title, text = _a.text, token = _a.token;
+                    busboy = new Busboy({ headers: req.headers });
+                    return [4 /*yield*/, note.path({ id: appId }, NOTEID)];
+                case 1:
+                    filePath = _b.sent();
+                    userwhere = {};
                     if (token) {
-                        where = { rememberToken: token };
+                        userwhere = { rememberToken: token };
                     }
                     else if (req.user.id) {
-                        id_1 = req.user.id;
-                        where = { id: id_1 };
+                        id = req.user.id;
+                        userwhere = { id: id };
                     }
                     else {
-                        return [2 /*return*/, res.json({ error: true, code: 'NS0001' })];
+                        return [2 /*return*/, res.error('N0002')];
                     }
-                    console.log('-------------SAVE NOTE');
-                    console.log(id, '---', typeId, '---', type);
-                    this.str.deleteFile(id);
-                    nameFile = id + '.wav';
-                    pathFile = path.join(__dirname, '../', '/notes/') + nameFile;
-                    if (!newId) return [3 /*break*/, 2];
-                    return [4 /*yield*/, this.str.renameFile(pathFile, path.join(__dirname, '../', '/notes/') + newId + '.wav')];
-                case 1:
-                    rename = _d.sent();
-                    if (!rename) {
-                        return [2 /*return*/, res.json({ error: true, code: 'NS0000' })];
-                    }
-                    id = newId;
-                    _d.label = 2;
+                    if (!(newId && newId !== '' && newId !== null && newId !== 'null')) return [3 /*break*/, 4];
+                    return [4 /*yield*/, note.path({ id: appId }, newId)];
                 case 2:
-                    this.str.deleteFile(id);
-                    //check if note existe	
-                    //si c'est le cas, on selectionne la note, et on met a jour tout simplement les informations
-                    //comme la durée et la nouvelle format 
-                    Note.findOne({ where: { unique: id } })
-                        .then(function (n) {
-                        if (!n) {
-                            if (type == 'trello') {
-                                var url = decodeURIComponent(typeId);
-                                Application.find({ where: { url: url } })
-                                    .then(function (i) {
-                                    if (i) {
-                                        User.find({
-                                            where: where,
-                                        })
-                                            .then(function (user) {
-                                            Note.create({ title: title, text: text, unique: id, type: type })
-                                                .then(function (n) {
-                                                n.setAuthor(user);
-                                                n.setApplication(i);
-                                                res.json({ success: true });
-                                            })
-                                                .catch(function (e) { return res.json({ error: true, code: 'NS0003' }); });
-                                        })
-                                            .catch(function (e) { return res.json({ error: true, code: 'NS0004' }); });
-                                    }
-                                    else {
-                                        res.json({ error: true, code: 'NS0005' });
-                                    }
-                                })
-                                    .catch(function (e) {
-                                    console.log(e);
-                                    res.json({ error: true, code: 'NS0006' });
-                                });
+                    newPath = _b.sent();
+                    console.log('new path : ', newPath);
+                    return [4 /*yield*/, this.str.renameFile(filePath, newPath)];
+                case 3:
+                    rename = _b.sent();
+                    console.log('rename : ', rename);
+                    if (!rename)
+                        return [2 /*return*/, res.error('N0003')];
+                    NOTEID = newId;
+                    _b.label = 4;
+                case 4:
+                    busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
+                        file.pipe(fs.createWriteStream(filePath));
+                    });
+                    busboy.on('finish', function () { return __awaiter(_this, void 0, void 0, function () {
+                        var _a, _b;
+                        return __generator(this, function (_c) {
+                            switch (_c.label) {
+                                case 0:
+                                    //upload terminer, on fait maintenant la 
+                                    _b = (_a = res).success;
+                                    return [4 /*yield*/, note.create(NOTEID, title, text, appId, type, userwhere)];
+                                case 1:
+                                    //upload terminer, on fait maintenant la 
+                                    _b.apply(_a, [_c.sent()]);
+                                    return [2 /*return*/];
                             }
-                            else {
-                                Application.find({ where: { compteId: typeId } })
-                                    .then(function (i) {
-                                    if (i) {
-                                        User.find({
-                                            where: { rememberToken: token },
-                                        })
-                                            .then(function (user) {
-                                            Note.create({ title: title, text: text, unique: id, type: type })
-                                                .then(function (n) {
-                                                n.setAuthor(user);
-                                                n.setApplication(i);
-                                                res.json({ success: true });
-                                            })
-                                                .catch(function (e) { return res.json({ error: true, code: 'NS0003' }); });
-                                        })
-                                            .catch(function (e) { return res.json({ error: true, code: 'NS0004' }); });
-                                    }
-                                    else {
-                                        res.json({ error: true, code: 'NS0005' });
-                                    }
-                                })
-                                    .catch(function (e) {
-                                    console.log(e);
-                                    res.json({ error: true, code: 'NS0006' });
-                                });
-                            }
-                        }
-                        else {
-                            n.update({ text: text })
-                                .then(function (n) {
-                                res.json({ success: true, code: 'NS0007' });
-                            })
-                                .catch(function (e) { return res.json({ error: true }); });
-                        }
-                    })
-                        .catch(function (e) { return res.json({ error: true }); });
-                    return [2 /*return*/];
+                        });
+                    }); });
+                    return [2 /*return*/, req.pipe(busboy)];
             }
         });
     });
-}
-exports.save = save;
-//uploade d'un audion pour l'enregistré dans vos notes  
-function upload(req, res) {
-    var _this = this;
-    var _a = req.query, unique = _a.unique, type = _a.type, typeId = _a.typeId, contactId = _a.contactId;
-    if (unique) {
-        this.str.closeIsStream(unique);
-    }
-    var busboy = new Busboy({ headers: req.headers });
-    var filePath = path.join(__dirname, '../', '/notes/') + unique + '.wav';
-    busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
-        file.pipe(fs.createWriteStream(filePath));
-    });
-    busboy.on('finish', function () { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            this.str.openFile(unique, filePath);
-            res.status(200).json({ 'message': "File uploaded successfully." });
-            return [2 /*return*/];
-        });
-    }); });
-    return req.pipe(busboy);
 }
 exports.upload = upload;

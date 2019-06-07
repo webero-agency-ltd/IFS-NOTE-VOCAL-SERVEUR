@@ -84,8 +84,8 @@ export class listen {
 
     init( id , url ) {
 
-        let tpl = `<div class="${id}core" class="audio-controller" >
-            <audio data-id="${id}" id="${id}" style="height: 30px;" controls="" >
+        let tpl = `<div class="${id}core"  class="audio-controller" >
+            <audio data-id="${id}" id="${id}" style="width: 100%; margin-top: 20px;" controls="" >
                 <source  src="${url}"  type="audio/mpeg">
             </audio>
             <div class="${id}" style="padding-left: 21px; display:none ; height: 30px;" >

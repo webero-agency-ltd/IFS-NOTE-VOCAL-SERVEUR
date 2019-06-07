@@ -68,6 +68,26 @@ var user = /** @class */ (function () {
             });
         });
     };
+    user.prototype.find = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var where, User, _a, err, data;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        where = {};
+                        typeof (id) == "object" ? where = id : where['id'] = id;
+                        User = global['db'].User;
+                        return [4 /*yield*/, promise_1.default(User.findOne({
+                                where: where
+                            }))];
+                    case 1:
+                        _a = _b.sent(), err = _a[0], data = _a[1];
+                        data;
+                        return [2 /*return*/, data];
+                }
+            });
+        });
+    };
     return user;
 }());
 module.exports = new user();

@@ -38,56 +38,65 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var BinaryServer = require('binaryjs').BinaryServer;
 var wav = require('wav');
 var path = require('path');
+var note = require('../libs/note');
 module.exports = function (server, db, str) {
     var _a = db, Note = _a.Note, Vocaux = _a.Vocaux;
     var binsocket = BinaryServer({ server: server });
     //lors du connexion au socket pour de transfère de fichier binaire 
     binsocket.on('connection', function (client) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, unique, type, typeId, contactId, nameFile, pathFile, fileWriter;
+            var _a, unique, type, typeId, contactId, appId, pathFile, fileWriter;
             return __generator(this, function (_b) {
-                _a = require('url').parse("http://bin.fr/so/" + client._socket.upgradeReq.url, true).query, unique = _a.unique, type = _a.type, typeId = _a.typeId, contactId = _a.contactId;
-                if (!unique)
-                    return [2 /*return*/];
-                //ici si le stream est déja crée, on le supprime car si non impossible d'écrasé le fichier 
-                str.closeIsStream(unique);
-                nameFile = unique + '.wav';
-                pathFile = path.join(__dirname, '../', '/notes/') + nameFile;
-                fileWriter = new wav.FileWriter(pathFile, {
-                    channels: 1,
-                    sampleRate: 48000,
-                    bitDepth: 16
-                });
-                //si l'utilisateur recoive un stream audio cette évenement est lancer  
-                client.on('stream', function (stream, meta) {
-                    stream.pipe(fileWriter);
-                    stream.on('end', function () {
-                        return __awaiter(this, void 0, void 0, function () {
-                            return __generator(this, function (_a) {
-                                fileWriter.end();
-                                console.log('µµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµ*');
-                                str.openFile(unique, pathFile);
-                                fileWriter = null;
-                                return [2 /*return*/];
+                switch (_b.label) {
+                    case 0:
+                        _a = require('url').parse("http://bin.fr/so/" + client._socket.upgradeReq.url, true).query, unique = _a.unique, type = _a.type, typeId = _a.typeId, contactId = _a.contactId, appId = _a.appId;
+                        if (!unique)
+                            return [2 /*return*/];
+                        //ici si le stream est déja crée, on le supprime car si non impossible d'écrasé le fichier 
+                        str.closeIsStream(unique);
+                        //on recrée le fichier 
+                        //let nameFile = unique+ '.wav' ; 
+                        console.log(appId);
+                        return [4 /*yield*/, note.pathstream(appId ? { id: appId } : { typeId: typeId }, unique)];
+                    case 1:
+                        pathFile = _b.sent();
+                        console.log('_______________________________________________', pathFile);
+                        if (!pathFile)
+                            return [2 /*return*/];
+                        fileWriter = new wav.FileWriter(pathFile, {
+                            channels: 1,
+                            sampleRate: 48000,
+                            bitDepth: 16
+                        });
+                        //si l'utilisateur recoive un stream audio cette évenement est lancer  
+                        client.on('stream', function (stream, meta) {
+                            stream.pipe(fileWriter);
+                            stream.on('end', function () {
+                                return __awaiter(this, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        fileWriter.end();
+                                        str.openFile(unique, pathFile);
+                                        fileWriter = null;
+                                        return [2 /*return*/];
+                                    });
+                                });
                             });
                         });
-                    });
-                });
-                client.on('close', function () {
-                    return __awaiter(this, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            if (fileWriter && fileWriter.end) {
-                                //on stope le stream de trashpère de biniare 
-                                fileWriter.end();
-                                fileWriter = null;
-                            }
-                            console.log('--- CLOSE SOKET ', unique);
-                            str.closeIsFile(unique);
-                            return [2 /*return*/];
+                        client.on('close', function () {
+                            return __awaiter(this, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    if (fileWriter && fileWriter.end) {
+                                        //on stope le stream de trashpère de biniare 
+                                        fileWriter.end();
+                                        fileWriter = null;
+                                    }
+                                    str.closeIsFile(unique);
+                                    return [2 /*return*/];
+                                });
+                            });
                         });
-                    });
-                });
-                return [2 /*return*/];
+                        return [2 /*return*/];
+                }
             });
         });
     });

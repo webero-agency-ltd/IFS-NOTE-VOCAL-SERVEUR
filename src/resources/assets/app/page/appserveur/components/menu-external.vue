@@ -10,6 +10,9 @@
 					  		</router-link>
 					  	</b-navbar-brand>
                         <b-navbar-nav class="ml-auto" >
+                            <b-nav-item href="/">
+                                {{$lang('appMenuDashbord')}} 
+                            </b-nav-item>
                             <b-nav-item :to="{name:'option'}">
                                 {{$lang('appMenuOptions')}} 
                             </b-nav-item>

@@ -168,6 +168,7 @@ function lists(req, res) {
                     if (success) {
                         return [2 /*return*/, res.success(success)];
                     }
+                    console.log(error);
                     return [2 /*return*/, res.error('TML002')];
             }
         });

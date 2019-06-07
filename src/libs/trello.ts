@@ -34,6 +34,7 @@ class trello {
 	*/
 	async lists({ board , token }){
 		let url = this.api + 'boards/' + board + '/lists?key=' + site.trelloKey + '&token=' + token ; 
+		console.log( url )
 		let { error, info , body } = await request.get( url )
 		if ( !error && info.statusCode == 200 ) {
 			let reponse = json( body , [] )

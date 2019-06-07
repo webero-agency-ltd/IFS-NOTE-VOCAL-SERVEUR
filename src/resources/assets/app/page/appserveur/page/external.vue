@@ -224,7 +224,7 @@
                     title : 0 ,
                     description : '',
                     membre : '' ,
-                    prioriter : 2 ,
+                    prioriter : 0 ,
                     date : '' , 
                     contactId : '' , 
                     search : '' , 
@@ -417,6 +417,7 @@
                 if ( this.compte == 'trello' ) {
                     //this.allPours
                     this.allPours.forEach( e => {
+                        console.log( e )
                         if ( e.id == this.form.prioriter ) {
                             add = parseInt( e.cardId ) ;  
                         }
@@ -477,5 +478,10 @@
     .propositionMembre span{
         color: rgba( 0 , 0 , 0 , 0.6 )
     }
-
+    
+    .btn-info:not(:disabled):not(.disabled):active, .btn-info:not(:disabled):not(.disabled).active, .show > .btn-info.dropdown-toggle {
+        color: #fff;
+        background-color: #093840;
+        border-color: #10707f;
+    }
 </style>

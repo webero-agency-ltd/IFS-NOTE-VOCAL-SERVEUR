@@ -98,6 +98,7 @@ export async function lists( req:Request, res:Response ) {
 	if ( success ) {
 		return res.success( success );  
     }
+    console.log( error )
     return res.error('TML002') ; 
 }
 
