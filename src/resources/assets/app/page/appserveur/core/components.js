@@ -27,6 +27,9 @@ Vue.component('alert', alert);
 import createApplication from '../components/createApplication';
 Vue.component('create-application', createApplication);
 
+import noteVocal from '../components/noteVocal';
+Vue.component('note-vocal', noteVocal);
+
 import bPagination from 'bootstrap-vue/es/components/pagination/pagination';
 Vue.component('b-pagination', bPagination);
 

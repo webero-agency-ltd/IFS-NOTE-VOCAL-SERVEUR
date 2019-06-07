@@ -50,26 +50,27 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	app.get('/team/application/:id',ensureAuth,team.index.bind({db})) ;
 	app.get('/team/:id/:type/:contactid',ensureAuth,team.create.bind({db})) ;
 
-	//champ utiliser par infusionsoft 
-	app.get('/infusionsoft/membre/:id',ensureAuth,infusionsoft.membre.bind({db})) ;
-	app.get('/infusionsoft/contacts/:id',ensureAuth,infusionsoft.contacts.bind({db})) ;
+	//champ utiliser par infusionsoft membre
+
+	app.get('/infusionsoft/membre/:id',ensureAuth,hangel.bind({ func : infusionsoft.membre.bind({db}) })) ;
+	app.get('/infusionsoft/contacts/:id',ensureAuth, hangel.bind({ func : infusionsoft.contacts.bind({db}) }) ) ;
 
 	//route des notes
 	app.get('/note/:id',note.item.bind({db,str})) ;
 	app.get('/note/check/:id',note.check.bind({db,str})) ;
 	app.post('/note/checks',note.checks.bind({db,str})) ;
 	app.get('/note/infusionsoft/:id',note.index.bind({db,str})) ;
-	app.get('/close/:id',ensureAuth,note.close.bind({db,str})) ;
+	//app.get('/close/:id',ensureAuth,note.close.bind({db,str})) ;
 	app.get('/audio/:id',ensureAuth,note.listen.bind({db,str})) ;
-	app.get('/audio/delete/:id',ensureAuth,note.deleteNote.bind({db,str})) ;
+	//app.get('/audio/delete/:id',ensureAuth,note.deleteNote.bind({db,str})) ;
 
-	app.post('/upload',ensureAuth,note.upload.bind({db,str})) ;
-	app.post('/save/:id',note.save.bind({db,str})) ;
+	app.post('/upload',ensureAuth,hangel.bind({ func : note.upload.bind({db,str}) })) ;
+	//app.post('/save/:id',note.save.bind({db,str})) ;
 
 	//tansvase notes 
 	//transvase task 
-	app.get('/tansvase/notes/:id',tansvase.notes.bind({db,str})) ;
-	app.get('/tansvase/tasks/:id',tansvase.tasks.bind({db,str})) ;
+	//app.get('/tansvase/notes/:id',tansvase.notes.bind({db,str})) ;
+	//app.get('/tansvase/tasks/:id',tansvase.tasks.bind({db,str})) ;
 	
 	//trello ICI 
 	app.get('/trello',trello.view.bind({db,str})) ;

@@ -90,6 +90,6 @@ export default class Serveur{
 	}
 	//lancement d'un serveur de websoket 
 	socket( server ){
-		require('./controller/binsocket')( server , db , str ) ; 
+		//require('./controller/binsocket')( server , db , str ) ; 
 	}
 } 

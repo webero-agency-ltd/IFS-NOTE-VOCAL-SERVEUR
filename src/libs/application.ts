@@ -14,7 +14,7 @@ var AppError = require('../libs/AppError');
  * Classe de manipulation des actions vers trello 
 */
 
-class application {
+class app {
 	
 	constructor() {
 	
@@ -25,9 +25,11 @@ class application {
 	 * et ce avec tout les statistique qui va avec 
 	*/
 	async item( id ){
+		let where = {} ;
+		typeof(id)=="object"?where=id:where['id']=id;
 		let { Application } = global['db'] as DBInterface ;
 		let [ err , data ] = await to(Application.findOne({
-		    where: { id }
+		    where 
 	    })) 
 		data as ApplicationInstance ;
 		if (err) 
@@ -148,4 +150,4 @@ class application {
 
 }
 
-module.exports = new application() ; 
+module.exports = new app() ; 

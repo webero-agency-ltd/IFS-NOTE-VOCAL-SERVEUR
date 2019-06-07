@@ -4,6 +4,7 @@ import forearch from '../libs/forearch';
 const path = require('path') ; 
 const fs = require('fs') ; 
 const Busboy = require('busboy'); 
+var note = require('../libs/note'); 
 
 //liste de tout les notes d'un utilisateur en particulier 
 //@todo : il faut bien avoire une session pour faire la recherche pour ne pas afficher tout les notes 
@@ -51,31 +52,6 @@ export function item( req:Request, res:Response ) {
 	    	}
 		})
 		.catch(e => res.json({ error : true } ));
-}
-
-/*
-* 	si le fichier dans l'URL n'est pas enregistré, on le suprime 
-*/
-export function close( req:Request, res:Response ) {
-	let { id } = req.params ;  
-	if ( id && this.str.closeIsFile( id ) ) {
-		return res.json({success:true}) ;
-	}
-	res.json({error:true}) ;
-}
-
-//supression d'un note dque l'on vient juste d'enregistré 
-export function deleteNote ( req:Request, res:Response ) {
-	let lang = req.lang() ;
-	let { id } = req.params ;  
-	if ( id && this.str.closeIsStream( id ) ) {
-		let nameFile =  id+'.wav' ;
-		let filePath = path.join(__dirname, '../','/notes/') + nameFile ; 
-		if (fs.existsSync( filePath ) && fs.unlinkSync( filePath )) {
-		    return res.json({success:true}) ;
-		}
-	}
-	res.json({error:true}) ;
 }
 
 //écouter un note en particuler 
@@ -131,7 +107,11 @@ export function listen( req:Request, res:Response ) {
 	return res.send(lang['filesnoteimpty']);
 }
 
+/*
+ * Chercher si les notes ici ce sont des notes trello
+*/
 export function checks( req:Request, res:Response ) {
+
 	let { id } = req.params ;  
 	let { User, Note , Application } = this.db as DBInterface ;
 	let { urls } = req.body ; 
@@ -153,9 +133,8 @@ export function checks( req:Request, res:Response ) {
 	findnotes.end(function (argument) {
 		return res.json( response )
 	})
-	findnotes.run() ; 
+	findnotes.run() ;
 
-	
 }
 
 export function check( req:Request, res:Response ) {
@@ -171,124 +150,42 @@ export function check( req:Request, res:Response ) {
 		.catch( e => res.status(400).json({ error : true }) );
 }
 
-//enregistrement d'un note en particuler 
-export async function save( req:Request, res:Response ) {
-
-	let { User, Note , Application } = this.db as DBInterface ;
-	let { id } = req.params ;   
-	let { token , typeId } = req.query ; 
-	let { title , text , type , newId } = req.body ; 
-
-	let where = {}
+//uploade d'un audion pour l'enregistré dans vos notes  
+export async function upload( req:Request, res:Response ) {
+	 
+	let { file , NOTEID , type , appId , newId , title , text, token } = req.query ; 
+	let busboy = new Busboy({ headers: req.headers });
+	let filePath = await note.path( { id : appId } , NOTEID ) ;
+	//récupération token utilisateur 
+	let userwhere = {}
 	if ( token ) {
-		where = { rememberToken : token }
+		userwhere = { rememberToken : token }
 	}else if ( req.user.id ) {
 		let id = req.user.id ;
-		where = { id }
+		userwhere = { id }
 	}else{
-		return res.json( { error : true , code : 'NS0001' })
-	}
-	console.log( '-------------SAVE NOTE' )
-	console.log( id , '---' , typeId, '---' , type )
-	this.str.deleteFile( id )
-
-	let nameFile = id+ '.wav' ; 
-	let pathFile = path.join(__dirname, '../','/notes/') + nameFile ;  
-	if ( newId ) {
-		let rename = await this.str.renameFile( pathFile , path.join(__dirname, '../','/notes/') + newId + '.wav' ) ; 
-		if ( ! rename ) {
-			return res.json( { error : true , code : 'NS0000' })
-		}
-		id = newId ; 
+		return res.error('N0002')
 	}
 
-	this.str.deleteFile( id )
-	
-	//check if note existe	
-	//si c'est le cas, on selectionne la note, et on met a jour tout simplement les informations
-	//comme la durée et la nouvelle format 
-	Note.findOne( { where: { unique : id } } )
-		.then(n => {
-			if ( !n ) {
-				if (type == 'trello') {
-					let url = decodeURIComponent( typeId ) ;
-
-					Application.find( { where: { url } } )
-						.then(i => {
-							if ( i ) {
-								User.find({
-								    where  ,
-								})
-									.then(user => {
-										Note.create({ title , text , unique :  id , type })
-											.then(n => {
-												n.setAuthor( user )
-												n.setApplication( i ) ; 
-												res.json({success:true})
-											})
-											.catch( e => res.json({ error : true, code : 'NS0003' }) );
-									})
-									.catch( e => res.json({ error : true , code : 'NS0004' }) );
-							}else{
-								res.json( { error : true , code : 'NS0005' } )
-							}
-						})
-						.catch( e => {
-							console.log( e )
-							res.json({ error : true , code : 'NS0006' })
-						} );
-
-				}else{
-					Application.find( { where: { compteId : typeId } } )
-						.then(i => {
-							if ( i ) {
-								User.find({
-								    where: { rememberToken : token } ,
-								})
-									.then(user => {
-										Note.create({ title , text , unique :  id , type })
-											.then(n => {
-												n.setAuthor( user )
-												n.setApplication( i ) ; 
-												res.json({success:true})
-											})
-											.catch( e => res.json({ error : true, code : 'NS0003' }) );
-									})
-									.catch( e => res.json({ error : true , code : 'NS0004' }) );
-							}else{
-								res.json( { error : true , code : 'NS0005' } )
-							}
-						})
-						.catch( e => {
-							console.log( e )
-							res.json({ error : true , code : 'NS0006' })
-						} );
-				}
-			}else {
-				n.update( { text } )
-					.then(n => {
-						res.json({ success : true , code : 'NS0007' })
-					})
-					.catch( e => res.json({ error : true }) );
-			}
-		})
-		.catch( e => res.json({ error : true }) );
-}
-
-//uploade d'un audion pour l'enregistré dans vos notes  
-export function upload( req:Request, res:Response ) {
-	let { unique , type , typeId , contactId } = req.query ; 
-	if ( unique ) {
-		this.str.closeIsStream( unique ) ;
+	//Pour la création de notes depuis la page mobile mais spécialement pour trello  
+	if ( newId && newId !== '' && newId !== null && newId !== 'null' ) {
+		let newPath = await note.path( { id : appId } , newId ) ;
+		console.log( 'new path : ' , newPath )
+		let rename = await this.str.renameFile( filePath , newPath ) ; 
+		console.log( 'rename : ' , rename )
+		if ( ! rename ) 
+			return res.error('N0003')
+		NOTEID = newId ; 
 	}
-	let busboy = new Busboy({ headers: req.headers });
-	let filePath = path.join(__dirname, '../' , '/notes/') + unique + '.wav' ; 
+
     busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
 	    file.pipe(fs.createWriteStream(filePath)); 
 	})
+
 	busboy.on('finish', async () => {	
-		this.str.openFile( unique , filePath )
-        res.status(200).json({ 'message': "File uploaded successfully." });
+		//upload terminer, on fait maintenant la 
+        res.success( await note.create( NOTEID , title , text , appId , type , userwhere ) )
     });
+
     return req.pipe(busboy);
 }

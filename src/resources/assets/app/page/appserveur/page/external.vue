@@ -51,7 +51,7 @@
                             <b-input-group>
                                 <b-row style="width: 100%;">
                                     <b-col sm="12">
-                                        <div id="vocal_recoder_core"></div>
+                                        <note-vocal v-if="NOTEID" :identifiant="NOTEID"></note-vocal>
                                     </b-col>
                                 </b-row>
                             </b-input-group>
@@ -185,13 +185,8 @@
 </template>
 <script>
     
-    import recoder from '../libs/recoder'
-    import { BinaryClient } from 'binaryjs-client';
-    import { wav } from 'wav';
-    import recordRTC from 'recordRTC';
     import makeid from '../libs/makeid';
     import moment from 'moment';
-
     import { createNamespacedHelpers } from 'vuex';
     import store from '../store/';
     
@@ -258,6 +253,8 @@
                 ] , 
                 //note vocal id 
                 NOTEID : null , 
+                //le note vocal est enregistrer ici 
+                note : null , 
             }
         },
 
@@ -353,7 +350,7 @@
         methods : {
 
             async create(){
-                
+
                 let compteId = null ;
                 let membre = null ; 
                 let description = '' ; 
@@ -368,111 +365,39 @@
                 }else{
                     return false ; 
                 }
-                console.log( '_____________________' , this.form.prioriter )
                 let data = await this.$store.dispatch('external/exoption/CREATE', {
                     op : { compteId , type : this.compte , title : this.optionsTitle[this.form.title].text , description : description , pour : this.form.membre , prioriter : this.form.prioriter , date : this.form.date.format('YYYY-MM-DDTHH:mm:ssZ'), contactId : this.form.contactId } , namespace : 'external' 
                 } ) ; 
                 if ( !data || (!data.url&&this.compte == 'trello') ) {
                     return
                 }
-                console.log( '----------------------------' ) ; 
-                console.log( data ) ; 
                 //enregistrement des vocal apres création des notes sur l'application qui a été selectionner 
                 let url = window.urlapplication+'/save/'+this.NOTEID+'?typeId='+compteId ;
                 //@todo :seulement pour trello  
                 let id = null ; 
                 this.compte == 'trello' ? id = decodeURIComponent( data.url.replace('https://trello.com', '') ).split('/').join('_').replace('/', '_').normalize('NFD').replace(/[\u0300-\u036f]/g, "") : '' ;  
-                console.log( data , id )
-                let set = await fetch( url , {
+                //upload des notes que vous avez enregister au paravant 
+                let formData = new FormData();
+                formData.append('file', this.note );
+                let _url = window.urlapplication+'/upload?' ;
+                _url += 'NOTEID='+this.NOTEID
+                _url += '&type='+this.compte
+                _url += '&appId='+compteId
+                _url += '&newId='+id
+                _url += '&text='+this.form.description
+                _url += '&title='+this.optionsTitle[this.form.title].text
+                let upload = await fetch( _url , {
                     method: 'POST',
                     headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
+                        //'Content-Type': 'multipart/form-data'
                     },
-                    body: JSON.stringify({ type : this.compte , newId : id , text : this.form.description , title : this.optionsTitle[this.form.title].text })
-                }) ;
-                if ( set.ok ) {
+                    body: formData
+                })
+                if ( upload.ok ) {
                     window.location.reload( true ) 
                 }
                 
             },  
-            
-            initRecoder(){
-                
-                //récupération des elements on on ajoute l'enregistreur 
-                let url = window.urlapplication  ;
-                let serveur =  url.replace(/(^\w+:|^)\/\//, '');
-                serveur = serveur.replace(/[0-9]/g, '');
-                serveur = serveur.replace(/:([^:]*)$/,'$1');
-
-                function convertFloat32ToInt16(buffer) {
-                    let l = buffer.length;
-                    let buf = new Int16Array(l);
-                    while (l--) {
-                        buf[l] = Math.min(1, buffer[l])*0x7FFF;
-                    }
-                    return buf.buffer;
-                }
-
-                let rec = recoder( url ) ; 
-                let stream = null ;
-                let client = null ; 
-                let listeAfter = false ; 
-                let onupload = false ; 
-
-                rec.connexion = function ( data ) {
-                    if( listeAfter )
-                        return true
-
-                    listeAfter = true ; 
-                    //on veut connecter au serveur pour commencer un nouvelle notes 
-                    let {
-                        NOTEID , 
-                        type , 
-                        typeId , 
-                        contactId
-                    } = data  ;  
-                    setTimeout(function () {
-                       let url = ( window.urlapplication.indexOf( 'https' ) > -1 ?'wss':'ws')+'://'+serveur+':'+window.portapplication+'?unique='+NOTEID+'&type='+type+'&typeId='+typeId+'&contactId='+contactId ; 
-                       console.log( '--- URL CONNECT' , url )
-                        client = new BinaryClient( url ) ; 
-                        client.on('open', function() {
-                            stream = client.createStream();
-                            rec.connexionSoketNoteVocaux() ;
-                            return listeAfter = false 
-                        })
-                    }, 1000 );
-                }
-
-                rec.saveStream = function ( data ) {
-                    stream.end();
-                    stream = null ;     
-                   
-                }
-
-                rec.stream = function ( data ) {
-                    let arr = new Float32Array(  data );
-                    stream.write(convertFloat32ToInt16( arr )); 
-                }
-
-                rec.close = function ( data ) {
-                    onupload = data ; 
-                }
-
-                let btnAddNote = $('#vocal_recoder_core')
-                console.log( btnAddNote )
-                btnAddNote.before( rec.recorder() ) ; 
-                //initialisation du recoder 
-                this.NOTEID = rec.init() ; 
-
-                $(window).on("beforeunload", function() { 
-                    if ( !client ) 
-                        return false ; 
-                    //enregistrement avant close client 
-                    client.close() ;
-                    client = null ; 
-                })
-            },
 
             //ici on change la valeur des date 
             changeDate(){ 
@@ -507,21 +432,21 @@
             },
 
             async init(){
-                console.log('FIND_ALL')
+                this.NOTEID = makeid(12) ;  
                 await this.$store.dispatch('external/exoption/FIND_OPTION' , { namespace : 'external' } ) ; 
                 this.loader = false;
-                await this.$nextTick()
-                this.initRecoder() ;  
+                await this.$nextTick() 
+                this.changePrioriters() ; 
             }
 
         },
         mounted(){
-            alert('sds')
             this.init() ; 
-            //initialisation de la varriable date 
         },
         created(){
-            
+            this.on('note-vocal-changed',( note ) => {
+                this.note = note  ; 
+            })
         }
     }
 </script>

@@ -19,6 +19,34 @@ class infusionsoft {
 	}
 
 	/*
+	 * Récupération des membres d'infusionsoft 
+	*/
+	async membre( id ){
+	    let app = await application.item( id )
+	    let jsont = json( app.accessToken , {} ) 
+		var { error, info , body } = await request.get( this.api + '/users/?access_token='+jsont['access_token'] ) ;
+		if ( error && info.statusCode !== 200 ) 
+	    	throw new AppError('IM0003');
+	    let reponse = json( body , {} ) ; 
+		return reponse['users']?reponse['users']:[];
+	}
+
+	/*
+	 * Récupération des listes des contacts d'infusionsoft 
+	*/
+	async contacts( id ){
+	    let app = await application.item( id )
+	    let token = json( app.accessToken , {} ) 
+		var { error, info , body } = await request.get( this.api + '/contacts/?access_token='+token['access_token'] ) ; 
+		if ( error && info.statusCode !== 200 )
+	    	throw new AppError('IC0003');
+	    let reponse = json( body , {} ) ; 
+		return reponse['contacts']?reponse['contacts'].map( function (e) {
+			return { text : e.family_name + ' ' + e.given_name , value : e.id , ...e }
+		}):[];
+	}
+
+	/*
 	 * Récupération de l'access toke  
 	*/
 	async findtoken( { id , code } ){

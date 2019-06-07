@@ -112,10 +112,10 @@ module.exports = {
 		//erreur d'infusionsoft controller 
 		//IM0001 : `Impossible de récupère le compte infuisonsoft *CODE:IM0001*`,
 		//IM0002 : `Erreur sur le token de l'application infusionsoft *CODE:IM0002*`,
-		//IM0003 : `Une erreur est produit *CODE:IM0003*`,
+		IM0003 : `Une erreur est produit *CODE:IM0003*`,
 		//IC0001 : `Impossible de récupère le compte infuisonsoft *CODE:IC0001*`,
 		//IC0002 : `Erreur sur le token de l'application infusionsoft *CODE:IC0002*`,
-		//IC0003 : `Une erreur est produit *CODE:IC0003*`,
+		IC0003 : `Une erreur est produit *CODE:IC0003*`,
 		//erreur de page external 
 		//EC0001 : `Erreur de récupération d'information de l'utilisateur *CODE:EC0001*` , 
 		//EC0002 : `Erreur de récupération d'information de l'utilisateur *CODE:EC0002*` , 
@@ -142,6 +142,16 @@ module.exports = {
 		//PC0002 : `Une erreur est produit *CODE:PC0002*`,
 		//PC0003 : `Une erreur est produit *CODE:PC0003*`,
 		//PC0004 : `Une erreur est produit *CODE:PC0004*`, 
+
+		/////
+		// euror dans le fichier note
+		N0001 : `Une erreur est produit *CODE:N0001*`,
+		N0002 : `Une erreur est produit *CODE:N0002*`,
+		N0003 : `Une erreur est produit *CODE:N0003*`,
+		N0004 : `Une erreur est produit *CODE:N0004*`,
+		N0005 : `Une erreur est produit *CODE:N0005*`,
+		N0006 : `Une erreur est produit *CODE:N0006*`,
+		N0007 : `Une erreur est produit *CODE:N0007*`,
 	},
 
 	/*

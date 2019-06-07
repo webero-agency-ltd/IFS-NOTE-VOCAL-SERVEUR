@@ -25,6 +25,17 @@ class user {
 		data as UserInstance ;
 	    return data ;  
 	}
+
+	async find( id )  : Promise <UserInstance>  {
+		let where = {} ;
+		typeof(id)=="object"?where=id:where['id']=id;
+		let { User } = global['db'] as DBInterface ;
+		let [ err , data ] = await to(User.findOne({
+		    where 
+	    })) 
+		data as UserInstance ;
+	    return data ;  
+	}
 }
 
 module.exports = new user() ; 
