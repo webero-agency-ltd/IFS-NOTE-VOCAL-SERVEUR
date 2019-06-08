@@ -250,6 +250,45 @@ var app = /** @class */ (function () {
             });
         });
     };
+    /*
+     * Checker si un utilisateur un admin ou team d'une page ou non
+    */
+    app.prototype.chackuser = function (token, id, type) {
+        return __awaiter(this, void 0, void 0, function () {
+            var u, where, app, _a, err, data;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4 /*yield*/, user.find({ rememberToken: token })];
+                    case 1:
+                        u = _b.sent();
+                        if (!u)
+                            throw new AppError('ARA002');
+                        where = {};
+                        if (type == 'infusionsoft') {
+                            where['compteId'] = id;
+                        }
+                        else if (type == 'trello') {
+                            where['url'] = id;
+                        }
+                        console.log(where);
+                        return [4 /*yield*/, this.item(where)];
+                    case 2:
+                        app = _b.sent();
+                        if (!app)
+                            throw new AppError('ARA003');
+                        return [4 /*yield*/, promise_1.default(u.getTeams({ where: { ApplicationId: app.id } }))];
+                    case 3:
+                        _a = _b.sent(), err = _a[0], data = _a[1];
+                        if (err || !data)
+                            throw new AppError('ARA004');
+                        if (data.length > 0) {
+                            return [2 /*return*/, app];
+                        }
+                        return [2 /*return*/, null];
+                }
+            });
+        });
+    };
     return app;
 }());
 module.exports = new app();

@@ -303,6 +303,7 @@
                     this.$store.dispatch( 'external/pour/FIND_ALL_POUR',{ id : this.external.trello , type : 'trello' , namespace : 'external' } ) ; 
                 }else if ( this.compte == 'infusionsoft' ) {
                     this.$store.dispatch( 'external/pour/ALL_POUR',{ id : this.external.infusionsoft , type : 'infusionsoft' , namespace : 'external' } ) ; 
+                    this.form.prioriter = 2 ; 
                 }
             },
 

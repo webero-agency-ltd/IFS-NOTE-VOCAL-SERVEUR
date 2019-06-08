@@ -16,10 +16,6 @@ var AppError = require('../libs/AppError');
 
 class app {
 	
-	constructor() {
-	
-	}
-
 	/*
 	 * Récupération de tout les information d'un application en particulier 
 	 * et ce avec tout les statistique qui va avec 
@@ -146,6 +142,32 @@ class app {
 			url = 'https://trello.com/1/authorize?expiration=30days&name=NoteVocal&scope=read,write&response_type=token&key='+site.trelloKey+'&return_url='+encodeURIComponent( redirect_uri ) ; 		
 		}
 		return url ;
+	}
+
+	/*
+	 * Checker si un utilisateur un admin ou team d'une page ou non 
+	*/
+	async chackuser( token , id , type ){
+		let u = await user.find( { rememberToken : token } ) ;
+	    if (!u) 
+	    	throw new AppError('ARA002');
+	    let where = {} ; 
+	    if (type=='infusionsoft') {
+	    	where['compteId'] = id ; 
+	    }else if( type == 'trello' ){
+	    	where['url'] = id ; 
+		}
+	    console.log( where )
+		let app = await this.item( where ) as ApplicationInstance ; 
+		if (!app) 
+	    	throw new AppError('ARA003');
+	    let [ err , data ] = await to( u.getTeams( { where: { ApplicationId : app.id as number } }) ) 
+	   	if ( err || !data ) 
+	    	throw new AppError('ARA004');
+	   	if ( data.length > 0 ) {
+			return app
+		}
+		return null ;
 	}
 
 }

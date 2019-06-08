@@ -39,7 +39,6 @@ var site = require('../config/site');
 var request = require('request');
 var querystring = require('querystring');
 var infusionsoft = require('../libs/infusionsoft');
-var urlAPI = 'https://api.infusionsoft.com/crm/rest/v1';
 function membre(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var lang, id, _a, _b;

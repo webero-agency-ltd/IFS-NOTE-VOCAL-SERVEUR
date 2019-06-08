@@ -8,8 +8,6 @@ const request = require('request');
 const querystring = require('querystring');
 const infusionsoft = require('../libs/infusionsoft');
 
-const urlAPI = 'https://api.infusionsoft.com/crm/rest/v1' ; 
-
 export async function membre( req:Request, res:Response ) {
 
 	let lang = req.lang() ; 

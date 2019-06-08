@@ -18,47 +18,11 @@ const infusionsoft = require('../libs/infusionsoft');
 const trello = require('../libs/trello');
 
 
-export function check( req:Request, res:Response ) {
-
+export async function check( req:Request, res:Response ) {
 	let lang = req.lang() ; 
-	let { Application , User } = this.db as DBInterface ;
-	//récupération 
 	let { id , type } = req.params  ;
 	let { token } = req.query ; 
-	User.findOne({
-	    where: { rememberToken : token }
-    })
-    	.then( u => {
-	    	if ( u ) {
-	    		if (type=='infusionsoft') {
-	    			Application.find( { where: { compteId : id } } )
-						.then(i => {
-							if ( i ) {
-								u.getTeams( { where: { ApplicationId : i.id as number } })
-									.then(t => {
-										if ( t.length > 0 ) {
-											return res.json( {success : true} )
-										}
-										res.json( {error : true , code : 'CA0001' } )
-									})
-									.catch( e => res.json({ error : true , code : 'CA0002'}) );
-							}else{
-								res.json( {error : true , code : 'CA0001' } )
-							}
-						})
-						.catch( e => res.json({ error : true , code : 'CA0002'}) );
-	    		}else if( type == 'trello' ){
-	    			//@todo : méthode de validation a cherche encore 
-	    			return res.json( {success : true} )
-	    		}
-	    	}else{
-	    		res.json({ error : true , code : 'CA0003'} )
-	    	}
-		})
-		.catch( e => {
-	  		e => res.json({ error : true , code : 'CA0004'} )
-	  	});
-	
+	return res.success( await application.chackuser( token , id , type ) );			
 }
 
 //récupération d'un infusionsoft en particuler avec tout ces statistique 

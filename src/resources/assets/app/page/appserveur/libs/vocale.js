@@ -25,10 +25,27 @@ export class Vocale {
         var pauseButton = document.getElementById("pauseButton");
         var logoRecorder = document.getElementById("logo-recorded");
         var recorderInfo = document.getElementById("recorder-info");
+        var uploadButton = document.getElementById("uploadButton");
+        var audioUpload = document.getElementById("audio-upload");
 
         recordButton.addEventListener("click", startRecording);
         stopButton.addEventListener("click", stopRecording);
+        uploadButton.addEventListener("click", ( e )=>{
+            e.preventDefault()
+            e.stopPropagation()
+            document.getElementById("audio-upload").click();
+        });
+        audioUpload.addEventListener("change", uploadFile);
         //pauseButton.addEventListener("click", pauseRecording);
+        
+        let $this = this ; 
+
+        //ici on veut faire l'upload de fichier 
+        function uploadFile( upload ){
+            if ( $this.recorder ) {
+                $this.recorder( upload.target.files[0] )
+            }
+        }
 
         function startRecording() {
             console.log("recordButton clicked");
@@ -84,7 +101,6 @@ export class Vocale {
             recorderInfo.style.display = 'none';
         }
 
-        let $this = this ; 
         function createDownloadLink(blob) {
             
             if ( $this.recorder ) {

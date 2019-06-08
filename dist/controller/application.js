@@ -42,46 +42,19 @@ var application = require('../libs/application');
 var infusionsoft = require('../libs/infusionsoft');
 var trello = require('../libs/trello');
 function check(req, res) {
-    var lang = req.lang();
-    var _a = this.db, Application = _a.Application, User = _a.User;
-    //récupération 
-    var _b = req.params, id = _b.id, type = _b.type;
-    var token = req.query.token;
-    User.findOne({
-        where: { rememberToken: token }
-    })
-        .then(function (u) {
-        if (u) {
-            if (type == 'infusionsoft') {
-                Application.find({ where: { compteId: id } })
-                    .then(function (i) {
-                    if (i) {
-                        u.getTeams({ where: { ApplicationId: i.id } })
-                            .then(function (t) {
-                            if (t.length > 0) {
-                                return res.json({ success: true });
-                            }
-                            res.json({ error: true, code: 'CA0001' });
-                        })
-                            .catch(function (e) { return res.json({ error: true, code: 'CA0002' }); });
-                    }
-                    else {
-                        res.json({ error: true, code: 'CA0001' });
-                    }
-                })
-                    .catch(function (e) { return res.json({ error: true, code: 'CA0002' }); });
+    return __awaiter(this, void 0, void 0, function () {
+        var lang, _a, id, type, token, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    lang = req.lang();
+                    _a = req.params, id = _a.id, type = _a.type;
+                    token = req.query.token;
+                    _c = (_b = res).success;
+                    return [4 /*yield*/, application.chackuser(token, id, type)];
+                case 1: return [2 /*return*/, _c.apply(_b, [_d.sent()])];
             }
-            else if (type == 'trello') {
-                //@todo : méthode de validation a cherche encore 
-                return res.json({ success: true });
-            }
-        }
-        else {
-            res.json({ error: true, code: 'CA0003' });
-        }
-    })
-        .catch(function (e) {
-        (function (e) { return res.json({ error: true, code: 'CA0004' }); });
+        });
     });
 }
 exports.check = check;

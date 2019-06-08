@@ -98,7 +98,10 @@ module.exports = {
 		ART003 : `Impossible de récupéré le token trello *CODE:ART003*`,
 
 		//AIT001 : `Accunne application est ratacher a cette ID *CODE:AIT001*`,
-		//ARA001 : `Une erreur est produit *CODE:ARA001*`,
+		ARA001 : `Une erreur est produit *CODE:ARA001*`,
+		ARA002 : `Une erreur est produit *CODE:ARA002*`,
+		ARA003 : `Une erreur est produit *CODE:ARA003*`,
+		ARA004 : `Une erreur est produit *CODE:ARA004*`,
 		//les erreur générale de l'applications 
 		//G0001 : `Une erreur est produit veille réactualisé votre app svp *CODE:G0001*`,
 		//Erreur qui se trouve dans la pages teams 
