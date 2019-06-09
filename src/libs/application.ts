@@ -155,7 +155,7 @@ class app {
 	    if (type=='infusionsoft') {
 	    	where['compteId'] = id ; 
 	    }else if( type == 'trello' ){
-	    	where['url'] = id ; 
+	    	where['url'] = { $like: '%' + decodeURIComponent( id ) + '%' } ; 
 		}
 	    console.log( where )
 		let app = await this.item( where ) as ApplicationInstance ; 

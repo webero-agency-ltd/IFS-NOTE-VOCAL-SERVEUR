@@ -8,16 +8,11 @@ var user = require('../libs/user');
 import { DBInterface } from '../interface/DBInterface';
 
 class note {
-
-	constructor() {
-	
-	}
-
 	/*
 	 * Création de ID de note 
 	*/
 	async path( where , unique ){
-
+		console.log( where )
 	    let app = await application.item( where ) 
 	    if ( !app )
 	    	throw new AppError('N0001');
@@ -28,7 +23,7 @@ class note {
 		return dir + unique + '.wav' ;
 
 	}
-
+	
 	async find( id ){
 		let where = {} ;
 		typeof(id)=="object"?where=id:where['id']=id;

@@ -127,6 +127,7 @@ module.exports = {
         EN0005: "Une erreur est produit *CODE:EN0005*",
         EN0006: "Une erreur est produit *CODE:EN0006*",
         EN0007: "Une erreur est produit *CODE:EN0007*",
+        EN0008: "Une erreur est produit *CODE:EN0008*",
         //generale externale page
         //GE000A : `Veillez d'abord paramètre votre application` , 
         //erreur dans la controller pour 

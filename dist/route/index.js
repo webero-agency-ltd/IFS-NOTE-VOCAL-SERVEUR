@@ -93,7 +93,7 @@ module.exports = function (app, db, str) {
             app.post('/note/checks', note.checks.bind({ db: db, str: str }));
             app.get('/note/infusionsoft/:id', note.index.bind({ db: db, str: str }));
             //app.get('/close/:id',ensureAuth,note.close.bind({db,str})) ;
-            app.get('/audio/:id', ensureAuth_1.default, note.listen.bind({ db: db, str: str }));
+            app.get('/audio/:id', hangel.bind({ func: note.listen.bind({ db: db, str: str }) }));
             //app.get('/audio/delete/:id',ensureAuth,note.deleteNote.bind({db,str})) ;
             app.post('/upload', ensureAuth_1.default, hangel.bind({ func: note.upload.bind({ db: db, str: str }) }));
             //app.post('/save/:id',note.save.bind({db,str})) ;
@@ -103,11 +103,11 @@ module.exports = function (app, db, str) {
             //app.get('/tansvase/tasks/:id',tansvase.tasks.bind({db,str})) ;
             //trello ICI 
             app.get('/trello', trello.view.bind({ db: db, str: str }));
-            app.get('/trello/boards/:id', ensureAuth_1.default, trello.boards.bind({ db: db, str: str }));
-            app.get('/trello/lists/:id', ensureAuth_1.default, trello.lists.bind({ db: db, str: str }));
-            app.get('/trello/label/:id', ensureAuth_1.default, trello.label.bind({ db: db, str: str }));
-            app.post('/trello/boards/:id', ensureAuth_1.default, trello.boardsUpdate.bind({ db: db, str: str }));
-            app.get('/trello/membre/:id', ensureAuth_1.default, trello.membre.bind({ db: db }));
+            app.get('/trello/boards/:id', ensureAuth_1.default, hangel.bind({ func: trello.boards.bind({ db: db, str: str }) }));
+            app.post('/trello/boards/:id', ensureAuth_1.default, hangel.bind({ func: trello.boardsUpdate.bind({ db: db, str: str }) }));
+            app.get('/trello/lists/:id', ensureAuth_1.default, hangel.bind({ func: trello.lists.bind({ db: db, str: str }) }));
+            app.get('/trello/label/:id', ensureAuth_1.default, hangel.bind({ func: trello.label.bind({ db: db, str: str }) }));
+            app.get('/trello/membre/:id', ensureAuth_1.default, hangel.bind({ func: trello.membre.bind({ db: db, str: str }) }));
             app.get('/external', ensureAuth_1.default, external.index.bind({ db: db }));
             //ici on fait la création de notes 
             app.post('/external', ensureAuth_1.default, external.create.bind({ db: db }));

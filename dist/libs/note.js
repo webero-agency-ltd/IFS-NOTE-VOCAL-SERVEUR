@@ -55,7 +55,9 @@ var note = /** @class */ (function () {
             var app, dir;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, application.item(where)];
+                    case 0:
+                        console.log(where);
+                        return [4 /*yield*/, application.item(where)];
                     case 1:
                         app = _a.sent();
                         if (!app)

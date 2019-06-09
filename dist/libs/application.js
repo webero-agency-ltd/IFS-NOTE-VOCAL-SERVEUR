@@ -268,7 +268,7 @@ var app = /** @class */ (function () {
                             where['compteId'] = id;
                         }
                         else if (type == 'trello') {
-                            where['url'] = id;
+                            where['url'] = { $like: '%' + decodeURIComponent(id) + '%' };
                         }
                         console.log(where);
                         return [4 /*yield*/, this.item(where)];

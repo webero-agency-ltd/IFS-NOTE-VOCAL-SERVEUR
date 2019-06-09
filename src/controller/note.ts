@@ -5,6 +5,8 @@ const path = require('path') ;
 const fs = require('fs') ; 
 const Busboy = require('busboy'); 
 var note = require('../libs/note'); 
+var application = require('../libs/application'); 
+var AppError = require('../libs/AppError');
 
 //liste de tout les notes d'un utilisateur en particulier 
 //@todo : il faut bien avoire une session pour faire la recherche pour ne pas afficher tout les notes 
@@ -55,17 +57,18 @@ export function item( req:Request, res:Response ) {
 }
 
 //écouter un note en particuler 
-export function listen( req:Request, res:Response ) {
+export async function listen( req:Request, res:Response ) {
 	//@todo : bien entendue, il faut faire la vérification si vous avez le droit 
 	//d'écouter ou non le contenu de cette notes 
-
 	//écouter une note en particulier 
 	let lang = req.lang() ; 
 	let { id } = req.params ; 
 	if ( id ) {
-		//Le filename représente l'ID du fichier 
-		let nameFile =  id+'.wav' ;
-		let filePath = path.join(__dirname, '../','/notes/') + nameFile ; 
+		//application
+		let n = await note.find( { unique : id } ) ;
+		if ( !n ) 
+		    throw new AppError('EN0008');
+		let filePath = await note.path( { id : n.ApplicationId } , id ) ;
 		if ( ! fs.existsSync( filePath ) ) {
 			return res.send(lang['filesnoteimpty']);
 		}
@@ -137,17 +140,14 @@ export function checks( req:Request, res:Response ) {
 
 }
 
-export function check( req:Request, res:Response ) {
+export async function check( req:Request, res:Response ) {
 	let { id } = req.params ;  
-	let { User, Note , Application } = this.db as DBInterface ;
-	Note.findOne( { where: { unique : id } } )
-		.then(n => {
-			if (n) {
-				return res.json( { success : true } )
-			}
-			res.status(400).json({ error : true })
-		})
-		.catch( e => res.status(400).json({ error : true }) );
+	let where = { $like: '%' + decodeURIComponent( id ) + '%' } ; 
+	let n = await note.find({ where })
+	if ( n ) {
+		return  res.success( n )
+	}
+	return  res.status(400).error('check')
 }
 
 //uploade d'un audion pour l'enregistré dans vos notes  
@@ -155,6 +155,8 @@ export async function upload( req:Request, res:Response ) {
 	 
 	let { file , NOTEID , type , appId , newId , title , text, token } = req.query ; 
 	let busboy = new Busboy({ headers: req.headers });
+	console.log( '---------------------------------' )
+	console.log( NOTEID , type , appId )
 	let filePath = await note.path( { id : appId } , NOTEID ) ;
 	//récupération token utilisateur 
 	let userwhere = {}

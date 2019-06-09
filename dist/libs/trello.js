@@ -139,6 +139,29 @@ var trello = /** @class */ (function () {
         });
     };
     /*
+     * Récupération de tout les cards de trello
+    */
+    trello.prototype.cards = function (_a) {
+        var board = _a.board, token = _a.token;
+        return __awaiter(this, void 0, void 0, function () {
+            var url, _b, error, info, body, reponse;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        url = this.api + 'boards/' + board + '/cards?fields=all&key=' + site.trelloKey + '&token=' + token;
+                        return [4 /*yield*/, request.get(url)];
+                    case 1:
+                        _b = _c.sent(), error = _b.error, info = _b.info, body = _b.body;
+                        if (!error && info.statusCode == 200) {
+                            reponse = json(body, []);
+                            return [2 /*return*/, { success: reponse }];
+                        }
+                        return [2 /*return*/, { error: error }];
+                }
+            });
+        });
+    };
+    /*
      * Récupération de tout les token trello
     */
     trello.prototype.findtoken = function (_a) {
@@ -152,8 +175,10 @@ var trello = /** @class */ (function () {
                         app = _c.sent();
                         if (!app)
                             throw new AppError('ART001');
+                        //récupération de tout les card ce cette application
                         return [4 /*yield*/, application.update(id, { accessToken: token })];
                     case 2:
+                        //récupération de tout les card ce cette application
                         _c.sent();
                         url = this.api + 'members/me?key=' + site.trelloKey + '&token=' + token;
                         return [4 /*yield*/, request.get(url)];

@@ -17,15 +17,10 @@ export async function membre( req:Request, res:Response ) {
 	let lang = req.lang() ; 
 	let { Application , User , Team } = this.db as DBInterface ;
 	let { id } = req.params ; 
-	let err : any ;  
-	let data  ;
-	//récupération des utilisateur courant 
-	data as ApplicationInstance ;
-	[ err , data ] = await to(Application.find({ where: { id } })) 
-    if ( err ) {
+	let i = await application.item( id ) ; 
+	if ( !i ) {
     	return res.error('TMBU001') ; 
     }
-    let i = data ; 
     let { success , error } = await trello.membres({ board : i.compteId , token : i.accessToken }) ; 
 	if ( success ) {
 		return res.success( success );  
@@ -34,24 +29,20 @@ export async function membre( req:Request, res:Response ) {
 } 
 
 export async function boardsUpdate( req:Request, res:Response ) {
-	let { Application , User } = this.db as DBInterface ;
 	let lang = req.lang() ; 
 	let { id } = req.params ; 
 	let { compteId , url } = req.body ; 
-	let err : any ;  
-	let data  ;
-	//récupération des utilisateur courant 
-	data as ApplicationInstance ;
-	[ err , data ] = await to(Application.find({ where: { id } })) 
-    if ( err ) {
-    	return res.error('TMBU001') ; 
-    }
-    let i = data ; 
-    [ err , data ] = await to(i.update({ compteId , url })) 
-    if ( err ) {
-    	return res.error('TMBU002') ; 
-    }
-	return res.success( i );  
+	//récupération des cars de trello 
+	let app = await application.item( id ) ; 
+	let cards = await trello.cards({ board : app.compteId , token : app.accessToken })
+	console.log( cards.success.map(({ url , shortUrl })=>{
+		return { url , shortUrl }  ;
+	}) )
+	cards.success.push({ url })
+	let cardstring = cards.success.map(({ url })=>{
+		return decodeURIComponent(url.replace('https://trello.com', ''))  ;
+	}).join() ; 
+	return res.success( await application.update( id , { compteId , url : cardstring } ) );
 }
 
 /*
@@ -62,15 +53,10 @@ export async function boards( req:Request, res:Response ) {
 	let { Application , User } = this.db as DBInterface ;
 	let lang = req.lang() ; 
 	let { id } = req.params ; 
-	let err : any ;  
-	let data  ;
-	//récupération des utilisateur courant 
-	data as ApplicationInstance ;
-	[ err , data ] = await to(Application.find( { where: { id } } )) 
-    if ( err ) {
+	let i = await application.item( id ) ; 
+	if ( !i ) {
     	return res.error('TMB001') ; 
     }
-    let i = data ; 
     let { success , error } = await trello.boards({ token : i.accessToken }) ; 
 	if ( success ) {
 		return res.success( success );  
@@ -85,15 +71,10 @@ export async function lists( req:Request, res:Response ) {
 	let { Application , User } = this.db as DBInterface ;
 	let lang = req.lang() ; 
 	let { id } = req.params ; 
-	let err : any ;  
-	let data  ;
-	//récupération des utilisateur courant 
-	data as ApplicationInstance ;
-	[ err , data ] = await to(Application.find( { where: { id } } )) 
-    if ( err ) {
+    let i = await application.item( id ) ; 
+	if ( !i ) {
     	return res.error('TML001') ; 
     }
-    let i = data ; 
     let { success , error } = await trello.lists({ board : i.compteId , token : i.accessToken }) ; 
 	if ( success ) {
 		return res.success( success );  
@@ -107,18 +88,12 @@ export async function lists( req:Request, res:Response ) {
  * Récupération des label dans un application trello
 */
 export async function label( req:Request, res:Response ) {
-	let { Application , User } = this.db as DBInterface ;
 	let lang = req.lang() ; 
-	let { id } = req.params ; 
-	let err : any ;  
-	let data  ;
-	//récupération des utilisateur courant 
-	data as ApplicationInstance ;
-	[ err , data ] = await to(Application.find( { where: { id } } )) 
-    if ( err ) {
+	let { id } = req.params ;
+	let i = await application.item( id ) ; 
+	if ( !i ) {
     	return res.error('TML001') ; 
     }
-    let i = data ; 
     let { success , error } = await trello.labels({ board : i.compteId , token : i.accessToken }) ; 
 	if ( success ) {
 		return res.success( success );  

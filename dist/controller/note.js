@@ -43,6 +43,8 @@ var path = require('path');
 var fs = require('fs');
 var Busboy = require('busboy');
 var note = require('../libs/note');
+var application = require('../libs/application');
+var AppError = require('../libs/AppError');
 //liste de tout les notes d'un utilisateur en particulier 
 //@todo : il faut bien avoire une session pour faire la recherche pour ne pas afficher tout les notes 
 //d'un utilisateur qui n'est pas la votre
@@ -94,55 +96,64 @@ function item(req, res) {
 exports.item = item;
 //écouter un note en particuler 
 function listen(req, res) {
-    //@todo : bien entendue, il faut faire la vérification si vous avez le droit 
-    //d'écouter ou non le contenu de cette notes 
-    //écouter une note en particulier 
-    var lang = req.lang();
-    var id = req.params.id;
-    if (id) {
-        //Le filename représente l'ID du fichier 
-        var nameFile = id + '.wav';
-        var filePath = path.join(__dirname, '../', '/notes/') + nameFile;
-        if (!fs.existsSync(filePath)) {
-            return res.send(lang['filesnoteimpty']);
-        }
-        ////////////////////////////////////////////////////
-        var stat = fs.statSync(filePath);
-        var fileSize = stat.size;
-        var range = req.headers.range;
-        if (range) {
-            var parts = range.replace(/bytes=/, "").split("-");
-            var start = parseInt(parts[0], 10);
-            var end = parts[1]
-                ? parseInt(parts[1], 10)
-                : fileSize - 1;
-            var chunksize = (end - start) + 1;
-            var readStream = fs.createReadStream(filePath, { start: start, end: end });
-            var head = {
-                'Content-Range': "bytes " + start + "-" + end + "/" + fileSize,
-                'Accept-Ranges': 'bytes',
-                'Content-Length': chunksize,
-                'Content-Type': 'video/mp4',
-            };
-            res.writeHead(206, head);
-            this.str.openStream(id, readStream);
-            readStream.pipe(res);
-        }
-        else {
-            var head = {
-                'Content-Length': fileSize,
-                'Content-Type': 'video/mp4',
-            };
-            res.writeHead(200, head);
-            var stream = fs.createReadStream(filePath);
-            this.str.openStream(id, stream);
-            stream.pipe(res);
-        }
-        ////////////////////////////////////////////////////
-        return true;
-    }
-    // ici le fichier n'est pas trouver 
-    return res.send(lang['filesnoteimpty']);
+    return __awaiter(this, void 0, void 0, function () {
+        var lang, id, n, filePath, stat, fileSize, range, parts, start, end, chunksize, readStream, head, head, stream;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    lang = req.lang();
+                    id = req.params.id;
+                    if (!id) return [3 /*break*/, 3];
+                    return [4 /*yield*/, note.find({ unique: id })];
+                case 1:
+                    n = _a.sent();
+                    if (!n)
+                        throw new AppError('EN0008');
+                    return [4 /*yield*/, note.path({ id: n.ApplicationId }, id)];
+                case 2:
+                    filePath = _a.sent();
+                    if (!fs.existsSync(filePath)) {
+                        return [2 /*return*/, res.send(lang['filesnoteimpty'])];
+                    }
+                    stat = fs.statSync(filePath);
+                    fileSize = stat.size;
+                    range = req.headers.range;
+                    if (range) {
+                        parts = range.replace(/bytes=/, "").split("-");
+                        start = parseInt(parts[0], 10);
+                        end = parts[1]
+                            ? parseInt(parts[1], 10)
+                            : fileSize - 1;
+                        chunksize = (end - start) + 1;
+                        readStream = fs.createReadStream(filePath, { start: start, end: end });
+                        head = {
+                            'Content-Range': "bytes " + start + "-" + end + "/" + fileSize,
+                            'Accept-Ranges': 'bytes',
+                            'Content-Length': chunksize,
+                            'Content-Type': 'video/mp4',
+                        };
+                        res.writeHead(206, head);
+                        this.str.openStream(id, readStream);
+                        readStream.pipe(res);
+                    }
+                    else {
+                        head = {
+                            'Content-Length': fileSize,
+                            'Content-Type': 'video/mp4',
+                        };
+                        res.writeHead(200, head);
+                        stream = fs.createReadStream(filePath);
+                        this.str.openStream(id, stream);
+                        stream.pipe(res);
+                    }
+                    ////////////////////////////////////////////////////
+                    return [2 /*return*/, true];
+                case 3: 
+                // ici le fichier n'est pas trouver 
+                return [2 /*return*/, res.send(lang['filesnoteimpty'])];
+            }
+        });
+    });
 }
 exports.listen = listen;
 /*
@@ -173,16 +184,23 @@ function checks(req, res) {
 }
 exports.checks = checks;
 function check(req, res) {
-    var id = req.params.id;
-    var _a = this.db, User = _a.User, Note = _a.Note, Application = _a.Application;
-    Note.findOne({ where: { unique: id } })
-        .then(function (n) {
-        if (n) {
-            return res.json({ success: true });
-        }
-        res.status(400).json({ error: true });
-    })
-        .catch(function (e) { return res.status(400).json({ error: true }); });
+    return __awaiter(this, void 0, void 0, function () {
+        var id, where, n;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    id = req.params.id;
+                    where = { $like: '%' + decodeURIComponent(id) + '%' };
+                    return [4 /*yield*/, note.find({ where: where })];
+                case 1:
+                    n = _a.sent();
+                    if (n) {
+                        return [2 /*return*/, res.success(n)];
+                    }
+                    return [2 /*return*/, res.status(400).error('check')];
+            }
+        });
+    });
 }
 exports.check = check;
 //uploade d'un audion pour l'enregistré dans vos notes  
@@ -195,6 +213,8 @@ function upload(req, res) {
                 case 0:
                     _a = req.query, file = _a.file, NOTEID = _a.NOTEID, type = _a.type, appId = _a.appId, newId = _a.newId, title = _a.title, text = _a.text, token = _a.token;
                     busboy = new Busboy({ headers: req.headers });
+                    console.log('---------------------------------');
+                    console.log(NOTEID, type, appId);
                     return [4 /*yield*/, note.path({ id: appId }, NOTEID)];
                 case 1:
                     filePath = _b.sent();

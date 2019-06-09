@@ -61,7 +61,7 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	app.post('/note/checks',note.checks.bind({db,str})) ;
 	app.get('/note/infusionsoft/:id',note.index.bind({db,str})) ;
 	//app.get('/close/:id',ensureAuth,note.close.bind({db,str})) ;
-	app.get('/audio/:id',ensureAuth,note.listen.bind({db,str})) ;
+	app.get('/audio/:id', hangel.bind({ func : note.listen.bind({db,str}) }) ) ;
 	//app.get('/audio/delete/:id',ensureAuth,note.deleteNote.bind({db,str})) ;
 
 	app.post('/upload',ensureAuth,hangel.bind({ func : note.upload.bind({db,str}) })) ;
@@ -74,12 +74,13 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	
 	//trello ICI 
 	app.get('/trello',trello.view.bind({db,str})) ;
-	app.get('/trello/boards/:id',ensureAuth,trello.boards.bind({db,str})) ;
-	app.get('/trello/lists/:id',ensureAuth,trello.lists.bind({db,str})) ;
-	app.get('/trello/label/:id',ensureAuth,trello.label.bind({db,str})) ;
-	app.post('/trello/boards/:id',ensureAuth,trello.boardsUpdate.bind({db,str})) ;
-	app.get('/trello/membre/:id',ensureAuth,trello.membre.bind({db})) ;
 
+	app.get('/trello/boards/:id',ensureAuth,hangel.bind({ func : trello.boards.bind({db,str}) })) ;
+	app.post('/trello/boards/:id',ensureAuth,hangel.bind({ func : trello.boardsUpdate.bind({db,str}) })) ;
+	app.get('/trello/lists/:id',ensureAuth,hangel.bind({ func : trello.lists.bind({db,str}) })) ;
+	app.get('/trello/label/:id',ensureAuth,hangel.bind({ func : trello.label.bind({db,str}) })) ;
+	app.get('/trello/membre/:id',ensureAuth,hangel.bind({ func : trello.membre.bind({db,str}) })) ;
+	
 	app.get('/external',ensureAuth,external.index.bind({db})) ;
 	//ici on fait la création de notes 
 	app.post('/external',ensureAuth,external.create.bind({db})) ;

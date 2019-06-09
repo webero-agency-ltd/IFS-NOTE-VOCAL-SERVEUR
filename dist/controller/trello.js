@@ -34,11 +34,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var promise_1 = __importDefault(require("../libs/promise"));
 var url = require('url');
 var trello = require('../libs/trello');
 var application = require('../libs/application');
@@ -48,25 +44,22 @@ function view(req, res) {
 exports.view = view;
 function membre(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, lang, _b, Application, User, Team, id, err, data, i, _c, success, error;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
+        var lang, _a, Application, User, Team, id, i, _b, success, error;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
                     lang = req.lang();
-                    _b = this.db, Application = _b.Application, User = _b.User, Team = _b.Team;
+                    _a = this.db, Application = _a.Application, User = _a.User, Team = _a.Team;
                     id = req.params.id;
-                    //récupération des utilisateur courant 
-                    data;
-                    return [4 /*yield*/, promise_1.default(Application.find({ where: { id: id } }))];
+                    return [4 /*yield*/, application.item(id)];
                 case 1:
-                    _a = _d.sent(), err = _a[0], data = _a[1];
-                    if (err) {
+                    i = _c.sent();
+                    if (!i) {
                         return [2 /*return*/, res.error('TMBU001')];
                     }
-                    i = data;
                     return [4 /*yield*/, trello.membres({ board: i.compteId, token: i.accessToken })];
                 case 2:
-                    _c = _d.sent(), success = _c.success, error = _c.error;
+                    _b = _c.sent(), success = _b.success, error = _b.error;
                     if (success) {
                         return [2 /*return*/, res.success(success)];
                     }
@@ -78,30 +71,31 @@ function membre(req, res) {
 exports.membre = membre;
 function boardsUpdate(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, _b, _c, Application, User, lang, id, _d, compteId, url, err, data, i;
-        return __generator(this, function (_e) {
-            switch (_e.label) {
+        var lang, id, _a, compteId, url, app, cards, cardstring, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
                 case 0:
-                    _c = this.db, Application = _c.Application, User = _c.User;
                     lang = req.lang();
                     id = req.params.id;
-                    _d = req.body, compteId = _d.compteId, url = _d.url;
-                    //récupération des utilisateur courant 
-                    data;
-                    return [4 /*yield*/, promise_1.default(Application.find({ where: { id: id } }))];
+                    _a = req.body, compteId = _a.compteId, url = _a.url;
+                    return [4 /*yield*/, application.item(id)];
                 case 1:
-                    _a = _e.sent(), err = _a[0], data = _a[1];
-                    if (err) {
-                        return [2 /*return*/, res.error('TMBU001')];
-                    }
-                    i = data;
-                    return [4 /*yield*/, promise_1.default(i.update({ compteId: compteId, url: url }))];
+                    app = _d.sent();
+                    return [4 /*yield*/, trello.cards({ board: app.compteId, token: app.accessToken })];
                 case 2:
-                    _b = _e.sent(), err = _b[0], data = _b[1];
-                    if (err) {
-                        return [2 /*return*/, res.error('TMBU002')];
-                    }
-                    return [2 /*return*/, res.success(i)];
+                    cards = _d.sent();
+                    console.log(cards.success.map(function (_a) {
+                        var url = _a.url, shortUrl = _a.shortUrl;
+                        return { url: url, shortUrl: shortUrl };
+                    }));
+                    cards.success.push({ url: url });
+                    cardstring = cards.success.map(function (_a) {
+                        var url = _a.url;
+                        return decodeURIComponent(url.replace('https://trello.com', ''));
+                    }).join();
+                    _c = (_b = res).success;
+                    return [4 /*yield*/, application.update(id, { compteId: compteId, url: cardstring })];
+                case 3: return [2 /*return*/, _c.apply(_b, [_d.sent()])];
             }
         });
     });
@@ -113,25 +107,22 @@ exports.boardsUpdate = boardsUpdate;
 */
 function boards(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, _b, Application, User, lang, id, err, data, i, _c, success, error;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
+        var _a, Application, User, lang, id, i, _b, success, error;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
-                    _b = this.db, Application = _b.Application, User = _b.User;
+                    _a = this.db, Application = _a.Application, User = _a.User;
                     lang = req.lang();
                     id = req.params.id;
-                    //récupération des utilisateur courant 
-                    data;
-                    return [4 /*yield*/, promise_1.default(Application.find({ where: { id: id } }))];
+                    return [4 /*yield*/, application.item(id)];
                 case 1:
-                    _a = _d.sent(), err = _a[0], data = _a[1];
-                    if (err) {
+                    i = _c.sent();
+                    if (!i) {
                         return [2 /*return*/, res.error('TMB001')];
                     }
-                    i = data;
                     return [4 /*yield*/, trello.boards({ token: i.accessToken })];
                 case 2:
-                    _c = _d.sent(), success = _c.success, error = _c.error;
+                    _b = _c.sent(), success = _b.success, error = _b.error;
                     if (success) {
                         return [2 /*return*/, res.success(success)];
                     }
@@ -146,25 +137,22 @@ exports.boards = boards;
 */
 function lists(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, _b, Application, User, lang, id, err, data, i, _c, success, error;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
+        var _a, Application, User, lang, id, i, _b, success, error;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
-                    _b = this.db, Application = _b.Application, User = _b.User;
+                    _a = this.db, Application = _a.Application, User = _a.User;
                     lang = req.lang();
                     id = req.params.id;
-                    //récupération des utilisateur courant 
-                    data;
-                    return [4 /*yield*/, promise_1.default(Application.find({ where: { id: id } }))];
+                    return [4 /*yield*/, application.item(id)];
                 case 1:
-                    _a = _d.sent(), err = _a[0], data = _a[1];
-                    if (err) {
+                    i = _c.sent();
+                    if (!i) {
                         return [2 /*return*/, res.error('TML001')];
                     }
-                    i = data;
                     return [4 /*yield*/, trello.lists({ board: i.compteId, token: i.accessToken })];
                 case 2:
-                    _c = _d.sent(), success = _c.success, error = _c.error;
+                    _b = _c.sent(), success = _b.success, error = _b.error;
                     if (success) {
                         return [2 /*return*/, res.success(success)];
                     }
@@ -180,25 +168,21 @@ exports.lists = lists;
 */
 function label(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, _b, Application, User, lang, id, err, data, i, _c, success, error;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
+        var lang, id, i, _a, success, error;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
-                    _b = this.db, Application = _b.Application, User = _b.User;
                     lang = req.lang();
                     id = req.params.id;
-                    //récupération des utilisateur courant 
-                    data;
-                    return [4 /*yield*/, promise_1.default(Application.find({ where: { id: id } }))];
+                    return [4 /*yield*/, application.item(id)];
                 case 1:
-                    _a = _d.sent(), err = _a[0], data = _a[1];
-                    if (err) {
+                    i = _b.sent();
+                    if (!i) {
                         return [2 /*return*/, res.error('TML001')];
                     }
-                    i = data;
                     return [4 /*yield*/, trello.labels({ board: i.compteId, token: i.accessToken })];
                 case 2:
-                    _c = _d.sent(), success = _c.success, error = _c.error;
+                    _a = _b.sent(), success = _a.success, error = _a.error;
                     if (success) {
                         return [2 /*return*/, res.success(success)];
                     }

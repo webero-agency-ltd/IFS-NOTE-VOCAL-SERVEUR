@@ -42,7 +42,7 @@ export const ApplicationFactory = (sequelize: Sequelize.Sequelize, DataTypes: Se
           type: DataTypes.STRING
       },
       url: {
-          type: DataTypes.STRING
+          type: DataTypes.TEXT
       },
       accessToken: {
           type: DataTypes.TEXT

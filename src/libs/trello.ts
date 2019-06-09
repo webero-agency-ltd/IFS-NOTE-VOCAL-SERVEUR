@@ -69,6 +69,20 @@ class trello {
 	    return { error };
 	}
 
+
+	/*
+	 * Récupération de tout les cards de trello 
+	*/
+	async cards({ board , token }){
+		let url = this.api+'boards/' + board + '/cards?fields=all&key=' + site.trelloKey + '&token=' + token ; 
+		let { error, info , body } = await request.get( url )
+		if ( !error && info.statusCode == 200 ) {
+			let reponse = json( body , [] )
+	    	return { success : reponse };
+	    }
+	    return { error };
+	}
+
 	/*
  	 * Récupération de tout les token trello
 	*/
@@ -76,6 +90,7 @@ class trello {
 	    let app = await application.item( id ) ;  
 	    if ( !app )  
 	    	throw new AppError('ART001');
+	    //récupération de tout les card ce cette application
 	    await application.update( id , { accessToken: token } )
 	    let url = this.api+'members/me?key='+site.trelloKey+'&token='+ token ; 
 	    let { error, info , body } = await request.get( url )
