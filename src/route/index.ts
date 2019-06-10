@@ -80,7 +80,9 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	app.get('/trello/lists/:id',ensureAuth,hangel.bind({ func : trello.lists.bind({db,str}) })) ;
 	app.get('/trello/label/:id',ensureAuth,hangel.bind({ func : trello.label.bind({db,str}) })) ;
 	app.get('/trello/membre/:id',ensureAuth,hangel.bind({ func : trello.membre.bind({db,str}) })) ;
-	
+	app.get('/trello/on/:id',hangel.bind({ func : trello.event.bind({db,str}) })) ;
+	app.post('/trello/on/:id',hangel.bind({ func : trello.event.bind({db,str}) })) ;
+	 
 	app.get('/external',ensureAuth,external.index.bind({db})) ;
 	//ici on fait la création de notes 
 	app.post('/external',ensureAuth,external.create.bind({db})) ;

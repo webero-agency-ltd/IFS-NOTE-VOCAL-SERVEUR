@@ -64,6 +64,22 @@ function get(url, headers) {
     }); });
 }
 exports.get = get;
+function destroy(url, headers) {
+    var _this = this;
+    if (headers === void 0) { headers = {}; }
+    return new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, request({
+                    headers: __assign({ 'Content-Type': 'application/json' }, headers),
+                    uri: url,
+                    method: 'DELETE'
+                }, function (error, info, body) {
+                    resolve({ error: error, info: info, body: body });
+                })];
+        });
+    }); });
+}
+exports.destroy = destroy;
 function post(url, body, headers) {
     var _this = this;
     if (headers === void 0) { headers = {}; }

@@ -69,6 +69,44 @@ function membre(req, res) {
     });
 }
 exports.membre = membre;
+function event(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var lang, id, app, cards, boards, url, cardstring, _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    lang = req.lang();
+                    id = req.params.id;
+                    if (req.body.action.type !== 'createCard')
+                        return [2 /*return*/, res.success()];
+                    return [4 /*yield*/, application.item(id)];
+                case 1:
+                    app = _c.sent();
+                    if (!app)
+                        return [2 /*return*/, res.success()];
+                    return [4 /*yield*/, trello.cards({ board: app.compteId, token: app.accessToken })];
+                case 2:
+                    cards = _c.sent();
+                    return [4 /*yield*/, trello.board({ token: app.accessToken, id: app.compteId })];
+                case 3:
+                    boards = _c.sent();
+                    if (!boards.success || !boards.success.url)
+                        return [2 /*return*/, res.success()];
+                    url = boards.success.url;
+                    cards.success.push({ url: url });
+                    cardstring = cards.success.map(function (_a) {
+                        var url = _a.url;
+                        return decodeURIComponent(url.replace('https://trello.com', ''));
+                    }).join();
+                    console.log(cardstring);
+                    _b = (_a = res).success;
+                    return [4 /*yield*/, application.update(id, { url: cardstring })];
+                case 4: return [2 /*return*/, _b.apply(_a, [_c.sent()])];
+            }
+        });
+    });
+}
+exports.event = event;
 function boardsUpdate(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var lang, id, _a, compteId, url, app, cards, cardstring, _b, _c;
@@ -81,7 +119,7 @@ function boardsUpdate(req, res) {
                     return [4 /*yield*/, application.item(id)];
                 case 1:
                     app = _d.sent();
-                    return [4 /*yield*/, trello.cards({ board: app.compteId, token: app.accessToken })];
+                    return [4 /*yield*/, trello.cards({ board: compteId, token: app.accessToken })];
                 case 2:
                     cards = _d.sent();
                     console.log(cards.success.map(function (_a) {
@@ -93,9 +131,21 @@ function boardsUpdate(req, res) {
                         var url = _a.url;
                         return decodeURIComponent(url.replace('https://trello.com', ''));
                     }).join();
+                    //suppression de l'ancien webhook 
+                    return [4 /*yield*/, trello.deleteWebhook({ board: app.compteId, token: app.accessToken })
+                        //ajout de webhook 
+                    ];
+                case 3:
+                    //suppression de l'ancien webhook 
+                    _d.sent();
+                    //ajout de webhook 
+                    return [4 /*yield*/, trello.webhook({ board: compteId, token: app.accessToken, app: app.id })];
+                case 4:
+                    //ajout de webhook 
+                    _d.sent();
                     _c = (_b = res).success;
                     return [4 /*yield*/, application.update(id, { compteId: compteId, url: cardstring })];
-                case 3: return [2 /*return*/, _c.apply(_b, [_d.sent()])];
+                case 5: return [2 /*return*/, _c.apply(_b, [_d.sent()])];
             }
         });
     });

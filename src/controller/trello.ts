@@ -28,13 +28,36 @@ export async function membre( req:Request, res:Response ) {
     return res.error('TMBU003') ;
 } 
 
+export async function event( req:Request, res:Response ) {
+	let lang = req.lang() ; 
+	let { id } = req.params ; 
+	if ( req.body.action.type !== 'createCard' ) 
+	 	return res.success();  
+	//on fait l'upldate de tout les cards de l'application ici :) 
+	let app = await application.item( id ) ; 
+	if ( !app ) 
+	 	return res.success();  
+	let cards = await trello.cards({ board : app.compteId , token : app.accessToken })
+	let boards = await trello.board({ token : app.accessToken , id : app.compteId }) ; 
+	if ( !boards.success || !boards.success.url ) 
+	 	return res.success();  
+	let url = boards.success.url ;
+	cards.success.push({ url })
+	let cardstring = cards.success.map(({ url })=>{
+		return decodeURIComponent(url.replace('https://trello.com', ''))  ;
+	}).join() ; 
+	console.log( cardstring ) ; 
+	return res.success( await application.update( id , { url : cardstring } ) );
+} 
+
 export async function boardsUpdate( req:Request, res:Response ) {
+
 	let lang = req.lang() ; 
 	let { id } = req.params ; 
 	let { compteId , url } = req.body ; 
 	//récupération des cars de trello 
 	let app = await application.item( id ) ; 
-	let cards = await trello.cards({ board : app.compteId , token : app.accessToken })
+	let cards = await trello.cards({ board : compteId , token : app.accessToken })
 	console.log( cards.success.map(({ url , shortUrl })=>{
 		return { url , shortUrl }  ;
 	}) )
@@ -42,6 +65,10 @@ export async function boardsUpdate( req:Request, res:Response ) {
 	let cardstring = cards.success.map(({ url })=>{
 		return decodeURIComponent(url.replace('https://trello.com', ''))  ;
 	}).join() ; 
+	//suppression de l'ancien webhook 
+	await trello.deleteWebhook( { board : app.compteId , token : app.accessToken } )
+	//ajout de webhook 
+	await trello.webhook( { board : compteId , token : app.accessToken , app : app.id } )
 	return res.success( await application.update( id , { compteId , url : cardstring } ) );
 }
 

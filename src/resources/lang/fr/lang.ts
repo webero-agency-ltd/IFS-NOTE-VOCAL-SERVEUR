@@ -96,6 +96,7 @@ module.exports = {
 		ART001 : `Impossible de trouver l'app trello *CODE:ART001*`,
 		//ART002 : `Impossible de trouver l'app trello *CODE:ART002*`,
 		ART003 : `Impossible de récupéré le token trello *CODE:ART003*`,
+		ART004 : `Impossible de récupéré le token trello *CODE:ART004*`,
 
 		//AIT001 : `Accunne application est ratacher a cette ID *CODE:AIT001*`,
 		ARA001 : `Une erreur est produit *CODE:ARA001*`,

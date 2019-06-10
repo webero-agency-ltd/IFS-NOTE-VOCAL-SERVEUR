@@ -108,6 +108,8 @@ module.exports = function (app, db, str) {
             app.get('/trello/lists/:id', ensureAuth_1.default, hangel.bind({ func: trello.lists.bind({ db: db, str: str }) }));
             app.get('/trello/label/:id', ensureAuth_1.default, hangel.bind({ func: trello.label.bind({ db: db, str: str }) }));
             app.get('/trello/membre/:id', ensureAuth_1.default, hangel.bind({ func: trello.membre.bind({ db: db, str: str }) }));
+            app.get('/trello/on/:id', hangel.bind({ func: trello.event.bind({ db: db, str: str }) }));
+            app.post('/trello/on/:id', hangel.bind({ func: trello.event.bind({ db: db, str: str }) }));
             app.get('/external', ensureAuth_1.default, external.index.bind({ db: db }));
             //ici on fait la création de notes 
             app.post('/external', ensureAuth_1.default, external.create.bind({ db: db }));

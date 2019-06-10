@@ -13,6 +13,18 @@ export function get( url , headers = {} ) : Promise <object> {
 	});
 }
 
+export function destroy( url , headers = {} ) : Promise <object> {
+	return new Promise<object>( async (resolve) => { 
+		return request({
+		    headers :  { 'Content-Type': 'application/json' , ...headers } ,
+		    uri:url,
+		    method: 'DELETE'
+		}, function ( error, info , body ) {	
+			resolve( { error, info , body } )
+		});
+	});
+}
+
 export function post( url , body , headers = {} ) : Promise <object> {
 	let formData = querystring.stringify( body );
 	let contentLength = formData.length;

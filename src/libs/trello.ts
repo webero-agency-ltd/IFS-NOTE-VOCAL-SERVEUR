@@ -3,6 +3,7 @@ var request = require('../libs/request') ;
 var json = require('../libs/json');
 var application = require('../libs/application');
 var team = require('../libs/team');
+var AppError = require('../libs/AppError');
 
 /*
  * Classe de manipulation des actions vers trello 
@@ -21,6 +22,16 @@ class trello {
 	*/
 	async boards( { token , id } ){
 	    let url = this.api+'members/'+( id?id:'me' )+'/boards?key=' + site.trelloKey + '&token=' + token ; 
+	    let { error, info , body } = await request.get( url ) ; 
+		if ( !error && info.statusCode == 200 ) {
+			let data = json( body , [] )
+	    	return { success : data };
+	    }
+	    return { error };
+	}
+
+	async board( { token , id } ){
+	    let url = this.api+'boards/'+ id +'?key=' + site.trelloKey + '&token=' + token ; 
 	    let { error, info , body } = await request.get( url ) ; 
 		if ( !error && info.statusCode == 200 ) {
 			let data = json( body , [] )
@@ -101,6 +112,39 @@ class trello {
 		await team.update( { ApplicationId : id } , { contactid : jsonp.id } ) ; 
 		return true ;
 	}
+
+	/*
+	 * Supression de vos webhook 
+	*/
+	async deleteWebhook( { board , token } ){
+		let url = this.api+`tokens/${token}/webhooks/?key=${site.trelloKey}`; 
+	    let { error, info , body } = await request.get( url )
+		if ( error && info.statusCode != 200 ) 
+	    	throw new AppError('ART004');
+	    let jsonp = json( body , [] );
+	    if ( jsonp.length > 0 ) {
+			let url = this.api+`webhooks/${jsonp[0].id}/?key=${site.trelloKey}&token=${token}`; 
+			console.log('----DELETE CONSOLE' , url )
+	    	let { error, info , body } = await request.destroy( url )
+	    	throw new AppError('ART005');
+	    }
+	}
+
+	/*
+ 	 * Ajout de webhook
+	*/
+	async webhook( { board , token , app } ){
+		let url = this.api+`tokens/${token}/webhooks/?key=${site.trelloKey}`; 		
+	    let form = {
+			idModel: board , 
+			description: 'Event Board Vocal Note' , 
+			callbackURL: 'https://therapiequantique.net/trello/on/'+app , 
+		};
+		var { error, info , body } = await request.post( url , form ) ;
+		if ( error && info.statusCode != 200 ) 
+	    	throw new AppError('ART006');
+	}
+	
 }
 
 module.exports = new trello() ; 

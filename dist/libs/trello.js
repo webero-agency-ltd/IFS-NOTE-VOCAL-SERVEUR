@@ -38,6 +38,7 @@ var request = require('../libs/request');
 var json = require('../libs/json');
 var application = require('../libs/application');
 var team = require('../libs/team');
+var AppError = require('../libs/AppError');
 /*
  * Classe de manipulation des actions vers trello
 */
@@ -56,6 +57,26 @@ var trello = /** @class */ (function () {
                 switch (_c.label) {
                     case 0:
                         url = this.api + 'members/' + (id ? id : 'me') + '/boards?key=' + site.trelloKey + '&token=' + token;
+                        return [4 /*yield*/, request.get(url)];
+                    case 1:
+                        _b = _c.sent(), error = _b.error, info = _b.info, body = _b.body;
+                        if (!error && info.statusCode == 200) {
+                            data = json(body, []);
+                            return [2 /*return*/, { success: data }];
+                        }
+                        return [2 /*return*/, { error: error }];
+                }
+            });
+        });
+    };
+    trello.prototype.board = function (_a) {
+        var token = _a.token, id = _a.id;
+        return __awaiter(this, void 0, void 0, function () {
+            var url, _b, error, info, body, data;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        url = this.api + 'boards/' + id + '?key=' + site.trelloKey + '&token=' + token;
                         return [4 /*yield*/, request.get(url)];
                     case 1:
                         _b = _c.sent(), error = _b.error, info = _b.info, body = _b.body;
@@ -193,6 +214,61 @@ var trello = /** @class */ (function () {
                         //mise a jour de l'id utilisateur dans trello team
                         _c.sent();
                         return [2 /*return*/, true];
+                }
+            });
+        });
+    };
+    /*
+     * Supression de vos webhook
+    */
+    trello.prototype.deleteWebhook = function (_a) {
+        var board = _a.board, token = _a.token;
+        return __awaiter(this, void 0, void 0, function () {
+            var url, _b, error, info, body, jsonp, url_1, _c, error_1, info_1, body_1;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        url = this.api + ("tokens/" + token + "/webhooks/?key=" + site.trelloKey);
+                        return [4 /*yield*/, request.get(url)];
+                    case 1:
+                        _b = _d.sent(), error = _b.error, info = _b.info, body = _b.body;
+                        if (error && info.statusCode != 200)
+                            throw new AppError('ART004');
+                        jsonp = json(body, []);
+                        if (!(jsonp.length > 0)) return [3 /*break*/, 3];
+                        url_1 = this.api + ("webhooks/" + jsonp[0].id + "/?key=" + site.trelloKey + "&token=" + token);
+                        console.log('----DELETE CONSOLE', url_1);
+                        return [4 /*yield*/, request.destroy(url_1)];
+                    case 2:
+                        _c = _d.sent(), error_1 = _c.error, info_1 = _c.info, body_1 = _c.body;
+                        throw new AppError('ART005');
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /*
+     * Ajout de webhook
+    */
+    trello.prototype.webhook = function (_a) {
+        var board = _a.board, token = _a.token, app = _a.app;
+        return __awaiter(this, void 0, void 0, function () {
+            var url, form, _b, error, info, body;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        url = this.api + ("tokens/" + token + "/webhooks/?key=" + site.trelloKey);
+                        form = {
+                            idModel: board,
+                            description: 'Event Board Vocal Note',
+                            callbackURL: 'https://therapiequantique.net/trello/on/' + app,
+                        };
+                        return [4 /*yield*/, request.post(url, form)];
+                    case 1:
+                        _b = _c.sent(), error = _b.error, info = _b.info, body = _b.body;
+                        if (error && info.statusCode != 200)
+                            throw new AppError('ART006');
+                        return [2 /*return*/];
                 }
             });
         });
