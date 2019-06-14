@@ -21,7 +21,7 @@ module.exports = {
 	 * Page index de l'application 
 	*/
 	appMenuHome : 'Home',
-	appMenuIFS : 'Infustionsoft',
+	appMenuApp : 'Application',
 	appMenuUsers : 'Users',
 	appMenuNotes : 'Notes',
 	appMenuOptions : 'Option',

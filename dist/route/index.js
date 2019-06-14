@@ -87,11 +87,12 @@ module.exports = function (app, db, str) {
             //champ utiliser par infusionsoft membre
             app.get('/infusionsoft/membre/:id', ensureAuth_1.default, hangel.bind({ func: infusionsoft.membre.bind({ db: db }) }));
             app.get('/infusionsoft/contacts/:id', ensureAuth_1.default, hangel.bind({ func: infusionsoft.contacts.bind({ db: db }) }));
+            app.get('/infusionsoft/note/:id', ensureAuth_1.default, hangel.bind({ func: infusionsoft.notes.bind({ db: db }) }));
             //route des notes
-            app.get('/note/:id', note.item.bind({ db: db, str: str }));
-            app.get('/note/check/:id', note.check.bind({ db: db, str: str }));
-            app.post('/note/checks', note.checks.bind({ db: db, str: str }));
-            app.get('/note/infusionsoft/:id', note.index.bind({ db: db, str: str }));
+            app.get('/note/:id', hangel.bind({ func: note.item.bind({ db: db, str: str }) }));
+            app.get('/note/check/:id', hangel.bind({ func: note.check.bind({ db: db, str: str }) }));
+            app.post('/note/checks', hangel.bind({ func: note.checks.bind({ db: db, str: str }) }));
+            app.get('/note/infusionsoft/:id', hangel.bind({ func: note.index.bind({ db: db, str: str }) }));
             //app.get('/close/:id',ensureAuth,note.close.bind({db,str})) ;
             app.get('/audio/:id', hangel.bind({ func: note.listen.bind({ db: db, str: str }) }));
             //app.get('/audio/delete/:id',ensureAuth,note.deleteNote.bind({db,str})) ;
@@ -102,22 +103,21 @@ module.exports = function (app, db, str) {
             //app.get('/tansvase/notes/:id',tansvase.notes.bind({db,str})) ;
             //app.get('/tansvase/tasks/:id',tansvase.tasks.bind({db,str})) ;
             //trello ICI 
-            app.get('/trello', trello.view.bind({ db: db, str: str }));
-            app.get('/trello/boards/:id', ensureAuth_1.default, hangel.bind({ func: trello.boards.bind({ db: db, str: str }) }));
+            app.get('/trello', trello.view);
             app.post('/trello/boards/:id', ensureAuth_1.default, hangel.bind({ func: trello.boardsUpdate.bind({ db: db, str: str }) }));
+            app.get('/trello/boards/:id', ensureAuth_1.default, hangel.bind({ func: trello.boards.bind({ db: db, str: str }) }));
             app.get('/trello/lists/:id', ensureAuth_1.default, hangel.bind({ func: trello.lists.bind({ db: db, str: str }) }));
             app.get('/trello/label/:id', ensureAuth_1.default, hangel.bind({ func: trello.label.bind({ db: db, str: str }) }));
             app.get('/trello/membre/:id', ensureAuth_1.default, hangel.bind({ func: trello.membre.bind({ db: db, str: str }) }));
             app.get('/trello/on/:id', hangel.bind({ func: trello.event.bind({ db: db, str: str }) }));
             app.post('/trello/on/:id', hangel.bind({ func: trello.event.bind({ db: db, str: str }) }));
-            app.get('/external', ensureAuth_1.default, external.index.bind({ db: db }));
-            //ici on fait la création de notes 
-            app.post('/external', ensureAuth_1.default, external.create.bind({ db: db }));
-            app.post('/external/note', ensureAuth_1.default, external.note.bind({ db: db }));
+            app.get('/external', ensureAuth_1.default, hangel.bind({ func: external.index.bind({ db: db }) }));
+            app.post('/external', ensureAuth_1.default, hangel.bind({ func: external.create.bind({ db: db }) }));
+            app.post('/external/note', ensureAuth_1.default, hangel.bind({ func: external.note.bind({ db: db }) }));
             //application externale autre celle
-            app.get('/pour/:application', ensureAuth_1.default, pour.index.bind({ db: db }));
-            app.post('/pour', ensureAuth_1.default, pour.create.bind({ db: db }));
-            app.delete('/pour/:id', ensureAuth_1.default, pour.delet.bind({ db: db }));
+            app.get('/pour/:application', ensureAuth_1.default, hangel.bind({ func: pour.index.bind({ db: db }) }));
+            app.post('/pour', ensureAuth_1.default, hangel.bind({ func: pour.create.bind({ db: db }) }));
+            app.delete('/pour/:id', ensureAuth_1.default, hangel.bind({ func: pour.delet.bind({ db: db }) }));
             return [2 /*return*/, new Promise(function (resolve) { return resolve(true); })];
         });
     });

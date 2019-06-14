@@ -5,8 +5,9 @@ import components from './core/components';
 import directives from './core/directives';
 import Vuex from 'vuex';
 import App from './App.vue';
+import 'ant-design-vue/dist/antd.css'
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = false
 
 new Vue({
     el: '#core',

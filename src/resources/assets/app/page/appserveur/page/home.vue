@@ -15,8 +15,8 @@
             </b-row>
             <b-row style="margin-top: 2rem">
                 <b-col cols="12">
-                    <b-card-group deck v-for="item in applications" :key="item.id" >
-                        <b-card  footer-tag="footer" bg-variant="light" :header="item.name">
+                    <b-card-group deck >
+                        <b-card v-for="item in applications" :key="item.id"  footer-tag="footer" bg-variant="light" :header="item.name">
                             <b-card-text><h3>Recorder</h3></b-card-text>
                             <b-card-text><h3>00 : 12</h3></b-card-text>
                             <router-link :to="{name:'application', params : {id : item.id} }">

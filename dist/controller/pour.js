@@ -34,53 +34,24 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var url = require('url');
 var request = require('request');
 var site = require('../config/site');
-var promise_1 = __importDefault(require("../libs/promise"));
+var pour = require('../libs/pour');
 function index(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, _b, _c, lang, _d, Pour, User, Application, userid, application, err, data, user, i;
-        return __generator(this, function (_e) {
-            switch (_e.label) {
+        var lang, _a, Pour, User, Application, userid, application, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
                 case 0:
                     lang = req.lang();
-                    _d = this.db, Pour = _d.Pour, User = _d.User, Application = _d.Application;
+                    _a = this.db, Pour = _a.Pour, User = _a.User, Application = _a.Application;
                     userid = req.user.id;
                     application = req.params.application;
-                    err = null;
-                    data = null;
-                    data;
-                    return [4 /*yield*/, promise_1.default(User.findOne({
-                            where: { id: req.user.id }
-                        }))];
-                case 1:
-                    _a = _e.sent(), err = _a[0], data = _a[1];
-                    user = data;
-                    data;
-                    return [4 /*yield*/, promise_1.default(Application.find({ where: { id: application } }))];
-                case 2:
-                    _b = _e.sent(), err = _b[0], data = _b[1];
-                    if (err || !data) {
-                        return [2 /*return*/, res.error('PC0001')];
-                    }
-                    i = data;
-                    if (err) {
-                        return [2 /*return*/, res.error('PI001')];
-                    }
-                    return [4 /*yield*/, promise_1.default(user.getPours({
-                            where: { ApplicationId: application }
-                        }))];
-                case 3:
-                    _c = _e.sent(), err = _c[0], data = _c[1];
-                    if (err) {
-                        return [2 /*return*/, res.error('PI002')];
-                    }
-                    return [2 /*return*/, res.success(data)];
+                    _c = (_b = res).success;
+                    return [4 /*yield*/, pour.find(req.user.id, application)];
+                case 1: return [2 /*return*/, _c.apply(_b, [_d.sent()])];
             }
         });
     });
@@ -88,36 +59,15 @@ function index(req, res) {
 exports.index = index;
 function delet(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, _b, lang, _c, Pour, User, userid, id, err, data, p;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
+        var lang, id, _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
                     lang = req.lang();
-                    _c = this.db, Pour = _c.Pour, User = _c.User;
-                    userid = req.user.id;
                     id = req.params.id;
-                    err = null;
-                    data = null;
-                    data;
-                    return [4 /*yield*/, promise_1.default(Pour.findOne({
-                            where: { id: id }
-                        }))];
-                case 1:
-                    _a = _d.sent(), err = _a[0], data = _a[1];
-                    p = data;
-                    if (err) {
-                        return [2 /*return*/, res.error('PD001')];
-                    }
-                    if (!p) {
-                        return [2 /*return*/, res.error('PD002')];
-                    }
-                    return [4 /*yield*/, promise_1.default(p.destroy())];
-                case 2:
-                    _b = _d.sent(), err = _b[0], data = _b[1];
-                    if (err) {
-                        return [2 /*return*/, res.error('PD003')];
-                    }
-                    return [2 /*return*/, res.success()];
+                    _b = (_a = res).success;
+                    return [4 /*yield*/, pour.destroy(id)];
+                case 1: return [2 /*return*/, _b.apply(_a, [_c.sent()])];
             }
         });
     });
@@ -125,51 +75,14 @@ function delet(req, res) {
 exports.delet = delet;
 function create(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, _b, _c, _d, _e, lang, _f, Pour, User, Application, userid, _g, name, appId, cardId, type, application, err, data, user, p, i;
-        return __generator(this, function (_h) {
-            switch (_h.label) {
+        var lang, _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
                     lang = req.lang();
-                    _f = this.db, Pour = _f.Pour, User = _f.User, Application = _f.Application;
-                    userid = req.user.id;
-                    _g = req.body, name = _g.name, appId = _g.appId, cardId = _g.cardId, type = _g.type, application = _g.application;
-                    data;
-                    return [4 /*yield*/, promise_1.default(User.findOne({
-                            where: { id: userid }
-                        }))];
-                case 1:
-                    _a = _h.sent(), err = _a[0], data = _a[1];
-                    user = data;
-                    data;
-                    return [4 /*yield*/, promise_1.default(Pour.create({ name: name, appId: appId, cardId: cardId, type: type }))];
-                case 2:
-                    _b = _h.sent(), err = _b[0], data = _b[1];
-                    if (err) {
-                        return [2 /*return*/, res.error('PC0002')];
-                    }
-                    p = data;
-                    return [4 /*yield*/, promise_1.default(p.setAuthor(user))];
-                case 3:
-                    _c = _h.sent(), err = _c[0], data = _c[1];
-                    if (err) {
-                        return [2 /*return*/, res.error('PC0003')];
-                    }
-                    data;
-                    return [4 /*yield*/, promise_1.default(Application.find({ where: { id: application } }))];
-                case 4:
-                    _d = _h.sent(), err = _d[0], data = _d[1];
-                    if (err || !data) {
-                        return [2 /*return*/, res.error('PC0001')];
-                    }
-                    i = data;
-                    return [4 /*yield*/, promise_1.default(p.setApplication(i))];
-                case 5:
-                    _e = _h.sent(), err = _e[0], data = _e[1];
-                    if (err) {
-                        return [2 /*return*/, res.error('PC0004')];
-                    }
-                    console.log('--------------------------');
-                    return [2 /*return*/, res.success()];
+                    _b = (_a = res).success;
+                    return [4 /*yield*/, pour.create(req.user.id, req.body)];
+                case 1: return [2 /*return*/, _b.apply(_a, [_c.sent()])];
             }
         });
     });

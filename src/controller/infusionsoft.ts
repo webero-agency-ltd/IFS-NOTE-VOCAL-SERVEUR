@@ -16,6 +16,15 @@ export async function membre( req:Request, res:Response ) {
 
 }
 
+export async function notes( req:Request, res:Response ) {
+
+	let lang = req.lang() ; 
+	let { token , appId } = req.query ; 
+	let { id } = req.params ; 
+	res.success( await infusionsoft.notes( appId , id ) ) ; 
+
+}
+
 export async function contacts( req:Request, res:Response ) {
 
 	let lang = req.lang() ; 

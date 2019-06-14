@@ -273,6 +273,27 @@ var trello = /** @class */ (function () {
             });
         });
     };
+    /*
+     * API trello création de note
+    */
+    trello.prototype.createCards = function (body, token) {
+        var error, info, body;
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, url;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        url = this.api + 'cards?fields=all&key=' + site.trelloKey + '&token=' + token;
+                        return [4 /*yield*/, request.post(url, body)];
+                    case 1:
+                        (_a = _b.sent(), error = _a.error, info = _a.info, body = _a.body);
+                        if (error && info.statusCode != 200)
+                            throw new AppError('ART008');
+                        return [2 /*return*/, json(body, [])];
+                }
+            });
+        });
+    };
     return trello;
 }());
 module.exports = new trello();

@@ -107,6 +107,29 @@ var infusionsoft = /** @class */ (function () {
         });
     };
     /*
+     * Récupération des listes des contacts d'infusionsoft
+    */
+    infusionsoft.prototype.notes = function (id, note) {
+        return __awaiter(this, void 0, void 0, function () {
+            var app, token, _a, error, info, body, reponse;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4 /*yield*/, application.item(id)];
+                    case 1:
+                        app = _b.sent();
+                        token = json(app.accessToken, {});
+                        return [4 /*yield*/, request.get(this.api + '/notes/' + note + '/?access_token=' + token['access_token'])];
+                    case 2:
+                        _a = _b.sent(), error = _a.error, info = _a.info, body = _a.body;
+                        if (error && info.statusCode !== 200)
+                            throw new AppError('IC0007');
+                        reponse = json(body, {});
+                        return [2 /*return*/, reponse.id ? reponse : {}];
+                }
+            });
+        });
+    };
+    /*
      * Récupération de l'access toke
     */
     infusionsoft.prototype.findtoken = function (_a) {
@@ -149,6 +172,56 @@ var infusionsoft = /** @class */ (function () {
                         _d.sent();
                         return [2 /*return*/, true];
                     case 5: throw new AppError('ARE005');
+                }
+            });
+        });
+    };
+    /*
+     *	Création de tache infusionsoft
+    */
+    infusionsoft.prototype.createTasks = function (body, t) {
+        var error, info, body;
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, header, token;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        header = {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        };
+                        token = json(t, {});
+                        return [4 /*yield*/, request.post(this.api + '/tasks/?access_token=' + token['access_token'], body, header, true)];
+                    case 1:
+                        (_a = _b.sent(), error = _a.error, info = _a.info, body = _a.body);
+                        if (error && (info.statusCode !== 200 || info.statusCode !== 201))
+                            throw new AppError('EN0005');
+                        return [2 /*return*/, json(body, {})];
+                }
+            });
+        });
+    };
+    /*
+     *	Création de notes infusionsoft
+    */
+    infusionsoft.prototype.createNotes = function (body, t) {
+        var error, info, body;
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, header, token;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        header = {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        };
+                        token = json(t, {});
+                        return [4 /*yield*/, request.post(this.api + '/notes/?access_token=' + token['access_token'], body, header, true)];
+                    case 1:
+                        (_a = _b.sent(), error = _a.error, info = _a.info, body = _a.body);
+                        if (error && (info.statusCode !== 200 || info.statusCode !== 201))
+                            throw new AppError('EN0007');
+                        return [2 /*return*/, json(body, {})];
                 }
             });
         });

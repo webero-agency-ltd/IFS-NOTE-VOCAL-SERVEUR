@@ -144,6 +144,18 @@ class trello {
 		if ( error && info.statusCode != 200 ) 
 	    	throw new AppError('ART006');
 	}
+
+	/*
+ 	 * API trello création de note 
+	*/
+	async createCards( body , token ){
+		let url = this.api+'cards?fields=all&key='+site.trelloKey+'&token='+token ; 
+	    var { error, info , body } = await request.post( url , body ) ;
+		if ( error && info.statusCode != 200 ) 
+	    	throw new AppError('ART008');
+	    return json( body , [] )
+
+	}
 	
 }
 

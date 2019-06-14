@@ -9,7 +9,7 @@ const trello = require('../libs/trello');
 const application = require('../libs/application');
 
 
-export function view( req:Request, res:Response ) {	
+export async function view( req:Request, res:Response ) {	
 	res.render( 'trello.ejs' ) 
 }
 

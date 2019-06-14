@@ -26,6 +26,13 @@ var noteVocal_1 = __importDefault(require("../components/noteVocal"));
 vue_1.default.component('note-vocal', noteVocal_1.default);
 var pagination_1 = __importDefault(require("bootstrap-vue/es/components/pagination/pagination"));
 vue_1.default.component('b-pagination', pagination_1.default);
+//////////////////////////////////////////////////////////////////////////////////////////////
+var ant_design_vue_1 = require("ant-design-vue");
+vue_1.default.component(ant_design_vue_1.Menu.name, ant_design_vue_1.Menu);
+vue_1.default.component(ant_design_vue_1.Menu.Item.name, ant_design_vue_1.Menu.Item);
+vue_1.default.component(ant_design_vue_1.Menu.SubMenu.name, ant_design_vue_1.Menu.SubMenu);
+vue_1.default.component(ant_design_vue_1.Avatar.name, ant_design_vue_1.Avatar);
+//////////////////////////////////////////////////////////////////////////////////////////////
 //Bootrap vuejs
 var table_1 = __importDefault(require("bootstrap-vue/es/components/table/table"));
 vue_1.default.component('b-table', table_1.default);

@@ -47,6 +47,19 @@ class infusionsoft {
 	}
 
 	/*
+	 * Récupération des listes des contacts d'infusionsoft 
+	*/
+	async notes( id , note ) {
+	    let app = await application.item( id )
+	    let token = json( app.accessToken , {} ) 
+	    var { error, info , body } = await request.get( this.api + '/notes/'+note+'/?access_token='+token['access_token'] ) ; 
+		if ( error && info.statusCode !== 200 )
+	    	throw new AppError('IC0007');
+	    let reponse = json( body , {} ) ;
+		return reponse.id?reponse:{};
+	}
+
+	/*
 	 * Récupération de l'access toke  
 	*/
 	async findtoken( { id , code } ){
@@ -75,6 +88,36 @@ class infusionsoft {
 			return true;
 		}
 	    throw new AppError('ARE005');
+	}
+
+	/*
+	 *	Création de tache infusionsoft 
+	*/
+	async createTasks( body , t ){
+		let header = {
+		    'Accept': 'application/json',
+            'Content-Type': 'application/json'
+	    }
+	    let token = json( t , {} );
+	    var { error, info , body } = await request.post( this.api + '/tasks/?access_token='+token['access_token'] , body , header , true ) ; 
+		if ( error && ( info.statusCode !== 200 || info.statusCode !== 201 ) )
+	    	throw new AppError('EN0005');
+	    return json( body , {} );
+	}
+
+	/*
+	 *	Création de notes infusionsoft 
+	*/
+	async createNotes( body , t ){
+		let header = {
+		    'Accept': 'application/json',
+            'Content-Type': 'application/json'
+	    }
+	    let token = json( t , {} );
+	    var { error, info , body } = await request.post( this.api + '/notes/?access_token='+token['access_token'] , body , header , true ) ; 
+		if ( error && ( info.statusCode !== 200 || info.statusCode !== 201 ) )
+	    	throw new AppError('EN0007');
+	    return json( body , {} );
 	}
 }
 

@@ -54,14 +54,15 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 
 	app.get('/infusionsoft/membre/:id',ensureAuth,hangel.bind({ func : infusionsoft.membre.bind({db}) })) ;
 	app.get('/infusionsoft/contacts/:id',ensureAuth, hangel.bind({ func : infusionsoft.contacts.bind({db}) }) ) ;
+	app.get('/infusionsoft/note/:id',ensureAuth, hangel.bind({ func : infusionsoft.notes.bind({db}) }) ) ;
 
 	//route des notes
-	app.get('/note/:id',note.item.bind({db,str})) ;
-	app.get('/note/check/:id',note.check.bind({db,str})) ;
-	app.post('/note/checks',note.checks.bind({db,str})) ;
-	app.get('/note/infusionsoft/:id',note.index.bind({db,str})) ;
+	app.get('/note/:id',hangel.bind({ func : note.item.bind({db,str}) })) ;
+	app.get('/note/check/:id',hangel.bind({ func : note.check.bind({db,str}) })) ;
+	app.post('/note/checks',hangel.bind({ func : note.checks.bind({db,str}) })) ;
+	app.get('/note/infusionsoft/:id',hangel.bind({ func : note.index.bind({db,str}) })) ;
 	//app.get('/close/:id',ensureAuth,note.close.bind({db,str})) ;
-	app.get('/audio/:id', hangel.bind({ func : note.listen.bind({db,str}) }) ) ;
+	app.get('/audio/:id', hangel.bind({ func : note.listen.bind({db,str}) }) ) ; 
 	//app.get('/audio/delete/:id',ensureAuth,note.deleteNote.bind({db,str})) ;
 
 	app.post('/upload',ensureAuth,hangel.bind({ func : note.upload.bind({db,str}) })) ;
@@ -73,25 +74,23 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	//app.get('/tansvase/tasks/:id',tansvase.tasks.bind({db,str})) ;
 	
 	//trello ICI 
-	app.get('/trello',trello.view.bind({db,str})) ;
-
-	app.get('/trello/boards/:id',ensureAuth,hangel.bind({ func : trello.boards.bind({db,str}) })) ;
+	app.get('/trello',trello.view) ;
 	app.post('/trello/boards/:id',ensureAuth,hangel.bind({ func : trello.boardsUpdate.bind({db,str}) })) ;
+	app.get('/trello/boards/:id',ensureAuth,hangel.bind({ func : trello.boards.bind({db,str}) })) ;
 	app.get('/trello/lists/:id',ensureAuth,hangel.bind({ func : trello.lists.bind({db,str}) })) ;
 	app.get('/trello/label/:id',ensureAuth,hangel.bind({ func : trello.label.bind({db,str}) })) ;
 	app.get('/trello/membre/:id',ensureAuth,hangel.bind({ func : trello.membre.bind({db,str}) })) ;
 	app.get('/trello/on/:id',hangel.bind({ func : trello.event.bind({db,str}) })) ;
 	app.post('/trello/on/:id',hangel.bind({ func : trello.event.bind({db,str}) })) ;
-	 
-	app.get('/external',ensureAuth,external.index.bind({db})) ;
-	//ici on fait la création de notes 
-	app.post('/external',ensureAuth,external.create.bind({db})) ;
-	app.post('/external/note',ensureAuth,external.note.bind({db})) ;
+
+	app.get('/external',ensureAuth,hangel.bind({ func : external.index.bind({db}) })) ;
+	app.post('/external',ensureAuth,hangel.bind({ func : external.create.bind({db}) })) ;
+	app.post('/external/note',ensureAuth,hangel.bind({ func : external.note.bind({db}) })) ;
 
 	//application externale autre celle
-	app.get('/pour/:application',ensureAuth,pour.index.bind({db})) ;
-	app.post('/pour',ensureAuth,pour.create.bind({db})) ;
-	app.delete('/pour/:id',ensureAuth,pour.delet.bind({db})) ;
+	app.get('/pour/:application',ensureAuth,hangel.bind({ func : pour.index.bind({db}) }) ) ;
+	app.post('/pour',ensureAuth,hangel.bind({ func : pour.create.bind({db}) })) ;
+	app.delete('/pour/:id',ensureAuth,hangel.bind({ func : pour.delet.bind({db}) })) ;
 
 	return new Promise<boolean>( resolve => resolve( true ));
 	

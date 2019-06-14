@@ -33,6 +33,17 @@ Vue.component('note-vocal', noteVocal);
 import bPagination from 'bootstrap-vue/es/components/pagination/pagination';
 Vue.component('b-pagination', bPagination);
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+import { Menu , Avatar } from 'ant-design-vue';
+Vue.component( Menu.name, Menu );
+Vue.component( Menu.Item.name, Menu.Item );
+Vue.component( Menu.SubMenu.name, Menu.SubMenu );
+
+Vue.component( Avatar.name, Avatar );
+//////////////////////////////////////////////////////////////////////////////////////////////
+ 
+
 //Bootrap vuejs
 import bTable from 'bootstrap-vue/es/components/table/table';
 Vue.component('b-table', bTable);

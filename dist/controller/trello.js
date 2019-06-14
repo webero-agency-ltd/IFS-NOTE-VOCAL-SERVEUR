@@ -39,7 +39,12 @@ var url = require('url');
 var trello = require('../libs/trello');
 var application = require('../libs/application');
 function view(req, res) {
-    res.render('trello.ejs');
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            res.render('trello.ejs');
+            return [2 /*return*/];
+        });
+    });
 }
 exports.view = view;
 function membre(req, res) {

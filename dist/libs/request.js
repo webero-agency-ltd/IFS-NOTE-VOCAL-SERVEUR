@@ -80,17 +80,22 @@ function destroy(url, headers) {
     }); });
 }
 exports.destroy = destroy;
-function post(url, body, headers) {
+function post(url, body, headers, jsforce) {
     var _this = this;
     if (headers === void 0) { headers = {}; }
+    if (jsforce === void 0) { jsforce = false; }
     var formData = querystring.stringify(body);
     var contentLength = formData.length;
+    headers = __assign({ 
+        //'Content-Length': contentLength,
+        'Content-Type': 'application/x-www-form-urlencoded' }, headers);
+    body = jsforce == false ? formData : JSON.stringify(body);
     return new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             request({
-                headers: __assign({ 'Content-Length': contentLength, 'Content-Type': 'application/x-www-form-urlencoded' }, headers),
+                headers: headers,
                 uri: url,
-                body: formData,
+                body: body,
                 method: 'POST'
             }, function (error, info, body) {
                 return __awaiter(this, void 0, void 0, function () {

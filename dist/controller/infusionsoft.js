@@ -57,6 +57,25 @@ function membre(req, res) {
     });
 }
 exports.membre = membre;
+function notes(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var lang, _a, token, appId, id, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    lang = req.lang();
+                    _a = req.query, token = _a.token, appId = _a.appId;
+                    id = req.params.id;
+                    _c = (_b = res).success;
+                    return [4 /*yield*/, infusionsoft.notes(appId, id)];
+                case 1:
+                    _c.apply(_b, [_d.sent()]);
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.notes = notes;
 function contacts(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var lang, _a, Application, User, Team, id, _b, _c;

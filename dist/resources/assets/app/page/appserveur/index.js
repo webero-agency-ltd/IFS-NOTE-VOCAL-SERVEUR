@@ -8,6 +8,7 @@ var plugin_1 = __importDefault(require("./core/plugin"));
 var router_1 = __importDefault(require("./router/router"));
 var components_1 = __importDefault(require("./core/components"));
 var App_vue_1 = __importDefault(require("./App.vue"));
+require("ant-design-vue/dist/antd.css");
 vue_1.default.config.productionTip = false;
 new vue_1.default({
     el: '#core',
