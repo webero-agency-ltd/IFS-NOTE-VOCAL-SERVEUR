@@ -10,6 +10,13 @@
 			window.urlapplication = "<%- urlapplication %>"; 
 			window.portapplication = "<%- portapplication %>"; 
 		</script>
+		<% if( locals.flash && locals.flash.runscript && locals.flash.runscript.name && locals.flash.runscript.value ) {%>  
+	    	<script>
+	    		let op = {}
+				op[`<%-locals.flash.runscript.name  %>` ] =  `<%- locals.flash.runscript.value  %>`; 
+	    		chrome.runtime.sendMessage( "<%- chromeId %>"  ,  op );
+	    	</script>
+	    <% } %> 
 		<div id="core"></div>
 		<script src="/assets/js/index.js"></script>
 	</body>

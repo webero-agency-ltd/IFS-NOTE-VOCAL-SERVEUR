@@ -43,15 +43,15 @@ var infusionsoft = require('../libs/infusionsoft');
 var trello = require('../libs/trello');
 function check(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var lang, _a, id, type, token, _b, _c;
+        var lang, _a, id, type, apiKey, _b, _c;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
                     lang = req.lang();
                     _a = req.params, id = _a.id, type = _a.type;
-                    token = req.query.token;
+                    apiKey = req.query.apiKey;
                     _c = (_b = res).success;
-                    return [4 /*yield*/, application.chackuser(token, id, type)];
+                    return [4 /*yield*/, application.chackuser(apiKey, id, type)];
                 case 1: return [2 /*return*/, _c.apply(_b, [_d.sent()])];
             }
         });

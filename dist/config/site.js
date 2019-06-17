@@ -5,4 +5,6 @@ module.exports = {
     urlapp: "http://localhost:3000",
     port: 3000,
     env: 'dev',
+    //id de l'extenssion chrome 
+    chromeId: 'bcnjckekkfoflenbllafnibogfkcgpei',
 };

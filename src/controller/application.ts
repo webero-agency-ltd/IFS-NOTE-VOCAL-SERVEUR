@@ -21,8 +21,8 @@ const trello = require('../libs/trello');
 export async function check( req:Request, res:Response ) {
 	let lang = req.lang() ; 
 	let { id , type } = req.params  ;
-	let { token } = req.query ; 
-	return res.success( await application.chackuser( token , id , type ) );			
+	let { apiKey } = req.query ; 
+	return res.success( await application.chackuser( apiKey , id , type ) );			
 }
 
 //récupération d'un infusionsoft en particuler avec tout ces statistique 

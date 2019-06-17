@@ -1,5 +1,16 @@
 <template>
-    <div class="homepage">
+    <div>
+        <a-breadcrumb :routes="routes">
+            <template slot="itemRender" slot-scope="{route, params, routes, paths}">
+                <span v-if="routes.indexOf(route) === routes.length - 1">
+                  {{route.breadcrumbName}}
+                </span>
+                <router-link v-else :to="paths.join('/')">
+                  {{route.breadcrumbName}}
+                </router-link>
+            </template>
+        </a-breadcrumb>
+        
         <b-container>
             <b-row>
                 <b-col cols="12">
@@ -59,7 +70,7 @@
         props : [ ], 
         data(){
             return {
-
+                
             }
         },
         computed: {

@@ -11,6 +11,7 @@ var application_1 = require("./application");
 var team_1 = require("./team");
 var external_1 = require("./external");
 var pour_1 = require("./pour");
+var form_1 = require("./form");
 exports.createModels = function (sequelizeConfig) {
     var database = sequelizeConfig.database, username = sequelizeConfig.username, password = sequelizeConfig.password, params = sequelizeConfig.params;
     var sequelize = new sequelize_1.default(database, username, password, params);
@@ -24,6 +25,7 @@ exports.createModels = function (sequelizeConfig) {
         Team: team_1.TeamFactory(sequelize, sequelize_1.default),
         External: external_1.ExternalFactory(sequelize, sequelize_1.default),
         Pour: pour_1.PourFactory(sequelize, sequelize_1.default),
+        Form: form_1.FormFactory(sequelize, sequelize_1.default),
     };
     Object.keys(db).forEach(function (modelName) {
         if (db[modelName].associate) {

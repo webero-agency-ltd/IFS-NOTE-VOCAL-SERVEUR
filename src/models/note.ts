@@ -5,6 +5,7 @@ import * as Sequelize from 'sequelize';
 import { SequelizeAttributes } from '../interface/SequelizeAttributes';
 import { UserInstance , UserAttributes } from './user';
 import { ApplicationInstance , ApplicationAttributes } from './application';
+import { FormInstance , FormAttributes } from './form';
    
 export interface NoteAttributes {
     id?: number;
@@ -25,6 +26,18 @@ export interface NoteInstance extends Sequelize.Instance<NoteAttributes>, NoteAt
     getApplication: Sequelize.BelongsToGetAssociationMixin<ApplicationInstance>;
     setApplication: Sequelize.BelongsToSetAssociationMixin<ApplicationInstance, ApplicationInstance['id']>;
     createApplication: Sequelize.BelongsToCreateAssociationMixin<ApplicationAttributes,ApplicationInstance>;
+
+    getForms: Sequelize.HasManyGetAssociationsMixin<FormInstance>;
+    setForms: Sequelize.HasManySetAssociationsMixin<NoteInstance,FormInstance['id']>;
+    addForms: Sequelize.HasManyAddAssociationsMixin<NoteInstance,FormInstance['id']>;
+    addForm: Sequelize.HasManyAddAssociationMixin<FormInstance, FormInstance['id']>;
+    createForm: Sequelize.HasManyCreateAssociationMixin<FormAttributes, FormInstance>;
+    removeForm: Sequelize.HasManyRemoveAssociationMixin<FormInstance, FormInstance['id']>;
+    removeForms: Sequelize.HasManyRemoveAssociationsMixin<NoteInstance,FormInstance['id']>;
+    hasForm: Sequelize.HasManyHasAssociationMixin<FormInstance, FormInstance['id']>;
+    hasForms: Sequelize.HasManyHasAssociationsMixin<FormInstance, FormInstance['id']>;
+    countForms: Sequelize.HasManyCountAssociationsMixin;
+
 }; 
 
 export const NoteFactory = (sequelize: Sequelize.Sequelize, DataTypes: Sequelize.DataTypes): Sequelize.Model<NoteInstance, NoteAttributes> => {
@@ -47,6 +60,7 @@ export const NoteFactory = (sequelize: Sequelize.Sequelize, DataTypes: Sequelize
         Note.belongsTo(models.User, { as: 'author', foreignKey: 'AuthorId' });
         Note.belongsTo(models.Vocaux);
         Note.belongsTo(models.Application);
+        Note.hasMany(models.Form);
     };
   	return Note;
 };

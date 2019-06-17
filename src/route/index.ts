@@ -15,6 +15,7 @@ const home = require('../controller/index') ;
 const infusionsoft = require('../controller/infusionsoft') ;
 const external = require('../controller/external') ;
 const pour = require('../controller/pour') ;
+const form = require('../controller/form') ;
 const { hangel } = require('../libs/hangel') ;
 
 module.exports = async function ( app : Application , db : DBInterface , str ) : Promise<boolean> {
@@ -35,6 +36,12 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 		res.clearCookie("remember_me");
 	  	req.logout();
 	  	res.redirect('/');
+	});
+	app.get('/user/authenticated', function(req, res){
+		if ( req.user ) {
+	  		return res.success( req.user );
+	  	}
+	  	return res.success( null );
 	});
 
 	app.get('/application',ensureAuth, hangel.bind( { func : application.index.bind({db}) } )) ;
@@ -60,7 +67,7 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	app.get('/note/:id',hangel.bind({ func : note.item.bind({db,str}) })) ;
 	app.get('/note/check/:id',hangel.bind({ func : note.check.bind({db,str}) })) ;
 	app.post('/note/checks',hangel.bind({ func : note.checks.bind({db,str}) })) ;
-	app.get('/note/infusionsoft/:id',hangel.bind({ func : note.index.bind({db,str}) })) ;
+	app.get('/notes/:id',hangel.bind({ func : note.index.bind({db,str}) })) ;
 	//app.get('/close/:id',ensureAuth,note.close.bind({db,str})) ;
 	app.get('/audio/:id', hangel.bind({ func : note.listen.bind({db,str}) }) ) ; 
 	//app.get('/audio/delete/:id',ensureAuth,note.deleteNote.bind({db,str})) ;
@@ -91,6 +98,10 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	app.get('/pour/:application',ensureAuth,hangel.bind({ func : pour.index.bind({db}) }) ) ;
 	app.post('/pour',ensureAuth,hangel.bind({ func : pour.create.bind({db}) })) ;
 	app.delete('/pour/:id',ensureAuth,hangel.bind({ func : pour.delet.bind({db}) })) ;
+
+	//création de formulaire 
+	app.get('/form/:id',ensureAuth,hangel.bind({ func : form.index.bind({db}) })) ;
+	app.post('/form/:id',ensureAuth,hangel.bind({ func : form.create.bind({db}) })) ;
 
 	return new Promise<boolean>( resolve => resolve( true ));
 	

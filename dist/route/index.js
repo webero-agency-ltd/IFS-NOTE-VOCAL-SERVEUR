@@ -53,6 +53,7 @@ var home = require('../controller/index');
 var infusionsoft = require('../controller/infusionsoft');
 var external = require('../controller/external');
 var pour = require('../controller/pour');
+var form = require('../controller/form');
 var hangel = require('../libs/hangel').hangel;
 module.exports = function (app, db, str) {
     return __awaiter(this, void 0, void 0, function () {
@@ -73,6 +74,12 @@ module.exports = function (app, db, str) {
                 req.logout();
                 res.redirect('/');
             });
+            app.get('/user/authenticated', function (req, res) {
+                if (req.user) {
+                    return res.success(req.user);
+                }
+                return res.success(null);
+            });
             app.get('/application', ensureAuth_1.default, hangel.bind({ func: application.index.bind({ db: db }) }));
             app.get('/application/item/:id', ensureAuth_1.default, hangel.bind({ func: application.item.bind({ db: db }) }));
             app.get('/application/check/:id/:type', hangel.bind({ func: application.check.bind({ db: db }) }));
@@ -92,7 +99,7 @@ module.exports = function (app, db, str) {
             app.get('/note/:id', hangel.bind({ func: note.item.bind({ db: db, str: str }) }));
             app.get('/note/check/:id', hangel.bind({ func: note.check.bind({ db: db, str: str }) }));
             app.post('/note/checks', hangel.bind({ func: note.checks.bind({ db: db, str: str }) }));
-            app.get('/note/infusionsoft/:id', hangel.bind({ func: note.index.bind({ db: db, str: str }) }));
+            app.get('/notes/:id', hangel.bind({ func: note.index.bind({ db: db, str: str }) }));
             //app.get('/close/:id',ensureAuth,note.close.bind({db,str})) ;
             app.get('/audio/:id', hangel.bind({ func: note.listen.bind({ db: db, str: str }) }));
             //app.get('/audio/delete/:id',ensureAuth,note.deleteNote.bind({db,str})) ;
@@ -118,6 +125,9 @@ module.exports = function (app, db, str) {
             app.get('/pour/:application', ensureAuth_1.default, hangel.bind({ func: pour.index.bind({ db: db }) }));
             app.post('/pour', ensureAuth_1.default, hangel.bind({ func: pour.create.bind({ db: db }) }));
             app.delete('/pour/:id', ensureAuth_1.default, hangel.bind({ func: pour.delet.bind({ db: db }) }));
+            //création de formulaire 
+            app.get('/form/:id', ensureAuth_1.default, hangel.bind({ func: form.index.bind({ db: db }) }));
+            app.post('/form/:id', ensureAuth_1.default, hangel.bind({ func: form.create.bind({ db: db }) }));
             return [2 /*return*/, new Promise(function (resolve) { return resolve(true); })];
         });
     });

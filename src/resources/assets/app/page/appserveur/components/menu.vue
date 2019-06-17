@@ -1,35 +1,35 @@
 <template>
-	<div>
-		<a-menu v-model="current"  mode="horizontal" >
-		    <a :to="{name:'home'}" >
-	      		<a-avatar src="/assets/img/logo.png" /> 
-	      	</a>
-		    <a-menu-item key="application">
-		      	<a :to="{name:'application'}" >
-		      		{{$lang('appMenuApp')}}
-		      	</a>
-		    </a-menu-item>
+	<a-layout-header class="header">
+        <div class="logo" >
+         	<router-link :to="{name:'home'}">
+	            <a-avatar  src="/assets/img/logo.png" /> 
+	        </router-link>
+        </div>
+      	<a-menu :style="{ lineHeight: '64px' , float : 'right' }" v-model="current"  mode="horizontal">
 		    <a-menu-item key="users">
-		      	<a :to="{name:'users', params : {id : $route.params.id}}" >
-		      		{{$lang('appMenuUsers')}}
-		      	</a>
-		    </a-menu-item>
-		    <a-menu-item key="notes">
-		      	<a :to="{name:'notes', params : {id : $route.params.id}}" >
+			  	<router-link :to="{name:'users', params : {id : $route.params.id}}">
+                    {{$lang('appMenuUsers')}}
+                </router-link>
+			</a-menu-item>
+			<a-menu-item key="notes">
+		      	<router-link :to="{name:'notes', params : {id : $route.params.id}}" >
 		      		{{$lang('appMenuNotes')}}
-		      	</a>
+		      	</router-link>
 		    </a-menu-item>
 		    <a-menu-item v-if="applicationsItem.type=='trello'" key="option">
-		      	<a  :to="{name:'option', params : {id : $route.params.id}}" >
+		      	<router-link  :to="{name:'option', params : {id : $route.params.id}}" >
 		      		{{$lang('appMenuOptions')}}
-		      	</a>
+		      	</router-link>
 		    </a-menu-item>
 		</a-menu>
-	</div>
+    </a-layout-header>
 </template>
 
 <script>
-
+	/*
+		:defaultSelectedKeys="['2']"
+		:style="{ lineHeight: '64px' }"
+	*/
 	import { createNamespacedHelpers } from 'vuex';
     import store from '../store/';
     
@@ -63,7 +63,19 @@
 	}
 </script>
 <style>
-	.menu{
-		border-bottom: 2px solid #ed1f24;
+	.logo {
+	    width: 120px;
+	    height: 31px;
+	    float: left;
+	    margin: 16px 28px 16px 0px;
 	}
+	
+	/*@Ecrase :*/
+	.ant-layout-header {
+	    background: #f0f2f5;
+	}
+	.ant-menu-horizontal{
+		background-color: #f0f2f5
+	}
+
 </style>

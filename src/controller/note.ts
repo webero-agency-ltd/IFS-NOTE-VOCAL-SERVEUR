@@ -21,7 +21,7 @@ export function index( req:Request, res:Response ) {
     	.then( i => {
 	    	i.getNotes()
 		    	.then( notes => {
-			    	res.json(notes)
+			    	res.success(notes)
 				})
 				.catch(e => {
 					console.log( e )
@@ -36,9 +36,10 @@ export function item( req:Request, res:Response ) {
 	let lang = req.lang() ; 
 	let { Note , User } = this.db as DBInterface ;
 	let { id } = req.params  ;
-	let { token } = req.query ; 
+	let { apiKey } = req.query ; 
+	console.log( apiKey )
 	User.findOne({
-	    where: { rememberToken : token }
+	    where: { rememberToken : apiKey }
     })
     	.then( u => {
 	    	if ( u ) {

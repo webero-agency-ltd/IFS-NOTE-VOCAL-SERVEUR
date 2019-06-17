@@ -22,6 +22,7 @@ exports.NoteFactory = function (sequelize, DataTypes) {
         Note.belongsTo(models.User, { as: 'author', foreignKey: 'AuthorId' });
         Note.belongsTo(models.Vocaux);
         Note.belongsTo(models.Application);
+        Note.hasMany(models.Form);
     };
     return Note;
 };

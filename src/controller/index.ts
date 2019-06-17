@@ -14,7 +14,7 @@ import forearch from '../libs/forearch';
 
 export function index( req:Request, res:Response ) {
 	let lang = req.lang() ; 
-	res.render( 'index.ejs',{ lang:JSON.stringify(res.locals.lang), urlapplication:site.urlapp, portapplication:site.port } )
+	res.render( 'index.ejs',{ lang:JSON.stringify(res.locals.lang), urlapplication:site.urlapp, portapplication:site.port, chromeId:site.chromeId } )
 }
 
 export function vocalNote( req:Request, res:Response ) {

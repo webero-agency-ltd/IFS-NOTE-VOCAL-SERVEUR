@@ -23,7 +23,9 @@ export function create( req:Request, res:Response ) {
     //mise a jours de l'utilisateur et enregistrement du remember token dans ca table de base de donner 
     //ce remember token est utilises dans l'extenssion chrome pour faire l'authentification entre 
     //un utilisateur et le serveur de vocal note 
-    let { redirect } = req.query ;  
+    let { redirect } = req.query ;
+    //lancement du script google chrome apres l'authentification  
+    req.flash('runscript',{ name : 'setApiKey' , value : token })
     User.find({ where: { id: req.user.id } })
     	.then(u => {
     		if (u) {
@@ -31,7 +33,6 @@ export function create( req:Request, res:Response ) {
 		        	rememberToken: token
 		      	})
 		      	.then(t => {  
-		      		res.cookie('me_identity', token ) //, { expires : new Date(new Date().getTime()+2073816000) }
 		      		res.cookie('remember_me', token ) //, { expires : new Date(new Date().getTime()+2073816000) }
 		      		if ( redirect ) {
 		      			res.redirect( decodeURIComponent(redirect) ) 

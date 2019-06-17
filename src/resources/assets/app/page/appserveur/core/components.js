@@ -35,33 +35,40 @@ Vue.component('b-pagination', bPagination);
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-import { Menu , Avatar } from 'ant-design-vue';
+import { 
+	Menu , 
+	Avatar , 
+	Layout , 
+	Breadcrumb , 
+	Col , 
+	Row , 
+	Button 
+} from 'ant-design-vue';
+
 Vue.component( Menu.name, Menu );
 Vue.component( Menu.Item.name, Menu.Item );
 Vue.component( Menu.SubMenu.name, Menu.SubMenu );
 
 Vue.component( Avatar.name, Avatar );
+
+Vue.component( Layout.name, Layout );
+Vue.component( Layout.Header.name, Layout.Header );
+Vue.component( Layout.Content.name, Layout.Content );
+
+console.log( Row.name )
+Vue.component( Row.name, Row );
+Vue.component( Col.name, Col );
+
+Vue.component( Breadcrumb.name, Breadcrumb );
+
+Vue.component( Button.name, Button );
+
 //////////////////////////////////////////////////////////////////////////////////////////////
  
 
 //Bootrap vuejs
 import bTable from 'bootstrap-vue/es/components/table/table';
 Vue.component('b-table', bTable);
-
-import bNavbar from 'bootstrap-vue/es/components/navbar/navbar';
-Vue.component('b-navbar', bNavbar);
-
-import bNavbarBrand from 'bootstrap-vue/es/components/navbar/navbar-brand';
-Vue.component('b-navbar-brand', bNavbarBrand);
-
-import bNavbarNav from 'bootstrap-vue/es/components/navbar/navbar-nav';
-Vue.component('b-navbar-nav', bNavbarNav);
-
-import bNavItem from 'bootstrap-vue/es/components/nav/nav-item';
-Vue.component('b-nav-item', bNavItem);
-
-import { Button } from 'bootstrap-vue/es/components';
-Vue.use(Button);
 
 import bForm from 'bootstrap-vue/es/components/form/form';
 Vue.component('b-form', bForm);
@@ -78,14 +85,8 @@ Vue.component('b-form-invalid-feedback', bFormInvalidFeedback);
 import bContainer from 'bootstrap-vue/es/components/layout/container';
 Vue.component('b-container', bContainer);
 
-import bRow from 'bootstrap-vue/es/components/layout/row';
-Vue.component('b-row', bRow);
-
 import bCol from 'bootstrap-vue/es/components/layout/col';
 Vue.component('b-col', bCol);
-
-import bFormRow from 'bootstrap-vue/es/components/layout/form-row';
-Vue.component('b-form-row', bFormRow);
 
 import bPopover from 'bootstrap-vue/es/components/popover/popover';
 Vue.component('b-popover', bPopover);

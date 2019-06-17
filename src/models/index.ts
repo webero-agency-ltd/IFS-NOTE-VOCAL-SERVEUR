@@ -7,6 +7,7 @@ import { ApplicationFactory } from './application';
 import { TeamFactory } from './team';
 import { ExternalFactory } from './external';
 import { PourFactory } from './pour';
+import { FormFactory } from './form';
 
 export const createModels = (sequelizeConfig: any): DBInterface => {
     const { database, username, password, params } = sequelizeConfig;
@@ -21,6 +22,7 @@ export const createModels = (sequelizeConfig: any): DBInterface => {
         Team: TeamFactory(sequelize, Sequelize),
         External: ExternalFactory(sequelize, Sequelize),
         Pour: PourFactory(sequelize, Sequelize),
+        Form: FormFactory(sequelize, Sequelize),
     };
     Object.keys(db).forEach(modelName => {
         if (db[modelName].associate) {

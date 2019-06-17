@@ -159,6 +159,12 @@ module.exports = {
 		N0005 : `Une erreur est produit *CODE:N0005*`,
 		N0006 : `Une erreur est produit *CODE:N0006*`,
 		N0007 : `Une erreur est produit *CODE:N0007*`,
+
+		//erreur dans la page form
+		F0001 : `Une erreur est produit lors de l'ajout du formulaire *CODE:F0001*`,
+		F0002 : `Une erreur est produit lors de l'ajout du formulaire *CODE:F0002*`,
+		F0003 : `Une erreur est produit lors de l'ajout du formulaire *CODE:F0003*`,
+		F0004 : `Une erreur est produit lors de la mise a jour de la valeur du formulaire *CODE:F0004*`,
 	},
 
 	/*

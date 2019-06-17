@@ -22,6 +22,8 @@ function create(req, res) {
     //ce remember token est utilises dans l'extenssion chrome pour faire l'authentification entre 
     //un utilisateur et le serveur de vocal note 
     var redirect = req.query.redirect;
+    //lancement du script google chrome apres l'authentification  
+    req.flash('runscript', { name: 'setApiKey', value: token });
     User.find({ where: { id: req.user.id } })
         .then(function (u) {
         if (u) {
@@ -29,7 +31,6 @@ function create(req, res) {
                 rememberToken: token
             })
                 .then(function (t) {
-                res.cookie('me_identity', token); //, { expires : new Date(new Date().getTime()+2073816000) }
                 res.cookie('remember_me', token); //, { expires : new Date(new Date().getTime()+2073816000) }
                 if (redirect) {
                     res.redirect(decodeURIComponent(redirect));

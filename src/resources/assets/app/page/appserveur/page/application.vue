@@ -1,27 +1,26 @@
 <template>
-	<div class="ifspage">
-        <b-container>
-            <b-row>
-                <b-col cols="12">
-                    <b-button class="mt-3" @click.prevent.stop="reauthorize">Token refresh</b-button>
-                </b-col>
-            </b-row>
-            <b-row style="margin-top: 2rem">
-                <b-col cols="12">
-                    <h2>{{$lang('appIFSTitle')}}</h2>
-                </b-col>
-                <b-col cols="12">
-                    <b-card-group deck>
-                        <b-card  footer-tag="footer" bg-variant="light" header="Temp d'enregistrement">
-                            
-                        </b-card>
-                        <b-card  footer-tag="footer" bg-variant="light" header="Note d'utilisateur">
-                            
-                        </b-card>
-                    </b-card-group>
-                </b-col>
-            </b-row>
-        </b-container>
+
+    <div :style="{ background: '#fff', padding: '24px', minHeight: '380px' }">
+
+        <Row :gutter="12">
+            <Col :span="8">
+                <h2>{{$lang('appIFSTitle')}}</h2>
+            </Col>
+            <Col :span="4">
+                <b-button class="mt-3" @click.prevent.stop="reauthorize">Token refresh</b-button>
+            </Col>
+        </Row>
+
+        <b-col cols="12">
+            <b-card-group deck>
+                <b-card  footer-tag="footer" bg-variant="light" header="Temp d'enregistrement">
+                    
+                </b-card>
+                <b-card  footer-tag="footer" bg-variant="light" header="Note d'utilisateur">
+                    
+                </b-card>
+            </b-card-group>
+        </b-col>        
     </div>
 </template>
 <script>

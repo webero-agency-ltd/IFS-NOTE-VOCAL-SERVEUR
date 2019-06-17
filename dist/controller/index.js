@@ -50,7 +50,7 @@ var execSync = require('child_process').execSync;
 var forearch_1 = __importDefault(require("../libs/forearch"));
 function index(req, res) {
     var lang = req.lang();
-    res.render('index.ejs', { lang: JSON.stringify(res.locals.lang), urlapplication: site.urlapp, portapplication: site.port });
+    res.render('index.ejs', { lang: JSON.stringify(res.locals.lang), urlapplication: site.urlapp, portapplication: site.port, chromeId: site.chromeId });
 }
 exports.index = index;
 function vocalNote(req, res) {

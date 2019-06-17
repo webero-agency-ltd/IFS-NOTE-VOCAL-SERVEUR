@@ -58,7 +58,7 @@ function index(req, res) {
         .then(function (i) {
         i.getNotes()
             .then(function (notes) {
-            res.json(notes);
+            res.success(notes);
         })
             .catch(function (e) {
             console.log(e);
@@ -73,9 +73,10 @@ function item(req, res) {
     var lang = req.lang();
     var _a = this.db, Note = _a.Note, User = _a.User;
     var id = req.params.id;
-    var token = req.query.token;
+    var apiKey = req.query.apiKey;
+    console.log(apiKey);
     User.findOne({
-        where: { rememberToken: token }
+        where: { rememberToken: apiKey }
     })
         .then(function (u) {
         if (u) {

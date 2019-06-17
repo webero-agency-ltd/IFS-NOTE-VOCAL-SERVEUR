@@ -6,6 +6,7 @@ import { ApplicationAttributes, ApplicationInstance } from '../models/applicatio
 import { TeamAttributes, TeamInstance } from '../models/team';
 import { ExternalAttributes, ExternalInstance } from '../models/external';
 import { PourAttributes, PourInstance } from '../models/pour';
+import { FormAttributes, FormInstance } from '../models/form';
 
 export interface DBInterface {
   	sequelize: Sequelize.Sequelize;
@@ -17,4 +18,5 @@ export interface DBInterface {
   	Team: Sequelize.Model<TeamInstance, TeamAttributes>;
   	External: Sequelize.Model<ExternalInstance, ExternalAttributes>;
   	Pour: Sequelize.Model<PourInstance, PourAttributes>;
+  	Form: Sequelize.Model<FormInstance, FormAttributes>;
 }
