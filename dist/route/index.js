@@ -54,6 +54,7 @@ var infusionsoft = require('../controller/infusionsoft');
 var external = require('../controller/external');
 var pour = require('../controller/pour');
 var form = require('../controller/form');
+var transferwise = require('../controller/transferwise');
 var hangel = require('../libs/hangel').hangel;
 module.exports = function (app, db, str) {
     return __awaiter(this, void 0, void 0, function () {
@@ -61,7 +62,7 @@ module.exports = function (app, db, str) {
             //controlleur de base de l'application qui vous affiche votre application  
             app.get('/', ensureAuth_1.default, home.index.bind({ db: db }));
             app.get('/vocal-note', ensureAuth_1.default, home.index.bind({ db: db }));
-            app.get('/refresh-token', home.refreshToken.bind({ db: db }));
+            app.get('/transferwise', home.transferwise.bind({ db: db }));
             //page d'authentification 
             app.get('/login', strategy_1.default, login.page.bind({ db: db }));
             app.post('/login', strategy_1.default, login.create.bind({ db: db }));
@@ -128,6 +129,14 @@ module.exports = function (app, db, str) {
             //création de formulaire 
             app.get('/form/:id', ensureAuth_1.default, hangel.bind({ func: form.index.bind({ db: db }) }));
             app.post('/form/:id', ensureAuth_1.default, hangel.bind({ func: form.create.bind({ db: db }) }));
+            //API transferwise ( seulement dans l'application du client pour ne pas crée plusieur serveur et le rendre vraiment compliquer a maintenire )
+            app.get('/transferwise/profiles', ensureAuth_1.default, hangel.bind({ func: transferwise.profiles.bind({ db: db }) }));
+            app.get('/transferwise/transfers', ensureAuth_1.default, hangel.bind({ func: transferwise.transfers.bind({ db: db }) }));
+            app.post('/transferwise/transfers', ensureAuth_1.default, hangel.bind({ func: transferwise.transfers_create.bind({ db: db }) }));
+            app.get('/transferwise/transfers/key', ensureAuth_1.default, hangel.bind({ func: transferwise.find.bind({ db: db }) }));
+            app.post('/transferwise/transfers/key', ensureAuth_1.default, hangel.bind({ func: transferwise.create.bind({ db: db }) }));
+            //récupération des transwise 
+            app.get('/form/:id', ensureAuth_1.default, hangel.bind({ func: form.index.bind({ db: db }) }));
             return [2 /*return*/, new Promise(function (resolve) { return resolve(true); })];
         });
     });

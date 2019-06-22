@@ -16,6 +16,7 @@ const infusionsoft = require('../controller/infusionsoft') ;
 const external = require('../controller/external') ;
 const pour = require('../controller/pour') ;
 const form = require('../controller/form') ;
+const transferwise = require('../controller/transferwise') ;
 const { hangel } = require('../libs/hangel') ;
 
 module.exports = async function ( app : Application , db : DBInterface , str ) : Promise<boolean> {
@@ -23,7 +24,7 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	//controlleur de base de l'application qui vous affiche votre application  
 	app.get('/',ensureAuth,home.index.bind({db})) ;
 	app.get('/vocal-note',ensureAuth,home.index.bind({db})) ;
-	app.get('/refresh-token',home.refreshToken.bind({db})) ;
+	app.get('/transferwise',home.transferwise.bind({db})) ;
 	
 	//page d'authentification 
 	app.get('/login',strategy,login.page.bind({db})) ;
@@ -103,6 +104,15 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	app.get('/form/:id',ensureAuth,hangel.bind({ func : form.index.bind({db}) })) ;
 	app.post('/form/:id',ensureAuth,hangel.bind({ func : form.create.bind({db}) })) ;
 
+	//API transferwise ( seulement dans l'application du client pour ne pas crée plusieur serveur et le rendre vraiment compliquer a maintenire )
+	app.get('/transferwise/profiles',ensureAuth,hangel.bind({ func : transferwise.profiles.bind({db}) })) ;
+	app.get('/transferwise/transfers',ensureAuth,hangel.bind({ func : transferwise.transfers.bind({db}) })) ;
+	app.post('/transferwise/transfers',ensureAuth,hangel.bind({ func : transferwise.transfers_create.bind({db}) })) ;
+	app.get('/transferwise/transfers/key',ensureAuth,hangel.bind({ func : transferwise.find.bind({db}) })) ;
+	app.post('/transferwise/transfers/key',ensureAuth,hangel.bind({ func : transferwise.create.bind({db}) })) ;
+	//récupération des transwise 
+	
+	app.get('/form/:id',ensureAuth,hangel.bind({ func : form.index.bind({db}) })) ;
 	return new Promise<boolean>( resolve => resolve( true ));
 	
 } 

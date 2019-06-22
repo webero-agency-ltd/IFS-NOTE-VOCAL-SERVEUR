@@ -24,6 +24,14 @@ if (window.location.pathname == '/' || window.location.pathname == '') {
         ]
     });
 }
+else if (window.location.pathname == '/transferwise') {
+    router = new vue_router_1.default({
+        routes: [
+            { name: 'transferwise', path: '/', component: function (h) { return h(require('../page/transferwise')); } },
+            { path: '*', redirect: '/' },
+        ]
+    });
+}
 else {
     router = new vue_router_1.default({
         routes: [

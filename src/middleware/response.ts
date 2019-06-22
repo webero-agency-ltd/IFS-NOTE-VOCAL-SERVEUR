@@ -15,7 +15,7 @@ module.exports = function ( req : Request , res : Response , next : NextFunction
 		return res.status(200).json({
 			id , 
 			message : lang['success'][id] ? lang['success'][id] : '' ,
-			data : data?data:{ success:true } , 
+			data : data!==null?data:{ success:true } , 
 		}); 
 	} 
 

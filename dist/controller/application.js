@@ -178,3 +178,29 @@ function redirectTrello(req, res) {
     });
 }
 exports.redirectTrello = redirectTrello;
+function redirectTransferwise(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var _a, Application, User, Team, lang, id, token;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _a = this.db, Application = _a.Application, User = _a.User, Team = _a.Team;
+                    lang = req.lang();
+                    id = req.params.id;
+                    token = req.query.token;
+                    if (!token) return [3 /*break*/, 2];
+                    return [4 /*yield*/, trello.findtoken({ id: id, token: token })];
+                case 1:
+                    if (_b.sent()) {
+                        return [2 /*return*/, res.redirect('/')];
+                    }
+                    return [3 /*break*/, 3];
+                case 2:
+                    res.render('trello_r.ejs');
+                    _b.label = 3;
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.redirectTransferwise = redirectTransferwise;

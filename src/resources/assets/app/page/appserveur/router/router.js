@@ -10,6 +10,7 @@ import users from '../page/users';
 import option from '../page/option';
 
 let router = null ;
+
 if ( window.location.pathname == '/' || window.location.pathname == '' ) {
 	router = new vueRouter({
 		routes : [
@@ -21,7 +22,16 @@ if ( window.location.pathname == '/' || window.location.pathname == '' ) {
 			{ path : '*', redirect : '/'},
 		]
 	})
-}else {
+}
+else if ( window.location.pathname == '/transferwise' ) {
+	router = new vueRouter({
+		routes : [
+			{ name: 'transferwise', path : '/', component : h => h(require('../page/transferwise')) },
+			{ path : '*', redirect : '/'},
+		]
+	})
+}
+else {
 	router = new vueRouter({
 		routes : [
 			{ name: 'external', path : '/', component : h => h(require('../page/external')) },

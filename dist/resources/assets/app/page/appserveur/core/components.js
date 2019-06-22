@@ -8,6 +8,8 @@ var pourTrello_1 = __importDefault(require("../components/pourTrello"));
 vue_1.default.component('pour-trello', pourTrello_1.default);
 var labelTrello_1 = __importDefault(require("../components/labelTrello"));
 vue_1.default.component('label-trello', labelTrello_1.default);
+var wisetransferApikey_1 = __importDefault(require("../components/wisetransferApikey"));
+vue_1.default.component('wisetransferApikey', wisetransferApikey_1.default);
 var pourInfusionsoft_1 = __importDefault(require("../components/pourInfusionsoft"));
 vue_1.default.component('pour-infusionsoft', pourInfusionsoft_1.default);
 var menu_1 = __importDefault(require("../components/menu"));
@@ -24,8 +26,8 @@ var createApplication_1 = __importDefault(require("../components/createApplicati
 vue_1.default.component('create-application', createApplication_1.default);
 var noteVocal_1 = __importDefault(require("../components/noteVocal"));
 vue_1.default.component('note-vocal', noteVocal_1.default);
-var pagination_1 = __importDefault(require("bootstrap-vue/es/components/pagination/pagination"));
-vue_1.default.component('b-pagination', pagination_1.default);
+var transferwise_menu_1 = __importDefault(require("../components/transferwise-menu"));
+vue_1.default.component('transferwise-menu', transferwise_menu_1.default);
 //////////////////////////////////////////////////////////////////////////////////////////////
 var ant_design_vue_1 = require("ant-design-vue");
 vue_1.default.component(ant_design_vue_1.Menu.name, ant_design_vue_1.Menu);
@@ -40,12 +42,10 @@ vue_1.default.component(ant_design_vue_1.Row.name, ant_design_vue_1.Row);
 vue_1.default.component(ant_design_vue_1.Col.name, ant_design_vue_1.Col);
 vue_1.default.component(ant_design_vue_1.Breadcrumb.name, ant_design_vue_1.Breadcrumb);
 vue_1.default.component(ant_design_vue_1.Button.name, ant_design_vue_1.Button);
+vue_1.default.component(ant_design_vue_1.Table.name, ant_design_vue_1.Table);
+vue_1.default.component(ant_design_vue_1.Modal.name, ant_design_vue_1.Modal);
+vue_1.default.component(ant_design_vue_1.Input.name, ant_design_vue_1.Input);
 //////////////////////////////////////////////////////////////////////////////////////////////
-//Bootrap vuejs
-var table_1 = __importDefault(require("bootstrap-vue/es/components/table/table"));
-vue_1.default.component('b-table', table_1.default);
-var form_1 = __importDefault(require("bootstrap-vue/es/components/form/form"));
-vue_1.default.component('b-form', form_1.default);
 var form_group_1 = __importDefault(require("bootstrap-vue/es/components/form-group/form-group"));
 vue_1.default.component('b-form-group', form_group_1.default);
 var form_input_1 = __importDefault(require("bootstrap-vue/es/components/form-input/form-input"));

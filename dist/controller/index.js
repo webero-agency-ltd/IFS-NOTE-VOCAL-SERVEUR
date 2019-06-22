@@ -53,6 +53,11 @@ function index(req, res) {
     res.render('index.ejs', { lang: JSON.stringify(res.locals.lang), urlapplication: site.urlapp, portapplication: site.port, chromeId: site.chromeId });
 }
 exports.index = index;
+function transferwise(req, res) {
+    var lang = req.lang();
+    res.render('transferwise.ejs', { lang: JSON.stringify(res.locals.lang), urlapplication: site.urlapp, portapplication: site.port });
+}
+exports.transferwise = transferwise;
 function vocalNote(req, res) {
     var lang = req.lang();
     res.render('noteVocal.ejs', { lang: JSON.stringify(res.locals.lang), urlapplication: site.urlapp, portapplication: site.port });

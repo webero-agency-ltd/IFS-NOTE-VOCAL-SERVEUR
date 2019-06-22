@@ -7,4 +7,5 @@ module.exports = {
     env: 'dev',
     //id de l'extenssion chrome 
     chromeId: 'bcnjckekkfoflenbllafnibogfkcgpei',
+    transferwise: '84fb589a-89fa-46ba-b10f-dd77a29d3f51',
 };

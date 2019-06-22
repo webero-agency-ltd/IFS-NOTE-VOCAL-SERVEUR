@@ -38,7 +38,7 @@ class note {
 	/*
 	 * Création de note ICI 
 	*/
-	async create( id , title , text , appId , type , userwhere ){
+	async create( id , title , text , appId , type , userwhere , attache , nativeId ){
 
 		let { Note } = global['db'] as DBInterface ;
 		let note = await this.find( id ) ; 
@@ -52,18 +52,18 @@ class note {
 		    if ( !u ) 
 		    	throw new AppError('N0006');
 		    //création du note en question et attacher le note au différent element 
-		    let [ err , data ] = await to( Note.create({ title , text , unique :  id , type }) ) ;
+		    let [ err , data ] = await to( Note.create({ title , text , unique :  id , type , attache , nativeId }) ) ;
 		    if ( err || !data )  
 		    	throw new AppError('N0007');
 		    note = data as NoteInstance ; 		
 		    [ err , data ] = await to( note.setAuthor( u ) ) ;
 		    [ err , data ] = await to( note.setApplication( app ) ) ;
-			return true;
 		}else {
 			let [ err , data ] = await to( note.update({ text }) ) ;
 		    if ( err )  
 		    	throw new AppError('N0004');
 		}
+		return note ;
 
 	}
 

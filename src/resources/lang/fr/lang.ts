@@ -165,6 +165,18 @@ module.exports = {
 		F0002 : `Une erreur est produit lors de l'ajout du formulaire *CODE:F0002*`,
 		F0003 : `Une erreur est produit lors de l'ajout du formulaire *CODE:F0003*`,
 		F0004 : `Une erreur est produit lors de la mise a jour de la valeur du formulaire *CODE:F0004*`,
+
+		//erreur de récupération de donner dans transfère wise 
+		TWP0001 : `Une erreur est produit dans transferwise *CODE:TWP0001*`,
+		TWP0002 : `Une erreur est produit dans transferwise *CODE:TWP0002*`,
+		TWP0003 : `Une erreur est produit dans transferwise *CODE:TWP0003*`,
+		TWP0004 : `Une erreur est produit dans transferwise *CODE:TWP0004*`,
+		TWP0005 : `Une erreur est produit dans transferwise *CODE:TWP0005*`,
+		TWP0006 : `Une erreur est produit dans transferwise *CODE:TWP0006*`,
+		TWP0007 : `Une erreur est produit dans transferwise *CODE:TWP0007*`,
+		TWP0008 : `Une erreur est produit dans transferwise *CODE:TWP0008*`,
+		TWP0009 : `Une erreur est produit dans transferwise *CODE:TWP0009*`,
+
 	},
 
 	/*

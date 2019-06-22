@@ -27,6 +27,7 @@ exports.UserFactory = function (sequelize, DataTypes) {
         User.hasMany(models.Team);
         User.hasMany(models.Pour, { foreignKey: 'AuthorId' });
         User.hasMany(models.Pour, { foreignKey: 'AuthorId' });
+        User.hasOne(models.Transferwise);
         User.hasOne(models.External);
         /*User.belongsToMany(models.Team, {
           through: 'UserTeams',

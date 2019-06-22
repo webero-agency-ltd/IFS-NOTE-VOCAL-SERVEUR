@@ -94,7 +94,7 @@ var note = /** @class */ (function () {
     /*
      * Création de note ICI
     */
-    note.prototype.create = function (id, title, text, appId, type, userwhere) {
+    note.prototype.create = function (id, title, text, appId, type, userwhere, attache, nativeId) {
         return __awaiter(this, void 0, void 0, function () {
             var _a, _b, Note, note, where, app, u, _c, err, data, _d, err, data;
             return __generator(this, function (_e) {
@@ -116,7 +116,7 @@ var note = /** @class */ (function () {
                         u = _e.sent();
                         if (!u)
                             throw new AppError('N0006');
-                        return [4 /*yield*/, promise_1.default(Note.create({ title: title, text: text, unique: id, type: type }))];
+                        return [4 /*yield*/, promise_1.default(Note.create({ title: title, text: text, unique: id, type: type, attache: attache, nativeId: nativeId }))];
                     case 4:
                         _c = _e.sent(), err = _c[0], data = _c[1];
                         if (err || !data)
@@ -128,14 +128,14 @@ var note = /** @class */ (function () {
                         return [4 /*yield*/, promise_1.default(note.setApplication(app))];
                     case 6:
                         _b = _e.sent(), err = _b[0], data = _b[1];
-                        return [2 /*return*/, true];
+                        return [3 /*break*/, 9];
                     case 7: return [4 /*yield*/, promise_1.default(note.update({ text: text }))];
                     case 8:
                         _d = _e.sent(), err = _d[0], data = _d[1];
                         if (err)
                             throw new AppError('N0004');
                         _e.label = 9;
-                    case 9: return [2 /*return*/];
+                    case 9: return [2 /*return*/, note];
                 }
             });
         });

@@ -16,6 +16,12 @@ exports.NoteFactory = function (sequelize, DataTypes) {
         type: {
             type: DataTypes.STRING
         },
+        attache: {
+            type: DataTypes.STRING
+        },
+        nativeId: {
+            type: DataTypes.STRING
+        },
     };
     var Note = sequelize.define('Note', attributes);
     Note.associate = function (models) {

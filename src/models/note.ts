@@ -13,6 +13,8 @@ export interface NoteAttributes {
     text?: string;
     type?: string;
     unique?: string;
+    attache?: string;
+    nativeId?: string;
     createdAt?: Date;
   	updatedAt?: Date;
 };
@@ -52,6 +54,12 @@ export const NoteFactory = (sequelize: Sequelize.Sequelize, DataTypes: Sequelize
           type: DataTypes.STRING
       },
       type: { 
+          type: DataTypes.STRING
+      },
+      attache: { 
+          type: DataTypes.STRING
+      },
+      nativeId: { 
           type: DataTypes.STRING
       },
   	}; 

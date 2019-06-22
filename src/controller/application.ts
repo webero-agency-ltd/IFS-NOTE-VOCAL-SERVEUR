@@ -82,3 +82,18 @@ export async function redirectTrello( req:Request, res:Response ) {
 		res.render( 'trello_r.ejs' ) ; 
 	}
 }
+
+
+export async function redirectTransferwise( req:Request, res:Response ) {
+	let { Application , User , Team } = this.db as DBInterface ;
+	let lang = req.lang() ; 
+	let { id } = req.params ; 
+	let { token } = req.query ; 
+	if ( token ){
+		if ( await trello.findtoken( { id , token } ) ) {
+			return res.redirect('/');
+		}
+	}else{
+		res.render( 'trello_r.ejs' ) ; 
+	}
+}

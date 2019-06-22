@@ -6,6 +6,9 @@ Vue.component('pour-trello', pourTrello);
 import labelTrello from '../components/labelTrello'; 
 Vue.component('label-trello', labelTrello);
 
+import wisetransferApikey from '../components/wisetransferApikey'; 
+Vue.component('wisetransferApikey', wisetransferApikey);
+
 import pourInfusionsoft from '../components/pourInfusionsoft';
 Vue.component('pour-infusionsoft', pourInfusionsoft);
 
@@ -30,8 +33,9 @@ Vue.component('create-application', createApplication);
 import noteVocal from '../components/noteVocal';
 Vue.component('note-vocal', noteVocal);
 
-import bPagination from 'bootstrap-vue/es/components/pagination/pagination';
-Vue.component('b-pagination', bPagination);
+import transferwiseMenu from '../components/transferwise-menu';
+Vue.component('transferwise-menu', transferwiseMenu);
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -42,7 +46,10 @@ import {
 	Breadcrumb , 
 	Col , 
 	Row , 
-	Button 
+	Button , 
+	Table ,
+	Modal ,
+	Input , 
 } from 'ant-design-vue';
 
 Vue.component( Menu.name, Menu );
@@ -63,15 +70,13 @@ Vue.component( Breadcrumb.name, Breadcrumb );
 
 Vue.component( Button.name, Button );
 
+Vue.component( Table.name, Table );
+
+Vue.component( Modal.name, Modal );
+
+Vue.component( Input.name, Input );
+
 //////////////////////////////////////////////////////////////////////////////////////////////
- 
-
-//Bootrap vuejs
-import bTable from 'bootstrap-vue/es/components/table/table';
-Vue.component('b-table', bTable);
-
-import bForm from 'bootstrap-vue/es/components/form/form';
-Vue.component('b-form', bForm);
 
 import bFormGroup from 'bootstrap-vue/es/components/form-group/form-group';
 Vue.component('b-form-group', bFormGroup);

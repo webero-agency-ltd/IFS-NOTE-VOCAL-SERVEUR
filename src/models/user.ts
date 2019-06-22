@@ -5,6 +5,7 @@ import { ApplicationInstance , ApplicationAttributes } from './application';
 import { TeamInstance , TeamAttributes } from './team';
 import { PourInstance , PourAttributes } from './pour';
 import { ExternalInstance , ExternalAttributes } from './external';
+import { TransferwiseInstance , TransferwiseAttributes } from './transferwise';
 
 
 export interface UserAttributes {
@@ -80,6 +81,11 @@ export interface UserInstance extends Sequelize.Instance<UserAttributes>, UserAt
     setExternal: Sequelize.HasOneSetAssociationMixin<ExternalInstance, ExternalInstance['id']>;
     createExternal: Sequelize.HasOneCreateAssociationMixin<ExternalAttributes>;
 
+    getTransferwise: Sequelize.HasOneGetAssociationMixin<TransferwiseInstance>;
+    setTransferwise: Sequelize.HasOneSetAssociationMixin<TransferwiseInstance, TransferwiseInstance['id']>;
+    createTransferwise: Sequelize.HasOneCreateAssociationMixin<TransferwiseAttributes>;
+
+
 }; 
 
 export const UserFactory = (sequelize: Sequelize.Sequelize, DataTypes: Sequelize.DataTypes): Sequelize.Model<UserInstance, UserAttributes> => {
@@ -107,6 +113,7 @@ export const UserFactory = (sequelize: Sequelize.Sequelize, DataTypes: Sequelize
       User.hasMany(models.Team);
       User.hasMany(models.Pour, { foreignKey: 'AuthorId' });
 	    User.hasMany(models.Pour, { foreignKey: 'AuthorId' });
+      User.hasOne(models.Transferwise)
       User.hasOne(models.External)
       /*User.belongsToMany(models.Team, {
         through: 'UserTeams',

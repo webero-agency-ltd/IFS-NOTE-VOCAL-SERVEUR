@@ -154,15 +154,15 @@ export async function check( req:Request, res:Response ) {
 //uploade d'un audion pour l'enregistré dans vos notes  
 export async function upload( req:Request, res:Response ) {
 	 
-	let { file , NOTEID , type , appId , newId , title , text, token } = req.query ; 
+	let { file , NOTEID , type , appId , newId , title , text, apiKey , attache , nativeId } = req.query ; 
 	let busboy = new Busboy({ headers: req.headers });
 	console.log( '---------------------------------' )
 	console.log( NOTEID , type , appId )
 	let filePath = await note.path( { id : appId } , NOTEID ) ;
 	//récupération token utilisateur 
 	let userwhere = {}
-	if ( token ) {
-		userwhere = { rememberToken : token }
+	if ( apiKey ) {
+		userwhere = { rememberToken : apiKey }
 	}else if ( req.user.id ) {
 		let id = req.user.id ;
 		userwhere = { id }
@@ -173,9 +173,7 @@ export async function upload( req:Request, res:Response ) {
 	//Pour la création de notes depuis la page mobile mais spécialement pour trello  
 	if ( newId && newId !== '' && newId !== null && newId !== 'null' ) {
 		let newPath = await note.path( { id : appId } , newId ) ;
-		console.log( 'new path : ' , newPath )
 		let rename = await this.str.renameFile( filePath , newPath ) ; 
-		console.log( 'rename : ' , rename )
 		if ( ! rename ) 
 			return res.error('N0003')
 		NOTEID = newId ; 
@@ -187,7 +185,7 @@ export async function upload( req:Request, res:Response ) {
 
 	busboy.on('finish', async () => {	
 		//upload terminer, on fait maintenant la 
-        res.success( await note.create( NOTEID , title , text , appId , type , userwhere ) )
+        res.success( await note.create( NOTEID , title , text , appId , type , userwhere , attache , nativeId ) )
     });
 
     return req.pipe(busboy);

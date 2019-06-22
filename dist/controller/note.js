@@ -207,12 +207,12 @@ exports.check = check;
 //uploade d'un audion pour l'enregistré dans vos notes  
 function upload(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, file, NOTEID, type, appId, newId, title, text, token, busboy, filePath, userwhere, id, newPath, rename;
+        var _a, file, NOTEID, type, appId, newId, title, text, apiKey, attache, nativeId, busboy, filePath, userwhere, id, newPath, rename;
         var _this = this;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    _a = req.query, file = _a.file, NOTEID = _a.NOTEID, type = _a.type, appId = _a.appId, newId = _a.newId, title = _a.title, text = _a.text, token = _a.token;
+                    _a = req.query, file = _a.file, NOTEID = _a.NOTEID, type = _a.type, appId = _a.appId, newId = _a.newId, title = _a.title, text = _a.text, apiKey = _a.apiKey, attache = _a.attache, nativeId = _a.nativeId;
                     busboy = new Busboy({ headers: req.headers });
                     console.log('---------------------------------');
                     console.log(NOTEID, type, appId);
@@ -220,8 +220,8 @@ function upload(req, res) {
                 case 1:
                     filePath = _b.sent();
                     userwhere = {};
-                    if (token) {
-                        userwhere = { rememberToken: token };
+                    if (apiKey) {
+                        userwhere = { rememberToken: apiKey };
                     }
                     else if (req.user.id) {
                         id = req.user.id;
@@ -234,11 +234,9 @@ function upload(req, res) {
                     return [4 /*yield*/, note.path({ id: appId }, newId)];
                 case 2:
                     newPath = _b.sent();
-                    console.log('new path : ', newPath);
                     return [4 /*yield*/, this.str.renameFile(filePath, newPath)];
                 case 3:
                     rename = _b.sent();
-                    console.log('rename : ', rename);
                     if (!rename)
                         return [2 /*return*/, res.error('N0003')];
                     NOTEID = newId;
@@ -254,7 +252,7 @@ function upload(req, res) {
                                 case 0:
                                     //upload terminer, on fait maintenant la 
                                     _b = (_a = res).success;
-                                    return [4 /*yield*/, note.create(NOTEID, title, text, appId, type, userwhere)];
+                                    return [4 /*yield*/, note.create(NOTEID, title, text, appId, type, userwhere, attache, nativeId)];
                                 case 1:
                                     //upload terminer, on fait maintenant la 
                                     _b.apply(_a, [_c.sent()]);
