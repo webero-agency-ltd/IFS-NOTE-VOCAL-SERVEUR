@@ -224,7 +224,7 @@ var trello = /** @class */ (function () {
     trello.prototype.deleteWebhook = function (_a) {
         var board = _a.board, token = _a.token;
         return __awaiter(this, void 0, void 0, function () {
-            var url, _b, error, info, body, jsonp, url_1, _c, error_1, info_1, body_1;
+            var url, _b, error, info, body, jsonp, url_1, _c, error_1, info_1, body_1, jsonp;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
@@ -235,14 +235,22 @@ var trello = /** @class */ (function () {
                         if (error && info.statusCode != 200)
                             throw new AppError('ART004');
                         jsonp = json(body, []);
-                        if (!(jsonp.length > 0)) return [3 /*break*/, 3];
+                        if (!(jsonp.length > 0)) return [3 /*break*/, 4];
                         url_1 = this.api + ("webhooks/" + jsonp[0].id + "/?key=" + site.trelloKey + "&token=" + token);
-                        console.log('----DELETE CONSOLE', url_1);
                         return [4 /*yield*/, request.destroy(url_1)];
                     case 2:
+                        _d.sent();
+                        return [4 /*yield*/, request.get(this.api + ("tokens/" + token + "/webhooks/?key=" + site.trelloKey))];
+                    case 3:
                         _c = _d.sent(), error_1 = _c.error, info_1 = _c.info, body_1 = _c.body;
-                        throw new AppError('ART005');
-                    case 3: return [2 /*return*/];
+                        if (error_1 && info_1.statusCode != 200)
+                            throw new AppError('ART004');
+                        jsonp = json(body_1, []);
+                        if (jsonp.length > 0) {
+                            throw new AppError('ART005');
+                        }
+                        _d.label = 4;
+                    case 4: return [2 /*return*/];
                 }
             });
         });

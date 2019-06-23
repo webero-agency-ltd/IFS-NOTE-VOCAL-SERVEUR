@@ -1,30 +1,32 @@
 <template>
-	<div class="notespage">
-        <b-container>
-            <b-row>
-                <b-col cols="12">
-                    <h2>{{$lang('appOptionTitle')}}</h2>
-                </b-col>
-            </b-row>
-            <b-row style="margin-top: 2rem">
-                <b-col cols="12">
-                    <template>
-                        <div>
-                            <b-table striped hover :items="items" :fields="fields" >
-                                <template slot="id" slot-scope="data">
-                                    <b-form-radio v-model="compte" name="some-radios" :value="data.item.id">{{data.item.id}}</b-form-radio>
-                                </template>
-                            </b-table>
-                        </div>
+    <div :style="{ marginLeft: 'auto', marginRight: 'auto', background: '#fff', padding: '24px', minHeight: '380px' , maxWidth : '992px' }">
+        <div style="display: flex;">
+            <h3>{{$lang('appOptionTitle')}}</h3>
+        </div>
+        <a-divider dashed />
+        <a-row :gutter="16">
+            <a-col>
+                <a-table 
+                    :columns="fields"
+                    :dataSource="items"
+                    :loading="loading"
+                    rowKey="title">
+                    <template slot="checkbox" slot-scope="checkbox , record">
+                        <a-radio-group @change="onChange" v-model="compte">
+                            <a-radio :value="record.id">{{record.id}}</a-radio>
+                        </a-radio-group>
                     </template>
-                </b-col>
-            </b-row>
-            <b-row>
-                <b-col cols="12">
-                    <b-button class="mt-3" @click="create">Valider</b-button>
-                </b-col>
-            </b-row>
-        </b-container>
+                    <template slot="link" slot-scope="link , record">
+                        <a target="_blank" :href="record.url">{{record.url}}</a>
+                    </template>
+                </a-table>
+            </a-col>
+        </a-row>
+        <a-row :gutter="16">
+            <a-col>
+                <a-button type="primary" icon="table" @click="create" block :loading="loading_btn" >Valider</a-button>
+            </a-col>
+        </a-row>
     </div>
 </template>
 <script>
@@ -47,6 +49,22 @@
         mapActions: mapApplicationActions 
     } = createNamespacedHelpers(`generale/application`);
 
+    let fields =  [{
+        title: 'ID',
+        dataIndex: 'checkbox',
+        width: 30,
+        scopedSlots: { customRender: 'checkbox' },
+    },{
+        title: 'Title',
+        dataIndex: 'title',
+        width: 150,
+    },{
+        title: 'Url',
+        dataIndex: 'url',
+        width: 150,
+        scopedSlots: { customRender: 'link' },
+    }] ; 
+    
 	export default {
 		props : [ ], 
 		data(){
@@ -54,11 +72,9 @@
                 infusionsoft : {} , 
                 compte : '' , 
                 items: [],
-                fields : [
-                    { key: "id", label: "ID" },
-                    { key: "title", label: "Title" },
-                    { key: "url", label: "Url" },
-                ]
+                loading : false ,
+                fields ,
+                loading_btn  : false , 
             }
         },
 
@@ -76,11 +92,9 @@
             },
 
             trelloBoards : function () {
-
                 this.items = this.trelloBoards.map(({ id , title , url }) => {
                     return { id , title , url }
                 }) 
-
             }
 
         },
@@ -94,19 +108,23 @@
                         item = i ; 
                     }
                 }
+                this.loading_btn = true; 
                 await this.$store.dispatch('generale/trello/ADD_BOARDS' , { id : this.$route.params.id,  compte : this.compte , url : item.url ,namespace : 'generale'} ) ; 
+                this.loading_btn = false; 
             },  
 
             async init(){
                 await this.$store.dispatch('generale/application/ITEM_APPLICATION' , { id : this.$route.params.id ,namespace : 'generale' } ) ; 
                 await this.$store.dispatch('generale/trello/ALL_BOARDS' , { id : this.$route.params.id  ,namespace : 'generale' }) ; 
-            }
+            },
+
+            onChange (e) {
+                console.log('radio checked', e.target.value)
+            },
 
         },
 		mounted(){
-            
             this.init() ; 
-
 		}
 	}
 </script>

@@ -1,26 +1,15 @@
 <template>
-
-    <div :style="{ background: '#fff', padding: '24px', minHeight: '380px' }">
-
-        <Row :gutter="12">
-            <Col :span="8">
-                <h2>{{$lang('appIFSTitle')}}</h2>
-            </Col>
-            <Col :span="4">
-                <b-button class="mt-3" @click.prevent.stop="reauthorize">Token refresh</b-button>
-            </Col>
-        </Row>
-
-        <b-col cols="12">
-            <b-card-group deck>
-                <b-card  footer-tag="footer" bg-variant="light" header="Temp d'enregistrement">
-                    
-                </b-card>
-                <b-card  footer-tag="footer" bg-variant="light" header="Note d'utilisateur">
-                    
-                </b-card>
-            </b-card-group>
-        </b-col>        
+    <div :style="{ marginLeft: 'auto', marginRight: 'auto', background: '#fff', padding: '24px', minHeight: '380px' , maxWidth : '992px' }">
+        <div style="display: flex;">
+            <h1>{{$lang('appIFSTitle')}} <strong>{{applicationsItem.name}}</strong></h1>
+            <h3 style="flex: 1;"><a-button @click="reauthorize" type="danger" style="float: right;margin-top: 0.5rem;" >Token refresh</a-button></h3>
+        </div>
+        <a-divider dashed />
+        <a-row :gutter="12">
+            <a-col :span="8">
+                            
+            </a-col>
+        </a-row>
     </div>
 </template>
 <script>
@@ -30,6 +19,7 @@
     
     import {
         generale,
+        mapApplicationFields ,
         mapApplicationMultiRowFields ,
     } from '../store/pages/generale';
     
@@ -53,8 +43,17 @@
                 
             }
         },
+
+        watch : {
+            applicationsItem : function () {
+                if ( this.applicationsItem.type == "trello" && !this.applicationsItem.compteId ) {
+                    this.$router.push({ name: 'option', params: { id: this.$route.params.id } }) 
+                }
+            }
+        },
+
         computed: {
-            
+            ...mapApplicationFields({ applicationsItem: `item` }),
         },
         methods : {
             async init(){

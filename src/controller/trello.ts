@@ -18,13 +18,13 @@ export async function membre( req:Request, res:Response ) {
 	let { Application , User , Team } = this.db as DBInterface ;
 	let { id } = req.params ; 
 	let i = await application.item( id ) ; 
-	if ( !i ) {
+	if ( !i ) 
     	return res.error('TMBU001') ; 
-    }
+    if ( !i.compteId ) 
+    	return res.error('TMBU004') ; 
     let { success , error } = await trello.membres({ board : i.compteId , token : i.accessToken }) ; 
-	if ( success ) {
+	if ( success ) 
 		return res.success( success );  
-    }
     return res.error('TMBU003') ;
 } 
 
@@ -58,9 +58,6 @@ export async function boardsUpdate( req:Request, res:Response ) {
 	//récupération des cars de trello 
 	let app = await application.item( id ) ; 
 	let cards = await trello.cards({ board : compteId , token : app.accessToken })
-	console.log( cards.success.map(({ url , shortUrl })=>{
-		return { url , shortUrl }  ;
-	}) )
 	cards.success.push({ url })
 	let cardstring = cards.success.map(({ url })=>{
 		return decodeURIComponent(url.replace('https://trello.com', ''))  ;

@@ -59,15 +59,15 @@ function membre(req, res) {
                     return [4 /*yield*/, application.item(id)];
                 case 1:
                     i = _c.sent();
-                    if (!i) {
+                    if (!i)
                         return [2 /*return*/, res.error('TMBU001')];
-                    }
+                    if (!i.compteId)
+                        return [2 /*return*/, res.error('TMBU004')];
                     return [4 /*yield*/, trello.membres({ board: i.compteId, token: i.accessToken })];
                 case 2:
                     _b = _c.sent(), success = _b.success, error = _b.error;
-                    if (success) {
+                    if (success)
                         return [2 /*return*/, res.success(success)];
-                    }
                     return [2 /*return*/, res.error('TMBU003')];
             }
         });
@@ -127,10 +127,6 @@ function boardsUpdate(req, res) {
                     return [4 /*yield*/, trello.cards({ board: compteId, token: app.accessToken })];
                 case 2:
                     cards = _d.sent();
-                    console.log(cards.success.map(function (_a) {
-                        var url = _a.url, shortUrl = _a.shortUrl;
-                        return { url: url, shortUrl: shortUrl };
-                    }));
                     cards.success.push({ url: url });
                     cardstring = cards.success.map(function (_a) {
                         var url = _a.url;

@@ -1,63 +1,40 @@
 <template>
-	<div class="d-block text-center">
-        <b-form class="form-login" @submit.prevent.stop="onSubmit">
-            <b-form-group buttons >
-                <b-form-radio v-model="type" name="some-radios" value="trello">Trello</b-form-radio>
-                <b-form-radio v-model="type" name="some-radios" value="infusionsoft">Infusionsoft</b-form-radio>
-            </b-form-group>
-            <b-form-group v-if="type=='infusionsoft'" >
-                <b-input-group>
-                    <b-row style="width: 100%;">
-                        <b-col sm="4"><label for="name">{{$lang('appInfusionsoftName')}} : </label></b-col>
-                        <b-col sm="8">
-                            <b-form-group>
-                                <b-form-input 
-                                		v-model="name"
-                                		@input="changeError('name')" 
-                                		:state="error.name?false:null"
-                                        :placeholder="$lang('appInfusionsoftName')">
-                                </b-form-input>
-                            </b-form-group>
-                        </b-col>
-                    </b-row>
-                </b-input-group>
-            </b-form-group>
-            <b-form-group v-if="type=='infusionsoft'" >
-                <b-input-group>
-                    <b-row style="width: 100%;">
-                        <b-col sm="4"><label for="compteId">{{$lang('appInfusionsoftUrlId')}} : </label></b-col>
-                        <b-col sm="8">
-                            <b-form-group>
-                                <b-form-input id="compteId"
-                                        v-model="compteId"
-                                        @input="changeError('compteId')"
-                                        :state="error.compteId?false:null"
-                                        :placeholder="$lang('appInfusionsoftUrlId')">
-                                </b-form-input>
-                            </b-form-group>
-                        </b-col>
-                    </b-row>
-                </b-input-group>
-            </b-form-group>
-            <b-form-group v-if="type=='trello'" >
-                <b-input-group>
-                    <b-row style="width: 100%;">
-                        <b-col sm="4"><label for="nameTrello">{{$lang('appTrelloName')}} : </label></b-col>
-                        <b-col sm="8">
-                            <b-form-group>
-                                <b-form-input id="nameTrello"
-                                        v-model="name"
-                                        @input="changeError('name')"
-                                        :state="error.name?false:null"
-                                        :placeholder="$lang('appTrelloName')">
-                                </b-form-input>
-                            </b-form-group>
-                        </b-col>
-                    </b-row>
-                </b-input-group>
-            </b-form-group>
-        </b-form>
-    </div>
+    <a-form :layout="'vertical'">
+        <a-form-item>
+            <a-radio-group
+                style="width: 100%;"
+                default-value="infusionsoft" 
+                @change="handleFormApplicationChange">
+                <a-radio-button style="width: 50%;" value="trello">
+                    Trello
+                </a-radio-button>
+                <a-radio-button style="width: 50%;" value="infusionsoft">
+                    Infusionsoft
+                </a-radio-button>
+            </a-radio-group>
+        </a-form-item>    
+        <a-form-item v-if="type=='infusionsoft'" :label="$lang('appInfusionsoftName')">
+            <a-input
+                v-decorator="[
+                    'name',
+                    {rules: [{ required: true, message: 'Please input name!' }]} ]"
+                v-model="name" :placeholder="$lang('appInfusionsoftName')" /> 
+        </a-form-item>
+        <a-form-item v-if="type=='infusionsoft'" :label="$lang('appInfusionsoftUrlId')">
+            <a-input
+                v-decorator="[
+                    'compteId',
+                    {rules: [{ required: true, message: 'Please input website!' }]}]"
+                    v-model="compteId" :placeholder="$lang('appInfusionsoftUrlId')" />      
+        </a-form-item>
+        <a-form-item v-if="type=='trello'" :label="$lang('appTrelloName')">
+            <a-input
+                v-decorator="[
+                    'name',
+                    {rules: [{ required: true, message: 'Please input name!' }]}]"
+                v-model="name" :placeholder="$lang('appTrelloName')" />   
+        </a-form-item>
+    </a-form>
 </template>
 <script>
 	
@@ -99,11 +76,9 @@
 
         methods : {
 
-        	/*
-            ...mapApplicationMutations({
-                submit: 'ADD_APPLICATION',
-            }),
-            */
+            handleFormApplicationChange  (e) {
+                this.type = e.target.value;
+            },
 
         	changeError ( e ){
         		let data = {}
@@ -130,15 +105,11 @@
         },
 		created(){
 
-			let ADD_APPLICATION = false ; 
-			this.on('createApplication',async () => {
-				if ( ADD_APPLICATION === false ) {
-					ADD_APPLICATION = true ; 
-					let response = await this.$store.dispatch('generale/application/ADD_APPLICATION' , { namespace : 'generale' } ) ; 
-					ADD_APPLICATION = false ; 
-					//on ferme le modale
-					this.emit('cmodale')
-				}
+			this.on('ApplicationCreate',async () => {
+				let response = await this.$store.dispatch('generale/application/ADD_APPLICATION' , { namespace : 'generale' } ) ; 
+                if ( response ) {
+                    this.emit('closemodale') ; 
+                }
 			});
 
             this.findInfusionsoft() ; 

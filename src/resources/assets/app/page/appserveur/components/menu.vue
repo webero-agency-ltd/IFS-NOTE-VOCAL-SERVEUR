@@ -54,6 +54,13 @@
             	current : ['application'] , 
             }
         },
+
+        watch:{
+		    $route (to, from){
+		        this.current = [ this.$route.name ]
+		    }
+		},  
+
         computed: {
             ...mapApplicationFields({ applicationsItem: `item` }),
         },

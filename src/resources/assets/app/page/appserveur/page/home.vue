@@ -1,47 +1,30 @@
 <template>
-    <div>
-        <a-breadcrumb :routes="routes">
-            <template slot="itemRender" slot-scope="{route, params, routes, paths}">
-                <span v-if="routes.indexOf(route) === routes.length - 1">
-                  {{route.breadcrumbName}}
-                </span>
-                <router-link v-else :to="paths.join('/')">
-                  {{route.breadcrumbName}}
-                </router-link>
-            </template>
-        </a-breadcrumb>
-        
-        <b-container>
-            <b-row>
-                <b-col cols="12">
-                    <h2>{{$lang('appHomeTitle')}}</h2>
-                </b-col>
-            </b-row>
-            <b-row>
-                <b-col cols="12">
-                    <h4>
-                        <a href="/vocal-note">{{$lang('appNoteMobile')}}</a>
-                    </h4>
-                </b-col>
-            </b-row>
-            <b-row style="margin-top: 2rem">
-                <b-col cols="12">
-                    <b-card-group deck >
-                        <b-card v-for="item in applications" :key="item.id"  footer-tag="footer" bg-variant="light" :header="item.name">
-                            <b-card-text><h3>Recorder</h3></b-card-text>
-                            <b-card-text><h3>00 : 12</h3></b-card-text>
-                            <router-link :to="{name:'application', params : {id : item.id} }">
-                                statistique
-                            </router-link>
-                            <em slot="footer">{{item.user_role}}</em>
-                        </b-card>
-                        <b-card @click="modale" class="text-center" bg-variant="light" >
-                            ADD NEW
-                        </b-card>
-                    </b-card-group>
-                </b-col>
-            </b-row>
-        </b-container>
+    <div :style="{ marginLeft: 'auto', marginRight: 'auto', background: '#fff', padding: '24px', minHeight: '380px' , maxWidth : '992px' }">
+        <div style="display: flex;">
+            <h1>{{$lang('appHomeTitle')}}</h1>
+            <h3 style="flex: 1;"><a href="/vocal-note" style="float: right; line-height: 2rem;"><a-icon type="mobile" />{{$lang('appNoteMobile')}}</a></h3>
+        </div>
+        <a-divider dashed />
+        <a-row :gutter="16">
+            <a-col :span="8" v-for="item in applications" :key="item.id">
+                <a-card>
+                    <template class="ant-card-actions" slot="actions">
+                        <a-icon @click="dashboard(item.id)" type="dashboard" />
+                        <a-icon type="user" />
+                        <a-icon type="delete" />
+                    </template>
+                    <a-card-meta
+                        :title="item.name"
+                        :description="item.user_role">
+                        <a-avatar v-if="item.type=='trello'" slot="avatar" src="/assets/img/trello.png" />
+                        <a-avatar v-if="item.type=='infusionsoft'" slot="avatar" src="/assets/img/infusionsoft.png" />
+                    </a-card-meta>
+                </a-card>
+            </a-col>
+        </a-row>
+        <div style="margin-top: 1.5rem;">
+            <a-button type="primary" icon="plus-circle" @click="newapplication" block >Add new application</a-button>
+        </div>
     </div>
 </template>
 <script>
@@ -79,19 +62,26 @@
         },
         methods : {
 
-            modale() { 
-                let footer = [
-                    {event:'createApplication',name:'crée application',variant:'primary'}
-                ]; 
-                footer = [{event:'close',name:'ANNULE',variant:'secondary'},...footer]
-                this.emit('modale',{title:this.$lang('appCreateApplicationTitle'),component:'create-application',footer}) 
+            newapplication() { 
+                
+                this.emit('modal',{
+                    title : this.$lang('appCreateApplicationTitle') , 
+                    component : 'create-application' , 
+                    handleOk : 'ApplicationCreate'
+                })
+
             },
 
             async init(){
                 //initialisation des stores de l'applications  
-                console.log('FIND_ALL')
                 await this.$store.dispatch('generale/application/FIND_ALL' , { namespace : 'generale' } ) ; 
+            },
+
+            //redirection a la page dashbord 
+            async dashboard( page ){
+                this.$router.push({ name: 'application', params: { id: page } }) 
             }
+
         },
         mounted(){
             this.init()

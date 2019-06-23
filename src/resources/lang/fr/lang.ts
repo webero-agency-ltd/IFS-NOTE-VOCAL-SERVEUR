@@ -38,7 +38,7 @@ module.exports = {
 	TrelloNull : 'l\'ID ne correspond pas a un compte trello, ou vous n\'avez pas d\'authorisation' ,
 	TrelloTokenError : 'l\'access token de trello est erreur' ,
 	//page infusionsoft
-	appIFSTitle : 'La statique de votre page' ,
+	appIFSTitle : 'Dasboard de l\'application : ' ,
 	InfusionsoftNull : 'l\'ID ne correspond pas a un compte infusionsoft, ou vous n\'avez pas d\'authorisation' ,
 	InfusionsoftAPINull : 'Il semble que les donners de l\'infusionsoft est vide' ,
 	InfusionsoftTokenError : 'l\'access token de l\'application est erreur' ,
@@ -112,9 +112,10 @@ module.exports = {
 		//TMB002 : `Erreur de récupération des bords trello *CODE:TMB002*` , 
 		//TML001 : `Erreur de récupération des teams de l'applications *CODE:TML001*` , 
 		TML002 : `Erreur de récupération des lists trello *CODE:TML002*` , 
-		//TMBU001 : `Erreur de récupération de l'applications *CODE:TMBU001*` , 
-		//TMBU002 : `Une erreur est produit *CODE:TMBU002*` , 
-		//TMBU003 : `Impossible de récupère les listes de trello *CODE:TMBU002*` , 
+		TMBU001 : `Erreur de récupération de l'applications *CODE:TMBU001*` , 
+		TMBU002 : `Une erreur est produit *CODE:TMBU002*` , 
+		TMBU003 : `Impossible de récupère les listes de trello *CODE:TMBU002*` , 
+		TMBU004 : `Vous devez d'abord définire un board a utiliser dans votre application trello *CODE:TMBU004*` , 
 		//erreur d'infusionsoft controller 
 		//IM0001 : `Impossible de récupère le compte infuisonsoft *CODE:IM0001*`,
 		//IM0002 : `Erreur sur le token de l'application infusionsoft *CODE:IM0002*`,
@@ -176,6 +177,10 @@ module.exports = {
 		TWP0007 : `Une erreur est produit dans transferwise *CODE:TWP0007*`,
 		TWP0008 : `Une erreur est produit dans transferwise *CODE:TWP0008*`,
 		TWP0009 : `Une erreur est produit dans transferwise *CODE:TWP0009*`,
+
+
+		//erreur sur trello 
+		ART005 : `Une Erreur de supression de hoot trello *CODE:ART005*`,
 
 	},
 

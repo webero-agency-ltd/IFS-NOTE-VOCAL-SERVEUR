@@ -8,7 +8,6 @@ var AppError = require('../libs/AppError');
 /*
  * Classe de manipulation des actions vers trello 
 */
-
 class trello {
 	
 	api : string  ;
@@ -80,7 +79,6 @@ class trello {
 	    return { error };
 	}
 
-
 	/*
 	 * Récupération de tout les cards de trello 
 	*/
@@ -121,12 +119,17 @@ class trello {
 	    let { error, info , body } = await request.get( url )
 		if ( error && info.statusCode != 200 ) 
 	    	throw new AppError('ART004');
-	    let jsonp = json( body , [] );
+	    var jsonp = json( body , [] );
 	    if ( jsonp.length > 0 ) {
 			let url = this.api+`webhooks/${jsonp[0].id}/?key=${site.trelloKey}&token=${token}`; 
-			console.log('----DELETE CONSOLE' , url )
-	    	let { error, info , body } = await request.destroy( url )
-	    	throw new AppError('ART005');
+	    	await request.destroy( url )
+		    let { error, info , body } = await request.get( this.api+`tokens/${token}/webhooks/?key=${site.trelloKey}` )
+			if ( error && info.statusCode != 200 ) 
+		    	throw new AppError('ART004');
+		    var jsonp = json( body , [] );
+		    if ( jsonp.length > 0 ) {
+		    	throw new AppError('ART005');
+		    }
 	    }
 	}
 
@@ -154,7 +157,6 @@ class trello {
 		if ( error && info.statusCode != 200 ) 
 	    	throw new AppError('ART008');
 	    return json( body , [] )
-
 	}
 	
 }

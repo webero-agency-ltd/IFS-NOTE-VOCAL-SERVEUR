@@ -36,8 +36,6 @@ Vue.component('note-vocal', noteVocal);
 import transferwiseMenu from '../components/transferwise-menu';
 Vue.component('transferwise-menu', transferwiseMenu);
 
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////
 import { 
 	Menu , 
@@ -50,6 +48,12 @@ import {
 	Table ,
 	Modal ,
 	Input , 
+	Card , 
+	Icon , 
+	Divider , 
+	Form ,
+	Radio , 
+	Popover , 
 } from 'ant-design-vue';
 
 Vue.component( Menu.name, Menu );
@@ -76,96 +80,22 @@ Vue.component( Modal.name, Modal );
 
 Vue.component( Input.name, Input );
 
-//////////////////////////////////////////////////////////////////////////////////////////////
+Vue.component( Card.name, Card );
+Vue.component( Card.Meta.name, Card.Meta );
 
-import bFormGroup from 'bootstrap-vue/es/components/form-group/form-group';
-Vue.component('b-form-group', bFormGroup);
+Vue.component( Icon.name, Icon );
 
-import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
-Vue.component('b-form-input', bFormInput);
+Vue.component( Divider.name, Divider );
 
-import bFormInvalidFeedback from 'bootstrap-vue/es/components/form/form-invalid-feedback';
-Vue.component('b-form-invalid-feedback', bFormInvalidFeedback);
-	
-import bContainer from 'bootstrap-vue/es/components/layout/container';
-Vue.component('b-container', bContainer);
+Vue.component( Form.name, Form );
+Vue.component( Form.Item.name, Form.Item );
 
-import bCol from 'bootstrap-vue/es/components/layout/col';
-Vue.component('b-col', bCol);
+Vue.component( Radio.name, Radio );
+Vue.component( Radio.Button.name, Radio.Button );
+Vue.component( Radio.Group.name, Radio.Group );
 
-import bPopover from 'bootstrap-vue/es/components/popover/popover';
-Vue.component('b-popover', bPopover);
+Vue.component( Popover.name, Popover );
 
-import bModal from 'bootstrap-vue/es/components/modal/modal';
-Vue.component('b-modal', bModal);
-
-import bDropdown from 'bootstrap-vue/es/components/dropdown/dropdown';
-Vue.component('b-dropdown', bDropdown);
-
-import bDropdownItem from 'bootstrap-vue/es/components/dropdown/dropdown-item';
-Vue.component('b-dropdown-item', bDropdownItem);
-
-import bNavItemDropdown from 'bootstrap-vue/es/components/nav/nav-item-dropdown';
-Vue.component('b-nav-item-dropdown', bNavItemDropdown);
-
-import bImg from 'bootstrap-vue/es/components/image/img';
-Vue.component('b-img', bImg);
-
-import bInputGroup from 'bootstrap-vue/es/components/input-group/input-group';
-Vue.component('b-input-group', bInputGroup);
-
-import bListGroup from 'bootstrap-vue/es/components/list-group/list-group';
-Vue.component('b-list-group', bListGroup);
-
-import bListGroupItem from 'bootstrap-vue/es/components/list-group/list-group-item';
-Vue.component('b-list-group-item', bListGroupItem);
-
-import bCard from 'bootstrap-vue/es/components/card/card';
-Vue.component('b-card', bCard);
-
-import bCardText from 'bootstrap-vue/es/components/card/card-text';
-Vue.component('b-card-text', bCardText);
-
-import bCardGroup from 'bootstrap-vue/es/components/card/card-group';
-Vue.component('b-card-group', bCardGroup);
-
-import bBadge from 'bootstrap-vue/es/components/badge/badge';
-Vue.component('b-badge', bBadge);
-
-import bProgress from 'bootstrap-vue/es/components/progress/progress';
-Vue.component('b-progress', bProgress);
-
-import bAlert from 'bootstrap-vue/es/components/alert/alert';
-Vue.component('b-alert', bAlert);
-
-import bFormTextarea from 'bootstrap-vue/es/components/form-textarea/form-textarea';
-Vue.component('b-form-textarea', bFormTextarea);
-
-import bFormSelect from 'bootstrap-vue/es/components/form-select/form-select';
-Vue.component('b-form-select', bFormSelect);
-
-import bFormCheckboxGroup from 'bootstrap-vue/es/components/form-checkbox/form-checkbox-group';
-Vue.component('b-form-checkbox-group', bFormCheckboxGroup);
-
-import bFormCheckbox from 'bootstrap-vue/es/components/form-checkbox/form-checkbox';
-Vue.component('b-form-checkbox', bFormCheckbox);
-
-import bProgressBar from 'bootstrap-vue/es/components/progress/progress-bar';
-Vue.component('b-progress-bar', bProgressBar);
-
-import BPopover from 'bootstrap-vue/es/components/popover/popover'
-Vue.component('b-popover', BPopover)
-
-import BFormRadioGroup from 'bootstrap-vue/es/components/form-radio/form-radio-group'
-Vue.component('b-form-radio-group', BFormRadioGroup)
-
-import bFormRadio from 'bootstrap-vue/es/components/form-radio/form-radio'
-Vue.component('b-form-radio', bFormRadio)
-
-import bInputGroupAppend from 'bootstrap-vue/es/components/input-group/input-group-append'
-Vue.component('b-input-group-append', bInputGroupAppend)
-
-let comp = {
-}
+let comp = {}
 
 export default comp;
