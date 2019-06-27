@@ -96,8 +96,14 @@ module.exports = function (app, db, str) {
             app.get('/infusionsoft/membre/:id', ensureAuth_1.default, hangel.bind({ func: infusionsoft.membre.bind({ db: db }) }));
             app.get('/infusionsoft/contacts/:id', ensureAuth_1.default, hangel.bind({ func: infusionsoft.contacts.bind({ db: db }) }));
             app.get('/infusionsoft/note/:id', ensureAuth_1.default, hangel.bind({ func: infusionsoft.notes.bind({ db: db }) }));
+            app.get('/infusionsoft/task/:id', ensureAuth_1.default, hangel.bind({ func: infusionsoft.tasks.bind({ db: db }) }));
+            app.get('/infusionsoft/on/:id', hangel.bind({ func: infusionsoft.event.bind({ db: db, str: str }) }));
+            app.post('/infusionsoft/on/:id', hangel.bind({ func: infusionsoft.event.bind({ db: db, str: str }) }));
+            app.get('/infusionsoft/destroyHook/:id', hangel.bind({ func: infusionsoft.destroyHook.bind({ db: db, str: str }) }));
+            app.get('/infusionsoft/setnote/:unique/:nativeId', hangel.bind({ func: infusionsoft.setnote.bind({ db: db, str: str }) }));
             //route des notes
             app.get('/note/:id', hangel.bind({ func: note.item.bind({ db: db, str: str }) }));
+            app.get('/note/nativeId/:id', hangel.bind({ func: note.itemNativeId.bind({ db: db, str: str }) }));
             app.get('/note/check/:id', hangel.bind({ func: note.check.bind({ db: db, str: str }) }));
             app.post('/note/checks', hangel.bind({ func: note.checks.bind({ db: db, str: str }) }));
             app.get('/notes/:id', hangel.bind({ func: note.index.bind({ db: db, str: str }) }));
@@ -136,7 +142,6 @@ module.exports = function (app, db, str) {
             app.get('/transferwise/transfers/key', ensureAuth_1.default, hangel.bind({ func: transferwise.find.bind({ db: db }) }));
             app.post('/transferwise/transfers/key', ensureAuth_1.default, hangel.bind({ func: transferwise.create.bind({ db: db }) }));
             //récupération des transwise 
-            app.get('/form/:id', ensureAuth_1.default, hangel.bind({ func: form.index.bind({ db: db }) }));
             return [2 /*return*/, new Promise(function (resolve) { return resolve(true); })];
         });
     });

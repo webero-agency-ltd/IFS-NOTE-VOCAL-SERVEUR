@@ -35,11 +35,27 @@ class note {
 	    return data ;  
 	}
 
+	async update( id , object ){
+		let where = {} ;
+		typeof(id)=="object"?where=id:where['id']=id;
+		let { Note } = global['db'] as DBInterface ;
+		let [ err , data ] = await to(Note.findOne({
+		    where 
+	    })) 
+		data as NoteInstance ;
+		if ( data ) {
+			console.log( 'update note ici avec les donner suivant : ' , object )  ;
+			data.update( object )
+		}
+	    return data ;  
+	}
+
 	/*
 	 * Création de note ICI 
 	*/
 	async create( id , title , text , appId , type , userwhere , attache , nativeId ){
 
+		console.log( '--CREATE NOTE IN WHERE' , id )
 		let { Note } = global['db'] as DBInterface ;
 		let note = await this.find( id ) ; 
 		if ( !note ) {
@@ -52,16 +68,21 @@ class note {
 		    if ( !u ) 
 		    	throw new AppError('N0006');
 		    //création du note en question et attacher le note au différent element 
-		    let [ err , data ] = await to( Note.create({ title , text , unique :  id , type , attache , nativeId }) ) ;
+		    let [ err , data ] = await to( Note.create({ title , text , unique : id.unique , type , attache , nativeId }) ) ;
+		    console.log( '______________' )
+		    console.log( err )
 		    if ( err || !data )  
 		    	throw new AppError('N0007');
 		    note = data as NoteInstance ; 		
 		    [ err , data ] = await to( note.setAuthor( u ) ) ;
 		    [ err , data ] = await to( note.setApplication( app ) ) ;
 		}else {
+			console.log( 'Update de note' )
 			let [ err , data ] = await to( note.update({ text }) ) ;
 		    if ( err )  
 		    	throw new AppError('N0004');
+		    note = data ; 
+			console.log( 'End Update de note' )
 		}
 		return note ;
 

@@ -45,6 +45,7 @@ var team = require('../libs/team');
 var promise_1 = __importDefault(require("../libs/promise"));
 var AppError = require('../libs/AppError');
 var note = require('../libs/note');
+var forearch = require('../libs/forearch');
 /*
  * Classe de manipulation des actions vers trello
 */
@@ -56,56 +57,54 @@ var app = /** @class */ (function () {
     */
     app.prototype.create = function (n, data) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, _b, _c, Form, itemNote, traits, _i, traits_1, i, type, name_1, value, _d, err, data_1, f;
-            return __generator(this, function (_e) {
-                switch (_e.label) {
+            var _a, _b, Form, itemNote, traits, _i, traits_1, i, type, name_1, value, _c, err, data_1, f;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
                         Form = global['db'].Form;
                         return [4 /*yield*/, note.find(n)];
                     case 1:
-                        itemNote = _e.sent();
+                        itemNote = _d.sent();
                         if (!itemNote)
                             throw new AppError('F0001');
-                        traits = data.filter(function (e) { return e.type && e.name && e.value; });
+                        traits = data.filter(function (e) { return e.type !== undefined && e.name !== undefined && e.value !== undefined; });
+                        console.log('------ create ');
+                        console.log('------ noteId :  ', n);
                         console.log(traits);
                         _i = 0, traits_1 = traits;
-                        _e.label = 2;
+                        _d.label = 2;
                     case 2:
-                        if (!(_i < traits_1.length)) return [3 /*break*/, 10];
+                        if (!(_i < traits_1.length)) return [3 /*break*/, 8];
                         i = traits_1[_i];
                         type = i.type, name_1 = i.name, value = i.value;
                         return [4 /*yield*/, promise_1.default(Form.findOne({
                                 where: { name: name_1, NoteId: n }
                             }))];
                     case 3:
-                        _d = _e.sent(), err = _d[0], data_1 = _d[1];
+                        _c = _d.sent(), err = _c[0], data_1 = _c[1];
                         f = data_1;
+                        console.log('____OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO');
+                        console.log('-name : ', name_1);
+                        console.log('-NoteId : ', n);
                         if (!f) return [3 /*break*/, 5];
                         return [4 /*yield*/, promise_1.default(f.update({ type: type, name: name_1, value: value }))];
                     case 4:
                         //ici on fait la mise a jour de la valeur car la formulaire existe déja
-                        _a = _e.sent(), err = _a[0], data_1 = _a[1];
+                        _a = _d.sent(), err = _a[0], f = _a[1];
                         if (err)
                             throw new AppError('F0004');
                         return [3 /*break*/, 7];
-                    case 5: return [4 /*yield*/, promise_1.default(Form.create({ type: type, name: name_1, value: value }))];
+                    case 5: return [4 /*yield*/, promise_1.default(Form.create({ type: type, name: name_1, value: value, NoteId: itemNote.id }))];
                     case 6:
                         //ici on crée le formulaire car il n'existe pas encore 
-                        _b = _e.sent(), err = _b[0], data_1 = _b[1];
+                        _b = _d.sent(), err = _b[0], f = _b[1];
                         if (err)
                             throw new AppError('F0002');
-                        _e.label = 7;
-                    case 7: return [4 /*yield*/, promise_1.default(itemNote.setForms(data_1))];
-                    case 8:
-                        //on ratache ensuite cette formulaire au note que l'on a selectionner avant 
-                        _c = _e.sent(), err = _c[0], data_1 = _c[1];
-                        if (err)
-                            throw new AppError('F0003');
-                        _e.label = 9;
-                    case 9:
+                        _d.label = 7;
+                    case 7:
                         _i++;
                         return [3 /*break*/, 2];
-                    case 10: return [2 /*return*/, data];
+                    case 8: return [2 /*return*/, data];
                 }
             });
         });

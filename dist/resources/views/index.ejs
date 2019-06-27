@@ -15,6 +15,17 @@
 	    		let op = {}
 				op[`<%-locals.flash.runscript.name  %>` ] =  `<%- locals.flash.runscript.value  %>`; 
 	    		chrome.runtime.sendMessage( "<%- chromeId %>"  ,  op );
+	    		chrome.runtime.sendMessage( "ccjkmhgpnjmendnoghjcemkhnfgpdble"  ,  {sdsd:'sdsd'} );
+
+	    		chrome.tabs.query({}, 
+			        function (tabs) {
+			        	console.log( tabs )
+			            
+			        }
+			    );
+
+	    		console.log( "<%- chromeId %>" )
+	    		console.log( op )
 	    	</script>
 	    <% } %> 
 		<div id="core"></div>

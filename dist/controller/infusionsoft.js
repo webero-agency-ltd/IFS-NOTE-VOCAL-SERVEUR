@@ -39,6 +39,8 @@ var site = require('../config/site');
 var request = require('request');
 var querystring = require('querystring');
 var infusionsoft = require('../libs/infusionsoft');
+var application = require('../libs/application');
+var note_application = require('../libs/note');
 function membre(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var lang, id, _a, _b;
@@ -76,17 +78,17 @@ function notes(req, res) {
     });
 }
 exports.notes = notes;
-function contacts(req, res) {
+function tasks(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var lang, _a, Application, User, Team, id, _b, _c;
+        var lang, _a, token, appId, id, _b, _c;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
                     lang = req.lang();
-                    _a = this.db, Application = _a.Application, User = _a.User, Team = _a.Team;
+                    _a = req.query, token = _a.token, appId = _a.appId;
                     id = req.params.id;
                     _c = (_b = res).success;
-                    return [4 /*yield*/, infusionsoft.contacts(id)];
+                    return [4 /*yield*/, infusionsoft.tasks(appId, id)];
                 case 1:
                     _c.apply(_b, [_d.sent()]);
                     return [2 /*return*/];
@@ -94,4 +96,105 @@ function contacts(req, res) {
         });
     });
 }
+exports.tasks = tasks;
+function contacts(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var lang, id, _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    lang = req.lang();
+                    id = req.params.id;
+                    _b = (_a = res).success;
+                    return [4 /*yield*/, infusionsoft.contacts(id)];
+                case 1:
+                    _b.apply(_a, [_c.sent()]);
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
 exports.contacts = contacts;
+function setnote(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var _a, unique, nativeId, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    _a = req.params, unique = _a.unique, nativeId = _a.nativeId;
+                    _c = (_b = res).success;
+                    return [4 /*yield*/, note_application.update({ unique: unique }, { nativeId: nativeId })];
+                case 1: 
+                //on selectionne d'abord que le note avec l'unique existe 
+                //si oui, on fait la mise a jour, si non, on resourne juste un success sant ID 
+                return [2 /*return*/, _c.apply(_b, [_d.sent()])];
+            }
+        });
+    });
+}
+exports.setnote = setnote;
+function event(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var id, n, app, note, body, repl, sdsd, s;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    id = req.params.id;
+                    if (!(req.body.event_key == 'note.add' && req.body.object_keys)) return [3 /*break*/, 3];
+                    n = req.body.object_keys[0].id;
+                    return [4 /*yield*/, application.item(id)];
+                case 1:
+                    app = _a.sent();
+                    if (!app)
+                        return [2 /*return*/, !1];
+                    return [4 /*yield*/, infusionsoft.notes(id, n)];
+                case 2:
+                    note = _a.sent();
+                    //récupération des notes qui correspond a l'url qui a été enregistre dans le contenue si existe 
+                    //si l'url existe, on fait le raprochement entre les deux et on fait l'update dans la base de donner 
+                    //si c'est pas le cas , on laise tout simplement passer 
+                    if (!note.id)
+                        return [2 /*return*/, !1];
+                    body = note.body;
+                    console.log(note);
+                    if (body.indexOf('https://therapiequantique.net/note/u/') >= 0) {
+                        repl = body.replace(new RegExp('\r?\n', 'g'), '');
+                        ;
+                        sdsd = /https:\/\/therapiequantique.net\/note\/u\/(.*)/gi;
+                        s = sdsd.exec(repl);
+                        if (s[1]) {
+                            console.log('update note ici');
+                            note_application.update({ unique: s[1] }, { nativeId: note.id });
+                        }
+                    }
+                    return [2 /*return*/, res.success(true)];
+                case 3:
+                    res.set('X-Hook-Secret', req.get('X-Hook-Secret'));
+                    res.success(true);
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.event = event;
+/*
+ * Supression de tout les hook qui existe
+*/
+function destroyHook(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var lang, id, _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    lang = req.lang();
+                    id = req.params.id;
+                    _b = (_a = res).success;
+                    return [4 /*yield*/, infusionsoft.destroyHook(id)];
+                case 1:
+                    _b.apply(_a, [_c.sent()]);
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.destroyHook = destroyHook;

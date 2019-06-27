@@ -59,6 +59,16 @@ class infusionsoft {
 		return reponse.id?reponse:{};
 	}
 
+	async tasks( id , note ) {
+	    let app = await application.item( id )
+	    let token = json( app.accessToken , {} ) 
+	    var { error, info , body } = await request.get( this.api + '/tasks/'+note+'/?access_token='+token['access_token'] ) ; 
+		if ( error && info.statusCode !== 200 )
+	    	throw new AppError('IC0007');
+	    let reponse = json( body , {} ) ;
+		return reponse.id?reponse:{};
+	}
+
 	/*
 	 * Récupération de l'access toke  
 	*/
@@ -85,6 +95,98 @@ class infusionsoft {
 	    let reponse = json( body , {} )
 		if ( reponse['users'] ) {
 			await team.update( { ApplicationId : id } , { contactid: reponse['users'][0].id } ) ; 
+			//apres on selectionne si cette application a un hook, si pas, on le crée
+			console.log( '_____________________________________' )
+			console.log( this.api + '/hooks/?access_token='+jsont['access_token'] )
+			var { error, info , body } = await request.get( this.api + '/hooks/?access_token='+jsont['access_token'] ) ;
+			let hooks = json( body , {} ) ; 
+			let reverified = [] ; 
+			let existed = [] ; 
+			for( let { hookUrl , eventKey , key , status } of hooks ){
+				if ( hookUrl == `https://therapiequantique.net/infusionsoft/on/${id}` && status== 'Verified' ) {
+					existed = [ ...existed , { hookUrl , eventKey , key , status }]
+				}else if( hookUrl == `https://therapiequantique.net/infusionsoft/on/${id}` ){
+					reverified = [ ...reverified , { hookUrl , eventKey , key , status }]
+				}
+			}
+			//revériffie 
+			if ( reverified.length ) {
+				console.log('-----VERIFICATION DE STATUS EN COURS------')
+				for( let { hookUrl , eventKey , key , status } of reverified ){
+					let form = {};
+					let headers = { 'Content-Type': 'application/json' } ; 
+					var { error, info , body } = await request.post( this.api + `/hooks/${key}/verify/?access_token=`+jsont['access_token'] , form , headers ) ;
+					console.log( '--' , hookUrl )
+				}	
+			}
+			console.log( existed.length , reverified.length )
+			console.log( '===========================================' )
+			if ( existed.length || reverified.length ) {
+				console.log('-----HOOK EXISTE------')
+				return true ;
+			}
+			let events = [
+				//"appointment.add",
+				//"appointment.delete",
+				//"appointment.edit",
+				//"company.add",
+				//"company.delete",
+				//"company.edit",
+				"contact.add",
+				"contact.delete",
+				"contact.edit",
+				"contact.redact",
+				//"contactGroup.add",
+				//"contactGroup.applied",
+				//"contactGroup.delete",
+				//"contactGroup.edit",
+				//"contactGroup.removed",
+				//"invoice.add",
+				//"invoice.delete",
+				//"invoice.edit",
+				//"invoice.payment.add",
+				//"invoice.payment.delete",
+				//"invoice.payment.edit",
+				//"leadsource.add",
+				//"leadsource.delete",
+				//"leadsource.edit",
+				"note.add",
+				"note.delete",
+				"note.edit",
+				//"opportunity.add",
+				//"opportunity.delete",
+				//"opportunity.edit",
+				//"opportunity.stage_move",
+				//"order.add",
+				//"order.delete",
+				//"order.edit",
+				//"product.add",
+				//"product.delete",
+				//"product.edit",
+				//"subscription.add",
+				//"subscription.delete",
+				//"subscription.edit",
+				"task.add",
+				"task.delete",
+				"task.edit",
+				//"user.activate",
+				//"user.add",
+				//"user.edit"
+			]
+			for( let e of events ){
+				let form = {
+					hookUrl: `https://therapiequantique.net/infusionsoft/on/${id}` , 
+			    	eventKey: e , 
+				};
+				console.log( e )
+				let headers = { 'Content-Type': 'application/json' } ; 
+				var { error, info , body } = await request.post( this.api + '/hooks/?access_token='+jsont['access_token'] , form , headers , true ) ;
+			}
+			//var { error, info , body } = await request.destroy( this.api + '/hooks/8/?access_token='+jsont['access_token'] , form , headers , true ) ;
+			
+			console.log( body )
+			console.log( json( body , {} ) ) 
+			console.log( '_____________________________________' )
 			return true;
 		}
 	    throw new AppError('ARE005');
@@ -119,6 +221,19 @@ class infusionsoft {
 	    	throw new AppError('EN0007');
 	    return json( body , {} );
 	}
+
+	async destroyHook( id ){
+		let app = await application.item( id )
+	    let token = json( app.accessToken , {} ) 
+		var { error, info , body } = await request.get( this.api + '/hooks/?access_token='+token['access_token'] ) ; 
+
+	    let reponse = json( body , {} ) ; 
+	    for( let { hookUrl , eventKey , key , status } of reponse ){
+	    	var { error, info , body } = await request.destroy( this.api + '/hooks/'+key+'/?access_token='+token['access_token'] ) ; 
+		}
+	    return true ;
+	}
+
 }
 
 module.exports = new infusionsoft() ; 

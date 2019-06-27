@@ -8,6 +8,12 @@ var note = require('../libs/note');
 var application = require('../libs/application'); 
 var AppError = require('../libs/AppError');
 
+export async function itemNativeId( req:Request, res:Response ) {
+	let lang = req.lang() ; 
+	let { id } = req.params  ;
+	console.log( id )
+	return res.success( await note.find( { nativeId : id } ) );
+}
 //liste de tout les notes d'un utilisateur en particulier 
 //@todo : il faut bien avoire une session pour faire la recherche pour ne pas afficher tout les notes 
 //d'un utilisateur qui n'est pas la votre
@@ -154,11 +160,11 @@ export async function check( req:Request, res:Response ) {
 //uploade d'un audion pour l'enregistré dans vos notes  
 export async function upload( req:Request, res:Response ) {
 	 
-	let { file , NOTEID , type , appId , newId , title , text, apiKey , attache , nativeId } = req.query ; 
+	let { NOTEID , update , file , type , appId , newId , title , text, apiKey , attache , nativeId } = req.query ; 
 	let busboy = new Busboy({ headers: req.headers });
-	console.log( '---------------------------------' )
-	console.log( NOTEID , type , appId )
+	console.log( 'upload : ---------------------------------' , file , NOTEID )
 	let filePath = await note.path( { id : appId } , NOTEID ) ;
+	console.log( filePath )
 	//récupération token utilisateur 
 	let userwhere = {}
 	if ( apiKey ) {
@@ -169,7 +175,15 @@ export async function upload( req:Request, res:Response ) {
 	}else{
 		return res.error('N0002')
 	}
-
+	//si on veut faire des mise a jour et qu'il ny a pas de note vocal a modiffier mais jute 
+	//des formulaire 
+	console.log( '+++++++++++++++++++++++++++++' )
+	console.log( update && (file == false || file == 'false') , update , file )
+	if ( update && (file == false || file == 'false') ) {
+		//on fait la selection des notes et on retour tout siplement cette valur
+		let n = await note.create( { unique : NOTEID } , title , text , appId , type , userwhere , attache , nativeId ) 
+		return res.success( n )  ;
+	}
 	//Pour la création de notes depuis la page mobile mais spécialement pour trello  
 	if ( newId && newId !== '' && newId !== null && newId !== 'null' ) {
 		let newPath = await note.path( { id : appId } , newId ) ;
@@ -180,12 +194,14 @@ export async function upload( req:Request, res:Response ) {
 	}
 
     busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
+		console.log( 'Pipe Upload files' )
 	    file.pipe(fs.createWriteStream(filePath)); 
 	})
-
+    
 	busboy.on('finish', async () => {	
+		console.log( 'FINISH Upload files' )
 		//upload terminer, on fait maintenant la 
-        res.success( await note.create( NOTEID , title , text , appId , type , userwhere , attache , nativeId ) )
+        res.success( await note.create( { unique : NOTEID } , title , text , appId , type , userwhere , attache , nativeId ) )
     });
 
     return req.pipe(busboy);

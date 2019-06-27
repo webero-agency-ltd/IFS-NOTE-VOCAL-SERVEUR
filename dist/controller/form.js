@@ -49,6 +49,8 @@ function create(req, res) {
                     lang = req.lang();
                     data = req.body.data;
                     id = req.params.id;
+                    console.log('--- CREATE FORMULAIRE');
+                    console.log(data, req.body);
                     _b = (_a = res).success;
                     return [4 /*yield*/, form.create(id, data)];
                 case 1: 

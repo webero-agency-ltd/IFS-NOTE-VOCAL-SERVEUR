@@ -11,6 +11,8 @@ export async function create( req:Request, res:Response ) {
 	let lang = req.lang() ; 
 	let { data } = req.body ; 
 	let { id } = req.params  ;
+	console.log( '--- CREATE FORMULAIRE' )
+	console.log( data , req.body )
 	//vérification d'abord que les donners que vous avez etrer correspond bien au spécification 
 	return res.success( await form.create( id , data ) );			
 }

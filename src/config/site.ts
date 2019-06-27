@@ -5,7 +5,7 @@ module.exports = {
   	urlapp : "http://localhost:3000",//http://192.168.8.100:3000
   	port : 3000 , 
   	env : 'dev' ,//prod  
-  	//id de l'extenssion chrome 
-  	chromeId : 'bcnjckekkfoflenbllafnibogfkcgpei' ,   
+  	//id de l'extenssion chromes 
+  	chromeId : 'ccjkmhgpnjmendnoghjcemkhnfgpdble' ,    
   	transferwise : '84fb589a-89fa-46ba-b10f-dd77a29d3f51' ,   
 }

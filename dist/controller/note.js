@@ -45,6 +45,23 @@ var Busboy = require('busboy');
 var note = require('../libs/note');
 var application = require('../libs/application');
 var AppError = require('../libs/AppError');
+function itemNativeId(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var lang, id, _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    lang = req.lang();
+                    id = req.params.id;
+                    console.log(id);
+                    _b = (_a = res).success;
+                    return [4 /*yield*/, note.find({ nativeId: id })];
+                case 1: return [2 /*return*/, _b.apply(_a, [_c.sent()])];
+            }
+        });
+    });
+}
+exports.itemNativeId = itemNativeId;
 //liste de tout les notes d'un utilisateur en particulier 
 //@todo : il faut bien avoire une session pour faire la recherche pour ne pas afficher tout les notes 
 //d'un utilisateur qui n'est pas la votre
@@ -207,18 +224,18 @@ exports.check = check;
 //uploade d'un audion pour l'enregistré dans vos notes  
 function upload(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, file, NOTEID, type, appId, newId, title, text, apiKey, attache, nativeId, busboy, filePath, userwhere, id, newPath, rename;
+        var _a, NOTEID, update, file, type, appId, newId, title, text, apiKey, attache, nativeId, busboy, filePath, userwhere, id, n, newPath, rename;
         var _this = this;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    _a = req.query, file = _a.file, NOTEID = _a.NOTEID, type = _a.type, appId = _a.appId, newId = _a.newId, title = _a.title, text = _a.text, apiKey = _a.apiKey, attache = _a.attache, nativeId = _a.nativeId;
+                    _a = req.query, NOTEID = _a.NOTEID, update = _a.update, file = _a.file, type = _a.type, appId = _a.appId, newId = _a.newId, title = _a.title, text = _a.text, apiKey = _a.apiKey, attache = _a.attache, nativeId = _a.nativeId;
                     busboy = new Busboy({ headers: req.headers });
-                    console.log('---------------------------------');
-                    console.log(NOTEID, type, appId);
+                    console.log('upload : ---------------------------------', file, NOTEID);
                     return [4 /*yield*/, note.path({ id: appId }, NOTEID)];
                 case 1:
                     filePath = _b.sent();
+                    console.log(filePath);
                     userwhere = {};
                     if (apiKey) {
                         userwhere = { rememberToken: apiKey };
@@ -230,19 +247,30 @@ function upload(req, res) {
                     else {
                         return [2 /*return*/, res.error('N0002')];
                     }
-                    if (!(newId && newId !== '' && newId !== null && newId !== 'null')) return [3 /*break*/, 4];
-                    return [4 /*yield*/, note.path({ id: appId }, newId)];
+                    //si on veut faire des mise a jour et qu'il ny a pas de note vocal a modiffier mais jute 
+                    //des formulaire 
+                    console.log('+++++++++++++++++++++++++++++');
+                    console.log(update && (file == false || file == 'false'), update, file);
+                    if (!(update && (file == false || file == 'false'))) return [3 /*break*/, 3];
+                    return [4 /*yield*/, note.create({ unique: NOTEID }, title, text, appId, type, userwhere, attache, nativeId)];
                 case 2:
+                    n = _b.sent();
+                    return [2 /*return*/, res.success(n)];
+                case 3:
+                    if (!(newId && newId !== '' && newId !== null && newId !== 'null')) return [3 /*break*/, 6];
+                    return [4 /*yield*/, note.path({ id: appId }, newId)];
+                case 4:
                     newPath = _b.sent();
                     return [4 /*yield*/, this.str.renameFile(filePath, newPath)];
-                case 3:
+                case 5:
                     rename = _b.sent();
                     if (!rename)
                         return [2 /*return*/, res.error('N0003')];
                     NOTEID = newId;
-                    _b.label = 4;
-                case 4:
+                    _b.label = 6;
+                case 6:
                     busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
+                        console.log('Pipe Upload files');
                         file.pipe(fs.createWriteStream(filePath));
                     });
                     busboy.on('finish', function () { return __awaiter(_this, void 0, void 0, function () {
@@ -250,9 +278,10 @@ function upload(req, res) {
                         return __generator(this, function (_c) {
                             switch (_c.label) {
                                 case 0:
+                                    console.log('FINISH Upload files');
                                     //upload terminer, on fait maintenant la 
                                     _b = (_a = res).success;
-                                    return [4 /*yield*/, note.create(NOTEID, title, text, appId, type, userwhere, attache, nativeId)];
+                                    return [4 /*yield*/, note.create({ unique: NOTEID }, title, text, appId, type, userwhere, attache, nativeId)];
                                 case 1:
                                     //upload terminer, on fait maintenant la 
                                     _b.apply(_a, [_c.sent()]);

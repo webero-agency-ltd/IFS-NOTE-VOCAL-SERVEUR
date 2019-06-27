@@ -9,6 +9,7 @@ import { DBInterface } from '../interface/DBInterface';
 import makeid from '../libs/makeid';
 var AppError = require('../libs/AppError');
 var note = require('../libs/note');
+var forearch = require('../libs/forearch');
 
 /*
  * Classe de manipulation des actions vers trello 
@@ -25,7 +26,9 @@ class app {
 		let itemNote = await note.find( n )
 		if( !itemNote )
 		    throw new AppError('F0001');
-		let traits = data.filter( e => e.type && e.name && e.value ) ; 
+		let traits = data.filter( e => e.type !== undefined && e.name  !== undefined && e.value !== undefined ) ; 
+		console.log( '------ create ' )
+		console.log( '------ noteId :  ' , n )
 		console.log( traits )
 		for( const i of traits ){
 			let { type , name , value } = i ;
@@ -35,21 +38,20 @@ class app {
 			    where : { name , NoteId : n }
 		    })) 
 			let f = data as PourInstance ;
+			console.log( '____OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO' )
+			console.log( '-name : ' , name )
+			console.log( '-NoteId : ' , n )
 			if ( f ) {
 				//ici on fait la mise a jour de la valeur car la formulaire existe déja
-				[ err , data ] = await to(f.update( { type , name , value } )) 
+				[ err , f ] = await to(f.update( { type , name , value } )) 
 			    if ( err )  
 			    	throw new AppError('F0004');
 			}else{
 				//ici on crée le formulaire car il n'existe pas encore 
-				[ err , data ] = await to(Form.create( { type , name , value } )) 
+				[ err , f ] = await to(Form.create( { type , name , value , NoteId : itemNote.id } )) 
 			    if ( err )  
 			    	throw new AppError('F0002');
 			}
-		    //on ratache ensuite cette formulaire au note que l'on a selectionner avant 
-		    [ err , data ] = await to(itemNote.setForms( data )) 
-		    if ( err )  
-		    	throw new AppError('F0003');
 		}
 		
 		return data;

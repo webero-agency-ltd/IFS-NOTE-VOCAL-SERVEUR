@@ -8,6 +8,7 @@ export interface FormAttributes {
     name?: string;
     type?: string;
     value?: string;
+    NoteId?:string;
 };
 
 export interface FormInstance extends Sequelize.Instance<FormAttributes>, FormAttributes { 

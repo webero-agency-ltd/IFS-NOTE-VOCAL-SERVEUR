@@ -63,9 +63,14 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	app.get('/infusionsoft/membre/:id',ensureAuth,hangel.bind({ func : infusionsoft.membre.bind({db}) })) ;
 	app.get('/infusionsoft/contacts/:id',ensureAuth, hangel.bind({ func : infusionsoft.contacts.bind({db}) }) ) ;
 	app.get('/infusionsoft/note/:id',ensureAuth, hangel.bind({ func : infusionsoft.notes.bind({db}) }) ) ;
-
+	app.get('/infusionsoft/task/:id',ensureAuth, hangel.bind({ func : infusionsoft.tasks.bind({db}) }) ) ;
+	app.get('/infusionsoft/on/:id',hangel.bind({ func : infusionsoft.event.bind({db,str}) })) ;
+	app.post('/infusionsoft/on/:id',hangel.bind({ func : infusionsoft.event.bind({db,str}) })) ;
+	app.get('/infusionsoft/destroyHook/:id',hangel.bind({ func : infusionsoft.destroyHook.bind({db,str}) })) ;
+	app.get('/infusionsoft/setnote/:unique/:nativeId',hangel.bind({ func : infusionsoft.setnote.bind({db,str}) })) ;
 	//route des notes
 	app.get('/note/:id',hangel.bind({ func : note.item.bind({db,str}) })) ;
+	app.get('/note/nativeId/:id',hangel.bind({ func : note.itemNativeId.bind({db,str}) })) ;
 	app.get('/note/check/:id',hangel.bind({ func : note.check.bind({db,str}) })) ;
 	app.post('/note/checks',hangel.bind({ func : note.checks.bind({db,str}) })) ;
 	app.get('/notes/:id',hangel.bind({ func : note.index.bind({db,str}) })) ;
@@ -112,7 +117,6 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	app.post('/transferwise/transfers/key',ensureAuth,hangel.bind({ func : transferwise.create.bind({db}) })) ;
 	//récupération des transwise 
 	
-	app.get('/form/:id',ensureAuth,hangel.bind({ func : form.index.bind({db}) })) ;
 	return new Promise<boolean>( resolve => resolve( true ));
 	
 } 

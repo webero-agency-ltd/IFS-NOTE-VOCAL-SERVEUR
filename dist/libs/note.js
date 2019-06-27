@@ -91,6 +91,30 @@ var note = /** @class */ (function () {
             });
         });
     };
+    note.prototype.update = function (id, object) {
+        return __awaiter(this, void 0, void 0, function () {
+            var where, Note, _a, err, data;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        where = {};
+                        typeof (id) == "object" ? where = id : where['id'] = id;
+                        Note = global['db'].Note;
+                        return [4 /*yield*/, promise_1.default(Note.findOne({
+                                where: where
+                            }))];
+                    case 1:
+                        _a = _b.sent(), err = _a[0], data = _a[1];
+                        data;
+                        if (data) {
+                            console.log('update note ici avec les donner suivant : ', object);
+                            data.update(object);
+                        }
+                        return [2 /*return*/, data];
+                }
+            });
+        });
+    };
     /*
      * Création de note ICI
     */
@@ -100,6 +124,7 @@ var note = /** @class */ (function () {
             return __generator(this, function (_e) {
                 switch (_e.label) {
                     case 0:
+                        console.log('--CREATE NOTE IN WHERE', id);
                         Note = global['db'].Note;
                         return [4 /*yield*/, this.find(id)];
                     case 1:
@@ -116,9 +141,11 @@ var note = /** @class */ (function () {
                         u = _e.sent();
                         if (!u)
                             throw new AppError('N0006');
-                        return [4 /*yield*/, promise_1.default(Note.create({ title: title, text: text, unique: id, type: type, attache: attache, nativeId: nativeId }))];
+                        return [4 /*yield*/, promise_1.default(Note.create({ title: title, text: text, unique: id.unique, type: type, attache: attache, nativeId: nativeId }))];
                     case 4:
                         _c = _e.sent(), err = _c[0], data = _c[1];
+                        console.log('______________');
+                        console.log(err);
                         if (err || !data)
                             throw new AppError('N0007');
                         note = data;
@@ -129,11 +156,15 @@ var note = /** @class */ (function () {
                     case 6:
                         _b = _e.sent(), err = _b[0], data = _b[1];
                         return [3 /*break*/, 9];
-                    case 7: return [4 /*yield*/, promise_1.default(note.update({ text: text }))];
+                    case 7:
+                        console.log('Update de note');
+                        return [4 /*yield*/, promise_1.default(note.update({ text: text }))];
                     case 8:
                         _d = _e.sent(), err = _d[0], data = _d[1];
                         if (err)
                             throw new AppError('N0004');
+                        note = data;
+                        console.log('End Update de note');
                         _e.label = 9;
                     case 9: return [2 /*return*/, note];
                 }
