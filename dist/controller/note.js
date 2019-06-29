@@ -34,29 +34,26 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var forearch_1 = __importDefault(require("../libs/forearch"));
 var path = require('path');
 var fs = require('fs');
 var Busboy = require('busboy');
 var note = require('../libs/note');
+var user = require('../libs/user');
 var application = require('../libs/application');
 var AppError = require('../libs/AppError');
 function itemNativeId(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var lang, id, _a, _b;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
+        var lang, _a, id, attache, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
                 case 0:
                     lang = req.lang();
-                    id = req.params.id;
-                    console.log(id);
-                    _b = (_a = res).success;
-                    return [4 /*yield*/, note.find({ nativeId: id })];
-                case 1: return [2 /*return*/, _b.apply(_a, [_c.sent()])];
+                    _a = req.params, id = _a.id, attache = _a.attache;
+                    console.log('--- itemNativeId ', id, attache);
+                    _c = (_b = res).success;
+                    return [4 /*yield*/, note.find({ nativeId: id, attache: attache })];
+                case 1: return [2 /*return*/, _c.apply(_b, [_d.sent()])];
             }
         });
     });
@@ -87,29 +84,27 @@ function index(req, res) {
 exports.index = index;
 //Récupération de informations d'un note en particuler 
 function item(req, res) {
-    var lang = req.lang();
-    var _a = this.db, Note = _a.Note, User = _a.User;
-    var id = req.params.id;
-    var apiKey = req.query.apiKey;
-    console.log(apiKey);
-    User.findOne({
-        where: { rememberToken: apiKey }
-    })
-        .then(function (u) {
-        if (u) {
-            Note.findOne({
-                where: { unique: id }
-            })
-                .then(function (n) {
-                res.json(n);
-            })
-                .catch(function (e) { return res.json({ error: true }); });
-        }
-        else {
-            res.json({ error: true });
-        }
-    })
-        .catch(function (e) { return res.json({ error: true }); });
+    return __awaiter(this, void 0, void 0, function () {
+        var lang, _a, Note, User, id, apiKey, u, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    lang = req.lang();
+                    _a = this.db, Note = _a.Note, User = _a.User;
+                    id = req.params.id;
+                    apiKey = req.query.apiKey;
+                    return [4 /*yield*/, user.find({ rememberToken: apiKey })];
+                case 1:
+                    u = _d.sent();
+                    if (!u && !req.user)
+                        throw new AppError('EN0009');
+                    console.log({ unique: id });
+                    _c = (_b = res).success;
+                    return [4 /*yield*/, note.find({ unique: id })];
+                case 2: return [2 /*return*/, _c.apply(_b, [_d.sent()])];
+            }
+        });
+    });
 }
 exports.item = item;
 //écouter un note en particuler 
@@ -174,33 +169,6 @@ function listen(req, res) {
     });
 }
 exports.listen = listen;
-/*
- * Chercher si les notes ici ce sont des notes trello
-*/
-function checks(req, res) {
-    var id = req.params.id;
-    var _a = this.db, User = _a.User, Note = _a.Note, Application = _a.Application;
-    var urls = req.body.urls;
-    var datas = urls.split(',,,');
-    var response = [];
-    var findnotes = forearch_1.default(datas, function (data, next) {
-        var urlDecode = decodeURIComponent(data.replace('https://trello.com', ''));
-        var unique = urlDecode.split('/').join('_').replace('/', '_');
-        Note.findOne({ where: { unique: unique } })
-            .then(function (n) {
-            if (n) {
-                response.push(data);
-            }
-            next();
-        })
-            .catch(function (e) { return next(); });
-    });
-    findnotes.end(function (argument) {
-        return res.json(response);
-    });
-    findnotes.run();
-}
-exports.checks = checks;
 function check(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var id, where, n;
@@ -215,7 +183,7 @@ function check(req, res) {
                     if (n) {
                         return [2 /*return*/, res.success(n)];
                     }
-                    return [2 /*return*/, res.status(400).error('check')];
+                    return [2 /*return*/, res.success([])];
             }
         });
     });
@@ -281,7 +249,7 @@ function upload(req, res) {
                                     console.log('FINISH Upload files');
                                     //upload terminer, on fait maintenant la 
                                     _b = (_a = res).success;
-                                    return [4 /*yield*/, note.create({ unique: NOTEID }, title, text, appId, type, userwhere, attache, nativeId)];
+                                    return [4 /*yield*/, note.create({ unique: NOTEID, attache: attache }, title, text, appId, type, userwhere, attache, nativeId)];
                                 case 1:
                                     //upload terminer, on fait maintenant la 
                                     _b.apply(_a, [_c.sent()]);

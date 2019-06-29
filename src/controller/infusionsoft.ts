@@ -45,10 +45,11 @@ export async function contacts( req:Request, res:Response ) {
 }
 
 export async function setnote( req:Request, res:Response ) {
-	let { unique , nativeId } = req.params ; 
+	let { unique , nativeId , attache } = req.params ; 
+	console.log(  { unique , nativeId , attache } )
 	//on selectionne d'abord que le note avec l'unique existe 
 	//si oui, on fait la mise a jour, si non, on resourne juste un success sant ID 
- 	return res.success( await note_application.update( { unique } , { nativeId } ) ) ; 
+	return res.success( await note_application.update( { unique , attache : { $not: (attache=='task'?'note':'task') } } , { nativeId } ) ) ; 
 }
 
 export async function event( req:Request, res:Response ) {
@@ -74,7 +75,7 @@ export async function event( req:Request, res:Response ) {
 			let s = sdsd.exec(repl);
 			if ( s[1] ) {
 				console.log( 'update note ici' )  ;
-				note_application.update( { unique : s[1] } , { nativeId : note.id } )
+				note_application.update( { unique : s[1] , type : 'note' } , { nativeId : note.id } )
 			}
 		}
 	 	return res.success( true ) ; 

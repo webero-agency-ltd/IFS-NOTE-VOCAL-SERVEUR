@@ -176,8 +176,8 @@ var transferwise = /** @class */ (function () {
                             throw new AppError('TWP0002');
                         reponse = json(body, []);
                         count = reponse.length;
-                        pageSize = 1;
-                        reponse = paginate_1.default(reponse, 1, page);
+                        pageSize = 10;
+                        reponse = paginate_1.default(reponse, pageSize, page);
                         transfers = [];
                         _i = 0, reponse_1 = reponse;
                         _b.label = 2;

@@ -25,6 +25,7 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	app.get('/',ensureAuth,home.index.bind({db})) ;
 	app.get('/vocal-note',ensureAuth,home.index.bind({db})) ;
 	app.get('/transferwise',home.transferwise.bind({db})) ;
+	app.get('/refresh-token',home.refreshToken.bind({db})) ;
 	
 	//page d'authentification 
 	app.get('/login',strategy,login.page.bind({db})) ;
@@ -67,12 +68,11 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	app.get('/infusionsoft/on/:id',hangel.bind({ func : infusionsoft.event.bind({db,str}) })) ;
 	app.post('/infusionsoft/on/:id',hangel.bind({ func : infusionsoft.event.bind({db,str}) })) ;
 	app.get('/infusionsoft/destroyHook/:id',hangel.bind({ func : infusionsoft.destroyHook.bind({db,str}) })) ;
-	app.get('/infusionsoft/setnote/:unique/:nativeId',hangel.bind({ func : infusionsoft.setnote.bind({db,str}) })) ;
+	app.get('/infusionsoft/setnote/:unique/:nativeId/:attache',hangel.bind({ func : infusionsoft.setnote.bind({db,str}) })) ;
 	//route des notes
 	app.get('/note/:id',hangel.bind({ func : note.item.bind({db,str}) })) ;
-	app.get('/note/nativeId/:id',hangel.bind({ func : note.itemNativeId.bind({db,str}) })) ;
+	app.get('/note/nativeId/:id/:attache',hangel.bind({ func : note.itemNativeId.bind({db,str}) })) ;
 	app.get('/note/check/:id',hangel.bind({ func : note.check.bind({db,str}) })) ;
-	app.post('/note/checks',hangel.bind({ func : note.checks.bind({db,str}) })) ;
 	app.get('/notes/:id',hangel.bind({ func : note.index.bind({db,str}) })) ;
 	//app.get('/close/:id',ensureAuth,note.close.bind({db,str})) ;
 	app.get('/audio/:id', hangel.bind({ func : note.listen.bind({db,str}) }) ) ; 

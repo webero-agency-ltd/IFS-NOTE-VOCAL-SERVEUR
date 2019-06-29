@@ -49,6 +49,7 @@ class app {
 			}else{
 				//ici on crée le formulaire car il n'existe pas encore 
 				[ err , f ] = await to(Form.create( { type , name , value , NoteId : itemNote.id } )) 
+				console.log( err )
 			    if ( err )  
 			    	throw new AppError('F0002');
 			}

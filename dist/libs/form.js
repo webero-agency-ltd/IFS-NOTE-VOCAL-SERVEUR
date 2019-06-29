@@ -98,6 +98,7 @@ var app = /** @class */ (function () {
                     case 6:
                         //ici on crée le formulaire car il n'existe pas encore 
                         _b = _d.sent(), err = _b[0], f = _b[1];
+                        console.log(err);
                         if (err)
                             throw new AppError('F0002');
                         _d.label = 7;

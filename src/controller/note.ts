@@ -5,14 +5,15 @@ const path = require('path') ;
 const fs = require('fs') ; 
 const Busboy = require('busboy'); 
 var note = require('../libs/note'); 
+var user = require('../libs/user'); 
 var application = require('../libs/application'); 
 var AppError = require('../libs/AppError');
 
 export async function itemNativeId( req:Request, res:Response ) {
 	let lang = req.lang() ; 
-	let { id } = req.params  ;
-	console.log( id )
-	return res.success( await note.find( { nativeId : id } ) );
+	let { id , attache } = req.params  ;
+	console.log( '--- itemNativeId ' ,  id  , attache )
+	return res.success( await note.find( { nativeId : id , attache } ) );
 }
 //liste de tout les notes d'un utilisateur en particulier 
 //@todo : il faut bien avoire une session pour faire la recherche pour ne pas afficher tout les notes 
@@ -38,29 +39,16 @@ export function index( req:Request, res:Response ) {
 }
 
 //Récupération de informations d'un note en particuler 
-export function item( req:Request, res:Response ) {
+export async function item( req:Request, res:Response ) {
 	let lang = req.lang() ; 
 	let { Note , User } = this.db as DBInterface ;
 	let { id } = req.params  ;
 	let { apiKey } = req.query ; 
-	console.log( apiKey )
-	User.findOne({
-	    where: { rememberToken : apiKey }
-    })
-    	.then( u => {
-	    	if ( u ) {
-	    		Note.findOne({
-				    where: { unique : id }
-			    })
-				    .then( n => {
-				    	res.json( n )
-					})
-					.catch( e => res.json({ error : true } ) );
-	    	}else{
-	    		res.json({ error : true } )
-	    	}
-		})
-		.catch(e => res.json({ error : true } ));
+	let u = await user.find( { rememberToken : apiKey } ) ; 
+	if ( !u && !req.user )
+		throw new AppError('EN0009');
+	console.log( { unique : id } )
+	return res.success( await note.find( { unique : id } ) );
 }
 
 //écouter un note en particuler 
@@ -117,36 +105,6 @@ export async function listen( req:Request, res:Response ) {
 	return res.send(lang['filesnoteimpty']);
 }
 
-/*
- * Chercher si les notes ici ce sont des notes trello
-*/
-export function checks( req:Request, res:Response ) {
-
-	let { id } = req.params ;  
-	let { User, Note , Application } = this.db as DBInterface ;
-	let { urls } = req.body ; 
-	let datas = urls.split(',,,')
-	let response = [] ; 
-
-	let findnotes = forearch( datas , function ( data, next ) {
-		let urlDecode = decodeURIComponent( data.replace('https://trello.com', '') ) ; 
-		let unique = urlDecode.split('/').join('_').replace('/', '_')  ; 
-		Note.findOne( { where: { unique } } )
-			.then(n => {
-				if (n) {
-					response.push( data ) ; 
-				}
-				next()
-			})
-			.catch( e => next() );
-	}) ; 
-	findnotes.end(function (argument) {
-		return res.json( response )
-	})
-	findnotes.run() ;
-
-}
-
 export async function check( req:Request, res:Response ) {
 	let { id } = req.params ;  
 	let where = { $like: '%' + decodeURIComponent( id ) + '%' } ; 
@@ -154,7 +112,7 @@ export async function check( req:Request, res:Response ) {
 	if ( n ) {
 		return  res.success( n )
 	}
-	return  res.status(400).error('check')
+	return  res.success([]) ;
 }
 
 //uploade d'un audion pour l'enregistré dans vos notes  
@@ -201,7 +159,7 @@ export async function upload( req:Request, res:Response ) {
 	busboy.on('finish', async () => {	
 		console.log( 'FINISH Upload files' )
 		//upload terminer, on fait maintenant la 
-        res.success( await note.create( { unique : NOTEID } , title , text , appId , type , userwhere , attache , nativeId ) )
+        res.success( await note.create( { unique : NOTEID , attache } , title , text , appId , type , userwhere , attache , nativeId ) )
     });
 
     return req.pipe(busboy);

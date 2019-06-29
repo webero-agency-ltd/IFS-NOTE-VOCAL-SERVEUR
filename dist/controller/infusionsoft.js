@@ -117,13 +117,14 @@ function contacts(req, res) {
 exports.contacts = contacts;
 function setnote(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, unique, nativeId, _b, _c;
+        var _a, unique, nativeId, attache, _b, _c;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
-                    _a = req.params, unique = _a.unique, nativeId = _a.nativeId;
+                    _a = req.params, unique = _a.unique, nativeId = _a.nativeId, attache = _a.attache;
+                    console.log({ unique: unique, nativeId: nativeId, attache: attache });
                     _c = (_b = res).success;
-                    return [4 /*yield*/, note_application.update({ unique: unique }, { nativeId: nativeId })];
+                    return [4 /*yield*/, note_application.update({ unique: unique, attache: { $not: (attache == 'task' ? 'note' : 'task') } }, { nativeId: nativeId })];
                 case 1: 
                 //on selectionne d'abord que le note avec l'unique existe 
                 //si oui, on fait la mise a jour, si non, on resourne juste un success sant ID 
@@ -164,7 +165,7 @@ function event(req, res) {
                         s = sdsd.exec(repl);
                         if (s[1]) {
                             console.log('update note ici');
-                            note_application.update({ unique: s[1] }, { nativeId: note.id });
+                            note_application.update({ unique: s[1], type: 'note' }, { nativeId: note.id });
                         }
                     }
                     return [2 /*return*/, res.success(true)];

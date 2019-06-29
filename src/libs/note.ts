@@ -21,7 +21,6 @@ class note {
 		    fs.mkdirSync(dir);
 		}
 		return dir + unique + '.wav' ;
-
 	}
 	
 	async find( id ){
@@ -36,12 +35,16 @@ class note {
 	}
 
 	async update( id , object ){
-		let where = {} ;
+	    let where = {} ;
 		typeof(id)=="object"?where=id:where['id']=id;
 		let { Note } = global['db'] as DBInterface ;
 		let [ err , data ] = await to(Note.findOne({
 		    where 
 	    })) 
+	    console.log( '__________________' )
+	    console.log( where )
+	    console.log( err )
+	    console.log( data )
 		data as NoteInstance ;
 		if ( data ) {
 			console.log( 'update note ici avec les donner suivant : ' , object )  ;

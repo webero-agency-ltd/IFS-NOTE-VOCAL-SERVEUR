@@ -91,8 +91,8 @@ class transferwise {
 	    	throw new AppError('TWP0002');
 	    let reponse = json( body , [] ) ;
 	    let count = reponse.length ; 
-	    let pageSize = 1 ; 
-	    reponse = paginate( reponse , 1 , page )
+	    let pageSize = 10 ; 
+	    reponse = paginate( reponse , pageSize , page )
 	    let transfers = [] ; 
 	    for( let item of reponse ){
 	    	let user = await this.users( id , item.user )

@@ -63,6 +63,7 @@ module.exports = function (app, db, str) {
             app.get('/', ensureAuth_1.default, home.index.bind({ db: db }));
             app.get('/vocal-note', ensureAuth_1.default, home.index.bind({ db: db }));
             app.get('/transferwise', home.transferwise.bind({ db: db }));
+            app.get('/refresh-token', home.refreshToken.bind({ db: db }));
             //page d'authentification 
             app.get('/login', strategy_1.default, login.page.bind({ db: db }));
             app.post('/login', strategy_1.default, login.create.bind({ db: db }));
@@ -100,12 +101,11 @@ module.exports = function (app, db, str) {
             app.get('/infusionsoft/on/:id', hangel.bind({ func: infusionsoft.event.bind({ db: db, str: str }) }));
             app.post('/infusionsoft/on/:id', hangel.bind({ func: infusionsoft.event.bind({ db: db, str: str }) }));
             app.get('/infusionsoft/destroyHook/:id', hangel.bind({ func: infusionsoft.destroyHook.bind({ db: db, str: str }) }));
-            app.get('/infusionsoft/setnote/:unique/:nativeId', hangel.bind({ func: infusionsoft.setnote.bind({ db: db, str: str }) }));
+            app.get('/infusionsoft/setnote/:unique/:nativeId/:attache', hangel.bind({ func: infusionsoft.setnote.bind({ db: db, str: str }) }));
             //route des notes
             app.get('/note/:id', hangel.bind({ func: note.item.bind({ db: db, str: str }) }));
-            app.get('/note/nativeId/:id', hangel.bind({ func: note.itemNativeId.bind({ db: db, str: str }) }));
+            app.get('/note/nativeId/:id/:attache', hangel.bind({ func: note.itemNativeId.bind({ db: db, str: str }) }));
             app.get('/note/check/:id', hangel.bind({ func: note.check.bind({ db: db, str: str }) }));
-            app.post('/note/checks', hangel.bind({ func: note.checks.bind({ db: db, str: str }) }));
             app.get('/notes/:id', hangel.bind({ func: note.index.bind({ db: db, str: str }) }));
             //app.get('/close/:id',ensureAuth,note.close.bind({db,str})) ;
             app.get('/audio/:id', hangel.bind({ func: note.listen.bind({ db: db, str: str }) }));

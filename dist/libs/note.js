@@ -105,6 +105,10 @@ var note = /** @class */ (function () {
                             }))];
                     case 1:
                         _a = _b.sent(), err = _a[0], data = _a[1];
+                        console.log('__________________');
+                        console.log(where);
+                        console.log(err);
+                        console.log(data);
                         data;
                         if (data) {
                             console.log('update note ici avec les donner suivant : ', object);
