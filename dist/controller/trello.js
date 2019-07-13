@@ -36,8 +36,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var url = require('url');
-var trello = require('../libs/trello');
+var site = require('../config/site');
+var note_application = require('../libs/note');
+var external = require('../libs/external');
 var application = require('../libs/application');
+var trello = require('../libs/trello');
+var infusionsoft = require('../libs/infusionsoft');
+var Pour = require('../libs/pour');
+var moment = require('moment');
 function view(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -47,6 +53,48 @@ function view(req, res) {
     });
 }
 exports.view = view;
+function cardAdd(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var lang, _a, title, compteId, description, type, pour, prioriter, date, contactId, userid, p, i, data, label, body, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    lang = req.lang();
+                    _a = req.body, title = _a.title, compteId = _a.compteId, description = _a.description, type = _a.type, pour = _a.pour, prioriter = _a.prioriter, date = _a.date, contactId = _a.contactId;
+                    userid = req.user.id;
+                    console.log('---------------------------');
+                    console.log(title, description, type, pour, prioriter, date, contactId, compteId);
+                    return [4 /*yield*/, Pour.item(pour)];
+                case 1:
+                    p = _d.sent();
+                    return [4 /*yield*/, application.item(compteId)];
+                case 2:
+                    i = _d.sent();
+                    if (!i)
+                        throw new AppError('EN0002');
+                    return [4 /*yield*/, Pour.item(prioriter)];
+                case 3:
+                    data = _d.sent();
+                    label = '';
+                    if (data) {
+                        label = data.appId;
+                    }
+                    body = { idList: p.cardId, name: title, desc: description, due: moment(date, 'YYYY-MM-DDTHH:mm:ssZ').clone().format('YYYY-MM-DD') };
+                    if (label) {
+                        body['idLabels'] = label;
+                    }
+                    if (p.appId !== 'generale') {
+                        body['idMembers'] = p.appId;
+                    }
+                    console.log(body);
+                    _c = (_b = res).success;
+                    return [4 /*yield*/, trello.createCards(body, i.accessToken)];
+                case 4: return [2 /*return*/, _c.apply(_b, [_d.sent()])];
+            }
+        });
+    });
+}
+exports.cardAdd = cardAdd;
 function membre(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var lang, _a, Application, User, Team, id, i, _b, success, error;
@@ -183,6 +231,38 @@ function boards(req, res) {
     });
 }
 exports.boards = boards;
+/*
+ * Récupèration des cards de trello
+*/
+function cards(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var lang, id, appId, i, _a, success, error;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    lang = req.lang();
+                    id = req.params.id;
+                    appId = req.query.appId;
+                    return [4 /*yield*/, application.item(appId)];
+                case 1:
+                    i = _b.sent();
+                    if (!i) {
+                        return [2 /*return*/, res.error('TML001')];
+                    }
+                    return [4 /*yield*/, trello.card({ card: id, token: i.accessToken })];
+                case 2:
+                    _a = _b.sent(), success = _a.success, error = _a.error;
+                    if (success) {
+                        console.log(success);
+                        return [2 /*return*/, res.success(success)];
+                    }
+                    console.log(error);
+                    return [2 /*return*/, res.error('TML002')];
+            }
+        });
+    });
+}
+exports.cards = cards;
 /*
  * Récupération des Listes dans un application trello
 */

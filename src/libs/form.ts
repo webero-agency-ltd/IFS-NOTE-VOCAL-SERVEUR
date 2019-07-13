@@ -26,6 +26,7 @@ class app {
 		let itemNote = await note.find( n )
 		if( !itemNote )
 		    throw new AppError('F0001');
+		console.log( data )
 		let traits = data.filter( e => e.type !== undefined && e.name  !== undefined && e.value !== undefined ) ; 
 		console.log( '------ create ' )
 		console.log( '------ noteId :  ' , n )

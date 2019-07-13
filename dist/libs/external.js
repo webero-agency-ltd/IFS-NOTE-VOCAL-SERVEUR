@@ -82,7 +82,7 @@ var ext = /** @class */ (function () {
     ext.prototype.create = function (u, _a) {
         var infusionsoft = _a.infusionsoft, trello = _a.trello;
         return __awaiter(this, void 0, void 0, function () {
-            var _b, _c, usr, External, _d, err, data, external;
+            var _b, _c, usr, External, external, err, _d, errsetExternal, data;
             return __generator(this, function (_e) {
                 switch (_e.label) {
                     case 0: return [4 /*yield*/, user.find(u)];
@@ -95,26 +95,23 @@ var ext = /** @class */ (function () {
                                 where: { UserId: u }
                             }))];
                     case 2:
-                        _d = _e.sent(), err = _d[0], data = _d[1];
-                        if (err || !data)
+                        _b = _e.sent(), err = _b[0], external = _b[1];
+                        if (err)
                             throw new AppError('EI0003');
-                        external = data;
                         if (external) {
                             //ici l'option external existe, donc on fait juste la mise a jour de celle ci 
                             return [2 /*return*/, external.update({ infusionsoft: infusionsoft, trello: trello })];
                         }
-                        //Création de team de l'applications 
-                        data;
                         return [4 /*yield*/, promise_1.default(External.create({ infusionsoft: infusionsoft, trello: trello }))];
                     case 3:
-                        _b = _e.sent(), err = _b[0], data = _b[1];
+                        //Création de team de l'applications 
+                        _c = _e.sent(), err = _c[0], external = _c[1];
                         if (err)
                             throw new AppError('EI0004');
-                        external = data;
-                        return [4 /*yield*/, promise_1.default(user.setExternal(external))];
+                        return [4 /*yield*/, promise_1.default(usr.setExternal(external))];
                     case 4:
-                        _c = _e.sent(), err = _c[0], data = _c[1];
-                        if (err)
+                        _d = _e.sent(), errsetExternal = _d[0], data = _d[1];
+                        if (errsetExternal)
                             throw new AppError('EI0005');
                         return [2 /*return*/, external];
                 }

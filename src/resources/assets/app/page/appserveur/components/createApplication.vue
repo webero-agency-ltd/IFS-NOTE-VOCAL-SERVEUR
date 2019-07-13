@@ -38,85 +38,31 @@
 </template>
 <script>
 	
-	import { createNamespacedHelpers } from 'vuex';
-    import store from '../store/';
-    
-    import {
-        generale,
-        //mapApplicationMultiRowFields ,
-        mapApplicationFields ,
-    } from '../store/pages/generale';
-    
-    if (!store.state.generale) store.registerModule(`generale`, generale);
-
-    const { 
-        mapActions: mapGeneraleMutations, 
-        mapState: mapGeneraleActions 
-    } = createNamespacedHelpers(`generale`);
-    
-    const { 
-        mapMutations: mapApplicationMutations , 
-        mapActions: mapApplicationActions 
-    } = createNamespacedHelpers(`generale/application`);
-
+    import application from '../store/application' ; 
+	
 	export default {
 
 		props : [], 
 
 		data(){
             return {
+                name : '' , 
+                compteId : '' , 
+                type : 'infusionsoft' , 
+                application  : application.stade
+
             }
         },
-
-        computed: {
-            ...mapGeneraleActions([`error`, `success`]),
-            //...mapApplicationMultiRowFields({ applications: `rows` }),
-            ...mapApplicationFields([`name`,`compteId`,`type`])
-        },
-
         methods : {
-
             handleFormApplicationChange  (e) {
                 this.type = e.target.value;
             },
-
-        	changeError ( e ){
-        		let data = {}
-        		data[e] = null ; 
-        		this.$store.commit('generale/ERROR',data, {root:true})
-        	},
-
-        	async findInfusionsoft(){
-                let url = window.urlapplication + '/application/item/'+this.$route.params.id ;
-                let find = await fetch( url )  ; 
-                if ( find.ok ) { 
-                    let data = await find.json() ; 
-                    if ( !data ) {
-                    	return
-                    }
-                    if ( data.type == "trello" ) {
-                        this.type = 'trello' ;
-                    }else{
-                        this.type = 'infusionsoft' ;
-                    }
-                }
-            },
-
         },
 		created(){
-
 			this.on('ApplicationCreate',async () => {
-				let response = await this.$store.dispatch('generale/application/ADD_APPLICATION' , { namespace : 'generale' } ) ; 
-                if ( response ) {
-                    this.emit('closemodale') ; 
-                }
+                await application.addApplication( { name :this.name , compteId : this.compteId, type : this.type } )
+                this.emit('closemodale') ; 
 			});
-
-            this.findInfusionsoft() ; 
-
 		}
 	}
 </script>
-<style>
-
-</style>

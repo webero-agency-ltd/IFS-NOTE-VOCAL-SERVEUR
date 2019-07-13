@@ -35,12 +35,88 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var site = require('../config/site');
 var request = require('request');
 var querystring = require('querystring');
-var infusionsoft = require('../libs/infusionsoft');
-var application = require('../libs/application');
+var moment = require('moment');
+var site = require('../config/site');
 var note_application = require('../libs/note');
+var external = require('../libs/external');
+var application = require('../libs/application');
+var trello = require('../libs/trello');
+var infusionsoft = require('../libs/infusionsoft');
+var Pour = require('../libs/pour');
+/*
+ * Fonction a utiliser dans le DEV seulement
+ * qui va nous permètre de générer des utilisateurs d'infusionsosft
+*/
+function makeFakerUser(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var id, _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    id = req.params.id;
+                    _b = (_a = res).success;
+                    return [4 /*yield*/, infusionsoft.createUser(id)];
+                case 1: return [2 /*return*/, _b.apply(_a, [_c.sent()])];
+            }
+        });
+    });
+}
+exports.makeFakerUser = makeFakerUser;
+function note(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var lang, _a, title, compteId, description, type, pour, prioriter, date, contactId, update, userid, i, p, body, _b, _c, _d, body, _e, _f, _g;
+        return __generator(this, function (_h) {
+            switch (_h.label) {
+                case 0:
+                    lang = req.lang();
+                    _a = req.body, title = _a.title, compteId = _a.compteId, description = _a.description, type = _a.type, pour = _a.pour, prioriter = _a.prioriter, date = _a.date, contactId = _a.contactId, update = _a.update;
+                    userid = req.user.id;
+                    console.log('---------------------------');
+                    console.log(title, description, type, pour, prioriter, date, contactId, compteId);
+                    return [4 /*yield*/, application.item(compteId)];
+                case 1:
+                    i = _h.sent();
+                    if (!i)
+                        throw new AppError('EN0002');
+                    if (!(pour !== 'default')) return [3 /*break*/, 7];
+                    return [4 /*yield*/, Pour.item(pour)];
+                case 2:
+                    p = _h.sent();
+                    body = { contact: { id: contactId }, description: description, due_date: date, title: title, priority: prioriter, user_id: parseInt(p.appId) };
+                    console.log(body);
+                    _c = (_b = res).success;
+                    if (!update) return [3 /*break*/, 4];
+                    return [4 /*yield*/, infusionsoft.updateTasks(body, i.accessToken)];
+                case 3:
+                    _d = _h.sent();
+                    return [3 /*break*/, 6];
+                case 4: return [4 /*yield*/, infusionsoft.createTasks(body, i.accessToken)];
+                case 5:
+                    _d = _h.sent();
+                    _h.label = 6;
+                case 6: return [2 /*return*/, _c.apply(_b, [_d])];
+                case 7:
+                    if (!(pour == 'default')) return [3 /*break*/, 12];
+                    body = { contact_id: contactId, body: description, title: title };
+                    _f = (_e = res).success;
+                    if (!update) return [3 /*break*/, 9];
+                    return [4 /*yield*/, infusionsoft.updateNotes(body, i.accessToken)];
+                case 8:
+                    _g = _h.sent();
+                    return [3 /*break*/, 11];
+                case 9: return [4 /*yield*/, infusionsoft.createNotes(body, i.accessToken)];
+                case 10:
+                    _g = _h.sent();
+                    _h.label = 11;
+                case 11: return [2 /*return*/, _f.apply(_e, [_g])];
+                case 12: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.note = note;
 function membre(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var lang, id, _a, _b;
@@ -99,16 +175,17 @@ function tasks(req, res) {
 exports.tasks = tasks;
 function contacts(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var lang, id, _a, _b;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
+        var lang, id, _a, text, page, size, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
                 case 0:
                     lang = req.lang();
                     id = req.params.id;
-                    _b = (_a = res).success;
-                    return [4 /*yield*/, infusionsoft.contacts(id)];
+                    _a = req.query, text = _a.text, page = _a.page, size = _a.size;
+                    _c = (_b = res).success;
+                    return [4 /*yield*/, infusionsoft.contacts(id, text, size, page)];
                 case 1:
-                    _b.apply(_a, [_c.sent()]);
+                    _c.apply(_b, [_d.sent()]);
                     return [2 /*return*/];
             }
         });
@@ -136,7 +213,7 @@ function setnote(req, res) {
 exports.setnote = setnote;
 function event(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var id, n, app, note, body, repl, sdsd, s;
+        var id, n, app, note_1, body, repl, sdsd, s;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -150,14 +227,14 @@ function event(req, res) {
                         return [2 /*return*/, !1];
                     return [4 /*yield*/, infusionsoft.notes(id, n)];
                 case 2:
-                    note = _a.sent();
+                    note_1 = _a.sent();
                     //récupération des notes qui correspond a l'url qui a été enregistre dans le contenue si existe 
                     //si l'url existe, on fait le raprochement entre les deux et on fait l'update dans la base de donner 
                     //si c'est pas le cas , on laise tout simplement passer 
-                    if (!note.id)
+                    if (!note_1.id)
                         return [2 /*return*/, !1];
-                    body = note.body;
-                    console.log(note);
+                    body = note_1.body;
+                    console.log(note_1);
                     if (body.indexOf('https://therapiequantique.net/note/u/') >= 0) {
                         repl = body.replace(new RegExp('\r?\n', 'g'), '');
                         ;
@@ -165,7 +242,7 @@ function event(req, res) {
                         s = sdsd.exec(repl);
                         if (s[1]) {
                             console.log('update note ici');
-                            note_application.update({ unique: s[1], type: 'note' }, { nativeId: note.id });
+                            note_application.update({ unique: s[1], type: 'note' }, { nativeId: note_1.id });
                         }
                     }
                     return [2 /*return*/, res.success(true)];

@@ -6,12 +6,12 @@
         </div>
         <a-divider dashed />
         <a-row :gutter="16">
-            <a-col :span="8" v-for="item in applications" :key="item.id">
+            <a-col :span="8" v-for="item in application.applications" :key="item.id">
                 <a-card>
                     <template class="ant-card-actions" slot="actions">
                         <a-icon @click="dashboard(item.id)" type="dashboard" />
-                        <a-icon type="user" />
-                        <a-icon type="delete" />
+                        <a-icon @click="user(item.id)" type="user" />
+                        <a-icon @click="destroy(item.id)" type="delete" />
                     </template>
                     <a-card-meta
                         :title="item.name"
@@ -28,37 +28,18 @@
     </div>
 </template>
 <script>
-
-    import { createNamespacedHelpers } from 'vuex';
-    import store from '../store/';
     
-    import {
-        generale,
-        mapApplicationMultiRowFields ,
-    } from '../store/pages/generale';
-    
-    if (!store.state.generale) store.registerModule(`generale`, generale);
-    
-    const { 
-        mapActions: mapGeneraleMutations, 
-        mapState: mapGeneraleActions 
-    } = createNamespacedHelpers(`generale`);
-    
-    const { 
-        mapMutations: mapApplicationMutations , 
-        mapActions: mapApplicationActions 
-    } = createNamespacedHelpers(`generale/application`);
+    import application from '../store/application' ; 
 
     export default {
         props : [ ], 
         data(){
             return {
-                
+                application : application.stade , 
             }
         },
         computed: {
-            ...mapGeneraleActions([`error`, `success`]),
-            ...mapApplicationMultiRowFields({ applications: `rows` }),
+        
         },
         methods : {
 
@@ -74,12 +55,25 @@
 
             async init(){
                 //initialisation des stores de l'applications  
-                await this.$store.dispatch('generale/application/FIND_ALL' , { namespace : 'generale' } ) ; 
+                await application.allApplication() ;  
             },
 
             //redirection a la page dashbord 
             async dashboard( page ){
                 this.$router.push({ name: 'application', params: { id: page } }) 
+            },
+
+            async user( page ){
+                this.$router.push({ name: 'users', params: { id: page } }) 
+            },
+
+            async destroy( page ){
+                this.emit('modal',{
+                    title : this.$lang('appDeleteApplicationTitle') , 
+                    component : 'deleteApplication' , 
+                    data : { id : page } , 
+                    handleOk : 'ApplicationDestroy'
+                })
             }
 
         },

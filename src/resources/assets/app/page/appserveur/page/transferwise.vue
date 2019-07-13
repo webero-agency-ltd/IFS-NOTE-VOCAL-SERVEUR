@@ -15,6 +15,7 @@
 </template>
 <script>
     
+    import api from '../libs/api' ; 
     const columns = [{
         title: 'Date',
         dataIndex: 'created',
@@ -36,27 +37,6 @@
         width: 150,
         scopedSlots: { customRender: 'montant' },
     }];
-
-    import { createNamespacedHelpers } from 'vuex';
-    import store from '../store/';
-    import api from '../libs/api';
-    
-    import {
-        generale,
-        mapApplicationMultiRowFields ,
-    } from '../store/pages/generale';
-    
-    if (!store.state.generale) store.registerModule(`generale`, generale);
-    
-    const { 
-        mapActions: mapGeneraleMutations, 
-        mapState: mapGeneraleActions 
-    } = createNamespacedHelpers(`generale`);
-    
-    const { 
-        mapMutations: mapApplicationMutations , 
-        mapActions: mapApplicationActions 
-    } = createNamespacedHelpers(`generale/application`);
 
     export default {
         props : [ ], 

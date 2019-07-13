@@ -1,6 +1,8 @@
 
 export default async function api( url , methode = 'GET', data = null  ) {
 
+	let op = { id : 1 } ; 
+	let da = { ...op }
 	url = window.urlapplication + url ;
   	let uploadResponse = null ; 
   	if ( methode == 'GET' ) {

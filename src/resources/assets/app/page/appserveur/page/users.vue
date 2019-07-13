@@ -1,8 +1,7 @@
 <template>
     <div :style="{ marginLeft: 'auto', marginRight: 'auto', background: '#fff', padding: '24px', minHeight: '380px' , maxWidth : '992px' }">
-        
         <a-row :gutter="12">
-            <a-col v-if="applicationsItem.type=='trello'" >
+            <a-col v-if="application.item.type=='trello'" >
                 <div>
                     <h3>{{$lang('appMembreTrello')}}</h3>
                 </div>
@@ -10,7 +9,7 @@
                 <a-table 
                     rowKey="id"
                     :columns="trello_column"
-                    :dataSource="trellos"
+                    :dataSource="users.membreTrelloNoteTeam"
                     :loading="trello_loading">
                     <template slot="add" slot-scope="add , record" >
                         <a-popover placement="topLeft">
@@ -22,7 +21,7 @@
                     </template>
                 </a-table>     
             </a-col>
-            <a-col v-if="applicationsItem.type=='infusionsoft'">
+            <a-col v-if="application.item.type=='infusionsoft'">
                 <div>
                     <h3>{{$lang('appMembreInfusionsof')}}</h3>
                 </div>
@@ -30,7 +29,7 @@
                 <a-table 
                     rowKey="id"
                     :columns="infusionsoft_column"
-                    :dataSource="infusionsofts"
+                    :dataSource="users.membreIFSNoteTeam"
                     :loading="infusionsoft_loading"
                     >
                     <template slot="add" slot-scope="add , record" >
@@ -51,7 +50,7 @@
                 <a-table 
                     rowKey="email"
                     :columns="users_columns"
-                    :dataSource="items"
+                    :dataSource="users.teams"
                     :loading="users_loading">
                 </a-table>
             </a-col>
@@ -61,171 +60,103 @@
 </template>
 <script>
 
-    import { createNamespacedHelpers } from 'vuex';
-    import store from '../store/';
-    
-    import {
-        generale,
-        mapApplicationFields ,
-        mapUsersFields ,
-        mapUsersMultiRowFields
-    } from '../store/pages/generale';
-    
-    if (!store.state.generale) store.registerModule(`generale`, generale);
+    import application from '../store/application' ; 
+    import user from '../store/user' ; 
 
-    const { 
-        mapActions: mapGeneraleMutations, 
-        mapState: mapGeneraleActions 
-    } = createNamespacedHelpers(`generale`);
+    let users_columns =  [
+        {
+            title: 'Email',
+            dataIndex: 'email',
+            width: 150,
+        },
+        {
+            title: 'Full Name',
+            dataIndex: 'fullname',
+            width: 150,
+        },
+        {
+            title: 'role',
+            dataIndex: 'role',
+            width: 150,
+        }
+    ]; 
 
-    const { 
-        mapMutations: mapApplicationMutations , 
-        mapActions: mapApplicationActions 
-    } = createNamespacedHelpers(`generale/application`);
+    let trello_column =  [
+        {
+            title: 'Full Name',
+            dataIndex: 'fullName',
+            width: 150,
+        },
+        {
+            title: 'Link add team',
+            dataIndex: 'add',
+            width: 150,
+            scopedSlots: { customRender: 'add' },
+        }
+    ]; 
 
-    const { 
-        mapMutations: mapUsersMutations , 
-        mapActions: mapUsersActions 
-    } = createNamespacedHelpers(`generale/users`);
-
-    let users_columns =  [{
-        title: 'Email',
-        dataIndex: 'email',
-        width: 150,
-    },{
-        title: 'Full Name',
-        dataIndex: 'fullname',
-        width: 150,
-    },{
-        title: 'role',
-        dataIndex: 'role',
-        width: 150,
-    }] ; 
-
-    let trello_column =  [{
-        title: 'Full Name',
-        dataIndex: 'fullName',
-        width: 150,
-    },{
-        title: 'Link add team',
-        dataIndex: 'add',
-        width: 150,
-        scopedSlots: { customRender: 'add' },
-    }] ; 
-
-    let infusionsoft_column =  [{
-        title: 'Full Name',
-        dataIndex: 'fullName',
-        width: 150,
-    },{
-        title: 'Link add team',
-        dataIndex: 'add',
-        width: 150,
-        scopedSlots: { customRender: 'add' },
-    }] ; 
+    let infusionsoft_column =  [
+        {
+            title: 'Full Name',
+            dataIndex: 'fullName',
+            width: 150,
+        },
+        {
+            title: 'Link add team',
+            dataIndex: 'add',
+            width: 150,
+            scopedSlots: { customRender: 'add' },
+        }
+    ]; 
 
 	export default {
 		props : [ ], 
 		data(){
             return {
-                urladdteams : '' , 
-                //membre équipe 
-                trellos : [] , 
-                items : [] , 
-                infusionsofts : [] , 
-                //table ici
-                fields : [
-                    { key: "fullName", label: "full name" },
-                    { key: "id", label: "ID" },
-                    { key: "add", label: "Add Team" },
-                ],
+                
+                application : application.stade , 
+                users : user.stade , 
+                urladdteams : '' ,  
+                
                 users_columns , 
                 trello_column , 
                 infusionsoft_column ,  
+                
                 //loading 
                 trello_loading : true , 
                 infusionsoft_loading : true , 
                 users_loading : true ,
+            
             }
         },
 
         computed: {
-            ...mapGeneraleActions([`error`, `success`]),
-            ...mapUsersMultiRowFields({ applicationTeam: `teams` , membreTrello : `membreTrello` , membreInfusionsoft : `membreInfusionsoft` }),
-            ...mapApplicationFields({ applicationsItem: `item` }),
+        
         },
+        methods : { 
 
-        watch : {
-
-            membreInfusionsoft : function (argument) {
-                this.infusionsofts = this.membreInfusionsoft.map(({ id , fullName , add }) => {
-                    return { id , fullName , add }
-                }).filter(({ id }) => {
-                    let is = this.applicationTeam.filter((un) => {
-                        let unique = un.id ; 
-                        if ( id == unique ) {
-                            return true;
-                        }
-                        return false ; 
-                    })
-                    if ( is.length > 0 ) {
-                        return false
-                    }
-                    return true ; 
-                })
-                this.infusionsoft_loading = false ; 
-            },
-
-            membreTrello : function (argument) {
-                this.trellos = this.membreTrello.map(({ id , fullName , add }) => {
-                    return { id , fullName , add }
-                }).filter(({ id }) => {
-                    let is = this.applicationTeam.filter((un) => {
-                        let unique = un.id ; 
-                        console.log( id == unique , id , unique )
-                        if ( id == unique ) {
-                            return true;
-                        }
-                        return false ; 
-                    })
-                    if ( is.length > 0 ) {
-                        return false
-                    }
-                    return true ; 
-                })
-                console.log( this.trellos )
-                this.trello_loading = false ; 
-
-            },
-
-            applicationTeam :  function () {
-                this.items = this.applicationTeam.map(({ email , fullname , role }) => {
-                    return { email , fullname , role }
-                }) 
-                this.users_loading = false ; 
-                //récupération de l'information de l'application qui a le focus 
-                this.$store.dispatch('generale/application/ITEM_APPLICATION' , { namespace : 'generale' , id : this.$route.params.id } ) ; 
-            },
-
-            applicationsItem : function () {
-                if ( !this.applicationsItem ) 
+            async finduser() {
+                if ( !this.application.item ) 
                     return ; 
-                if ( this.applicationsItem.type == "trello" ) {
-                    if ( !this.applicationsItem.compteId ) {
+                if ( this.application.item.type == "trello" ) {
+                    if ( !this.application.item.compteId ) {
                         this.$router.push({ name: 'option', params: { id: this.$route.params.id } }) 
                     }else{
-                        this.$store.dispatch('generale/users/MEMBRE_TRELLO' , { namespace : 'generale' , id : this.$route.params.id } ) ; 
+                        await user.membreTrello( this.$route.params.id ) ;
+                        this.trello_loading = false ;
                     }
                 }else{
-                    this.$store.dispatch('generale/users/MEMBRE_INFUSIONSOFT' , { namespace : 'generale' , id : this.$route.params.id } ) ; 
+                    await user.membreInfusionsoft( this.$route.params.id ) ;
+                    this.infusionsoft_loading = false ; 
                 }
-                this.urladdteams = window.urlapplication + '/team/'+ this.applicationsItem.unique ; 
-            }
-        },
+                this.urladdteams = window.urlapplication + '/team/'+ this.application.item.unique ; 
+            },
 
-        methods : {  
             async init(){
-                await this.$store.dispatch('generale/users/ALL_TEAM' , { namespace : 'generale' , id : this.$route.params.id } ) ; 
+                await application.itemApplication( this.$route.params.id ) 
+                await user.allTeam( this.$route.params.id ) ; 
+                this.users_loading = false ;
+                this.finduser() ; 
             },
         },
 		created(){ 

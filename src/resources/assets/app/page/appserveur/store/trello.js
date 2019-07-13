@@ -14,7 +14,7 @@ class trello {
 	/*
  	 * Récupèration de tout les boards de trello 
 	*/
-	allBoard( id ){
+	async allBoard( id ){
 		let [ err , { data } ] = await api( '/trello/boards/'+ id ) ;
 		if ( err ) 
 			return [ err , null ]
@@ -27,7 +27,7 @@ class trello {
 	/*
 	 * Récupération de tout les label de trello 
 	*/
-	allList( id ){
+	async allList( id ){
 		let [ err , { data } ] = await api( '/trello/lists/'+id ) ;
 		if ( err ) 
 			return [ err , null ]
@@ -40,7 +40,7 @@ class trello {
 	/*
 	 * Récupération de label de trello  
 	*/
-	allLabel( id ){
+	async allLabel( id ){
 		let [ err , { data } ] = await api( '/trello/label/'+id ) ;
 		if ( err ) 
 			return [ err , null ]
@@ -50,4 +50,25 @@ class trello {
 		return [ null , this.stade.labels ]
 	}
 
+	/*
+	 * Ajoute de card dans trello
+	*/
+	async card( body ){
+		console.log( body )
+		let [ err , { data } ] = await api( '/trello/card' , 'POST' , body  ) ;
+		if ( err ) 
+			return [ err , null ]
+		return [ null , data ]
+	}
+
+	async itemCard( id , appId ){
+		let [ err , { data } ] = await api( '/trello/card/' + id  + '/?appId='+appId )  ; 
+		if ( err ) 
+			return [ err , null ]
+		return  [ err , data ]
+	}
+	
 } 
+
+
+export default new trello() ;

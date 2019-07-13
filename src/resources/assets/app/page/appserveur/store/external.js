@@ -9,7 +9,7 @@ class external {
 		}
 	}
 
-	createNote( note ){
+	async createNote( note ){
 		let [ err , { data } ] = await api( '/external/note' , 'POST' , note ) ;
 		if ( err ) 
 			return [ err , null ] ; 
@@ -20,8 +20,10 @@ class external {
 	/*
 	 * Récupération des informations des note en paramètre
 	*/
-	findNote(){
+	async findNote(){
 		
 	}
 
 } 
+
+export default new external() ;

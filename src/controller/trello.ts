@@ -5,13 +5,48 @@ import { ApplicationAttributes , ApplicationInstance } from '../models/applicati
 import to from '../libs/promise'; 
 
 const url = require('url');
-const trello = require('../libs/trello');
-const application = require('../libs/application');
 
+var site = require('../config/site') ;
+var note_application = require('../libs/note');
+var external = require('../libs/external') ;
+var application = require('../libs/application') ;
+var trello = require('../libs/trello') ;
+var infusionsoft = require('../libs/infusionsoft') ;
+var Pour = require('../libs/pour');
+const moment = require('moment') ;
 
 export async function view( req:Request, res:Response ) {	
 	res.render( 'trello.ejs' ) 
 }
+
+export async function cardAdd( req:Request, res:Response ) {
+	let lang = req.lang() ; 
+	//récupération 
+	let { title , compteId , description , type , pour , prioriter , date , contactId } = req.body ; 
+	let userid = req.user.id;  
+	console.log( '---------------------------' )
+	console.log( title , description , type , pour , prioriter , date , contactId , compteId ) ; 
+    let p = await Pour.item( pour ) ; 
+    let i = await application.item( compteId ) ;
+    if (!i) 
+    	throw new AppError('EN0002');
+	//récupération de l'id du label s'il existe
+    let data = await Pour.item( prioriter ) ;
+    let label = '' ; 
+	if ( data ) {
+		label = data.appId ; 
+	}
+	//création de note trello
+    let body = { idList : p.cardId , name : title , desc : description , due : moment( date , 'YYYY-MM-DDTHH:mm:ssZ' ).clone().format('YYYY-MM-DD') } ; 
+	if ( label ) {
+		body['idLabels'] = label ; 
+	}
+	if ( p.appId !== 'generale' ) {
+		body['idMembers'] = p.appId ; 
+	} 
+	console.log( body ) ; 
+    return res.success( await trello.createCards( body , i.accessToken ) );
+} 
 
 export async function membre( req:Request, res:Response ) {
 	let lang = req.lang() ; 
@@ -86,6 +121,26 @@ export async function boards( req:Request, res:Response ) {
 		return res.success( success );  
     }
     return res.error('TMB002') ; 
+}
+
+/*
+ * Récupèration des cards de trello 
+*/
+export async function cards( req:Request, res:Response ) {
+	let lang = req.lang() ; 
+	let { id } = req.params ; 
+	let { appId } = req.query ; 
+    let i = await application.item( appId ) ; 
+	if ( !i ) {
+    	return res.error('TML001') ; 
+    }
+    let { success , error } = await trello.card({ card : id , token : i.accessToken }) ; 
+	if ( success ) {
+		console.log( success )
+		return res.success( success );  
+    }
+    console.log( error )
+    return res.error('TML002') ;
 }
 
 /*

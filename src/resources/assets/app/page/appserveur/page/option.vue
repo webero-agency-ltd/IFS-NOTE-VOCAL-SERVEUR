@@ -8,7 +8,7 @@
             <a-col>
                 <a-table 
                     :columns="fields"
-                    :dataSource="items"
+                    :dataSource="trello.boards"
                     :loading="loading"
                     rowKey="title">
                     <template slot="checkbox" slot-scope="checkbox , record">
@@ -31,95 +31,76 @@
 </template>
 <script>
 
-    import { createNamespacedHelpers } from 'vuex';
-    import store from '../store/';
-    
-    import {
-        generale,
-        mapApplicationFields ,
-        mapUsersFields ,
-        mapUsersMultiRowFields , 
-        mapTrelloMultiRowFields
-    } from '../store/pages/generale';
-    
-    if (!store.state.generale) store.registerModule(`generale`, generale);
+    import trello from '../store/trello' ; 
+    import application from '../store/application' ; 
 
-    const { 
-        mapMutations: mapApplicationMutations , 
-        mapActions: mapApplicationActions 
-    } = createNamespacedHelpers(`generale/application`);
-
-    let fields =  [{
-        title: 'ID',
-        dataIndex: 'checkbox',
-        width: 30,
-        scopedSlots: { customRender: 'checkbox' },
-    },{
-        title: 'Title',
-        dataIndex: 'title',
-        width: 150,
-    },{
-        title: 'Url',
-        dataIndex: 'url',
-        width: 150,
-        scopedSlots: { customRender: 'link' },
-    }] ; 
+    let fields =  [
+        {
+            title: 'ID',
+            dataIndex: 'checkbox',
+            width: 30,
+            scopedSlots: { customRender: 'checkbox' },
+        },
+        {
+            title: 'Title',
+            dataIndex: 'title',
+            width: 150,
+        },
+        {
+            title: 'Url',
+            dataIndex: 'url',
+            width: 150,
+            scopedSlots: { customRender: 'link' },
+        }
+    ] ; 
     
 	export default {
 		props : [ ], 
 		data(){
             return {
-                infusionsoft : {} , 
+                trello : trello.stade , 
+                application : application.stade , 
                 compte : '' , 
-                items: [],
-                loading : false ,
+                loading : true ,
                 fields ,
                 loading_btn  : false , 
             }
         },
 
         computed: {
-            ...mapApplicationFields({ applicationsItem: `item` }),
-            ...mapTrelloMultiRowFields({ trelloBoards: `boards` }),
+        
         },
 
         watch : {
-
-            applicationsItem : function () {
-                if ( this.applicationsItem ) {
-                    this.compte = this.applicationsItem.compteId ;
-                }
-            },
-
-            trelloBoards : function () {
-                this.items = this.trelloBoards.map(({ id , title , url }) => {
-                    return { id , title , url }
-                }) 
-            }
 
         },
 
         methods : { 
 
+            onChange (e) {
+                console.log('radio checked', e.target.value)
+            },
+
             async create(){
                 let item = null ;
-                for( const i of this.items ){
+                for( const i of this.trello.boards ){
                     if ( i.id == this.compte ) {
                         item = i ; 
                     }
                 }
                 this.loading_btn = true; 
-                await this.$store.dispatch('generale/trello/ADD_BOARDS' , { id : this.$route.params.id,  compte : this.compte , url : item.url ,namespace : 'generale'} ) ; 
+                await application.addBoard( { id : this.$route.params.id,  compte : this.compte , url : item.url } ) 
                 this.loading_btn = false; 
+                this.init() ; 
             },  
 
             async init(){
-                await this.$store.dispatch('generale/application/ITEM_APPLICATION' , { id : this.$route.params.id ,namespace : 'generale' } ) ; 
-                await this.$store.dispatch('generale/trello/ALL_BOARDS' , { id : this.$route.params.id  ,namespace : 'generale' }) ; 
-            },
-
-            onChange (e) {
-                console.log('radio checked', e.target.value)
+                await application.itemApplication( this.$route.params.id ) 
+                await trello.allBoard( this.$route.params.id ); 
+                this.loading = false ; 
+                if ( this.application.item ) {
+                    this.compte = this.application.item.compteId ;
+                }
             },
 
         },

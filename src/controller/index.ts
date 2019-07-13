@@ -22,6 +22,18 @@ export function transferwise( req:Request, res:Response ) {
 	res.render( 'transferwise.ejs' ,{ lang:JSON.stringify(res.locals.lang), urlapplication:site.urlapp, portapplication:site.port } ) 
 }
 
+export function flash( req:Request, res:Response ) {
+	let lang = req.lang() ; 
+	req.flash('message' , req.body ) ; 
+	res.success( true )
+}
+
+export function read( req:Request, res:Response ) {
+	let lang = req.lang() ; 
+	let { unique } = req.params ;
+	res.render( 'read.ejs' ,{ lang:JSON.stringify(res.locals.lang), unique ,urlapplication:site.urlapp, portapplication:site.port } ) 
+}
+
 export function vocalNote( req:Request, res:Response ) {
 	let lang = req.lang() ; 
 	res.render( 'noteVocal.ejs' ,{ lang:JSON.stringify(res.locals.lang), urlapplication:site.urlapp, portapplication:site.port } ) 

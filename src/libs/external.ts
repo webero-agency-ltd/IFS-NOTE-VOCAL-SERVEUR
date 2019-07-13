@@ -37,24 +37,23 @@ class ext {
 	    	throw new AppError('EC0001');
 		let { External } = global['db'] as DBInterface ;
 	    //récupération externale si existe 
-		let [ err , data ] = await to(External.findOne({
+	    let external : ExternalInstance ;
+	    let err : null ;
+		[ err , external ] = await to(External.findOne({
 		    where: { UserId : u }
 	    })) 
-	    if ( err || !data ) 
+	    if ( err ) 
 	    	throw new AppError('EI0003');
-	    let external = data as ExternalInstance ;
 	    if ( external ) {
 	    	//ici l'option external existe, donc on fait juste la mise a jour de celle ci 
 	    	return external.update( { infusionsoft , trello } )	
 	    }
 	    //Création de team de l'applications 
-	    data as ExternalInstance ;
-		[ err , data ] = await to(External.create( { infusionsoft , trello } )) 
+		[ err , external ] = await to(External.create( { infusionsoft , trello } )) 
 	    if ( err ) 
 	    	throw new AppError('EI0004');
-	    external = data ; 
-	    [ err , data ] = await to( user.setExternal( external ) ) 
-	    if ( err )
+	    let [ errsetExternal , data ] = await to( usr.setExternal( external ) ) 
+	    if ( errsetExternal )
 	    	throw new AppError('EI0005');
 	    return external ;
 	}

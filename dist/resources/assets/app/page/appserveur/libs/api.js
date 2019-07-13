@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -39,10 +50,12 @@ function api(url, methode, data) {
     if (methode === void 0) { methode = 'GET'; }
     if (data === void 0) { data = null; }
     return __awaiter(this, void 0, void 0, function () {
-        var uploadResponse, json_1, e_1, json_2, e_2;
+        var op, da, uploadResponse, json_1, e_1, json_2, e_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
+                    op = { id: 1 };
+                    da = __assign({}, op);
                     url = window.urlapplication + url;
                     uploadResponse = null;
                     if (!(methode == 'GET')) return [3 /*break*/, 2];

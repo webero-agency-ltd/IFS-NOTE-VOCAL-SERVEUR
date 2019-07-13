@@ -1,0 +1,22 @@
+<!DOCTYPE>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+		<title>Enregistrement de note vocal</title>
+	</head>
+	<body>
+		<script> 
+			window.trans = <%- lang.replace(/=&gt;/g, '=>') %>; 
+			window.urlapplication = "<%- urlapplication %>"; 
+			window.unique = "<%- unique %>"; 
+			window.portapplication = "<%- portapplication %>";
+			<% if( locals.flash && locals.flash.message ) {%>   
+				window.success_create = true; 
+	    	<% }  %> 
+	    	console.log( window.unique ) ;  
+	    	console.log( window.success_create ) ;  
+		</script>
+		<div id="core"></div>
+		<script src="/assets/js/index.js"></script>
+	</body>
+</html>

@@ -20,7 +20,8 @@
     "@types/redis": "^2.8.12",
     "@types/request": "^2.48.1",
     "@types/sequelize": "^4.27.48",
-    "copyfiles": "^2.1.0"
+    "copyfiles": "^2.1.0",
+    "faker": "^4.1.0"
   },
   "dependencies": {
     "await-to-js": "^2.1.1",
@@ -37,6 +38,7 @@
     "express-session": "^1.16.1",
     "flash": "^1.1.0",
     "mysql2": "^1.6.5",
+    "node-cache": "^4.2.0",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "passport-remember-me": "0.0.1",

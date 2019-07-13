@@ -1,3 +1,4 @@
+"use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -44,6 +45,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 var site = require('../config/site');
 var request = require('../libs/request');
 var querystring = require('querystring');
@@ -51,6 +56,9 @@ var AppError = require('../libs/AppError');
 var application = require('../libs/application');
 var team = require('../libs/team');
 var json = require('../libs/json');
+var cache = require('./cache');
+var faker = require('faker');
+var paginate_1 = __importDefault(require("../libs/paginate"));
 /*
  * Classe de manipulation des actions vers trello
 */
@@ -58,6 +66,56 @@ var infusionsoft = /** @class */ (function () {
     function infusionsoft() {
         this.api = 'https://api.infusionsoft.com/crm/rest/v1';
     }
+    infusionsoft.prototype.createUser = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var app, jsont, users, i, _i, users_1, item, header, _a, error, info, body;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4 /*yield*/, application.item(id)];
+                    case 1:
+                        app = _b.sent();
+                        jsont = json(app.accessToken, {});
+                        users = [];
+                        //name.lastName(), name.firstName(), and name.suffix()
+                        for (i = 0; i < 500; ++i) {
+                            users = users.concat([{
+                                    "given_name": faker.name.lastName(),
+                                    "family_name": faker.name.firstName(),
+                                    "email_addresses": [
+                                        {
+                                            "email": faker.internet.email(),
+                                            "field": "EMAIL1"
+                                        },
+                                        {
+                                            "email": faker.internet.email(),
+                                            "field": "EMAIL2"
+                                        }
+                                    ],
+                                }]);
+                        }
+                        console.log(users);
+                        _i = 0, users_1 = users;
+                        _b.label = 2;
+                    case 2:
+                        if (!(_i < users_1.length)) return [3 /*break*/, 5];
+                        item = users_1[_i];
+                        header = {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        };
+                        return [4 /*yield*/, request.post(this.api + '/contacts/?access_token=' + jsont['access_token'], item, header, true)];
+                    case 3:
+                        _a = _b.sent(), error = _a.error, info = _a.info, body = _a.body;
+                        console.log(item, error, body);
+                        _b.label = 4;
+                    case 4:
+                        _i++;
+                        return [3 /*break*/, 2];
+                    case 5: return [2 /*return*/, true];
+                }
+            });
+        });
+    };
     /*
      * Récupération des membres d'infusionsoft
     */
@@ -84,24 +142,75 @@ var infusionsoft = /** @class */ (function () {
     /*
      * Récupération des listes des contacts d'infusionsoft
     */
-    infusionsoft.prototype.contacts = function (id) {
+    infusionsoft.prototype.contacts = function (id, text, size, page) {
+        if (text === void 0) { text = ''; }
+        if (size === void 0) { size = 200; }
+        if (page === void 0) { page = 1; }
         return __awaiter(this, void 0, void 0, function () {
-            var app, token, _a, error, info, body, reponse;
+            var app, token, contacts, offset, total, stop_1, reponse, _a, err, info, body, cts, contactsFilter;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0: return [4 /*yield*/, application.item(id)];
                     case 1:
                         app = _b.sent();
                         token = json(app.accessToken, {});
-                        return [4 /*yield*/, request.get(this.api + '/contacts/?access_token=' + token['access_token'])];
+                        return [4 /*yield*/, cache.get("infusionsoft_" + id + "_contacts_cache", [])];
                     case 2:
-                        _a = _b.sent(), error = _a.error, info = _a.info, body = _a.body;
-                        if (error && info.statusCode !== 200)
-                            throw new AppError('IC0003');
+                        contacts = _b.sent();
+                        if (!(contacts.length == 0)) return [3 /*break*/, 8];
+                        offset = 0;
+                        total = 1000;
+                        stop_1 = false;
+                        reponse = { contacts: [] };
+                        _b.label = 3;
+                    case 3:
+                        console.log(this.api + '/contacts/?access_token=' + token['access_token'] + ("&offset=" + offset + "&limit=1000"));
+                        return [4 /*yield*/, request.get(this.api + '/contacts/?access_token=' + token['access_token'] + ("&offset=" + offset + "&limit=1000"))];
+                    case 4:
+                        _a = _b.sent(), err = _a.err, info = _a.info, body = _a.body;
+                        if (err && info.statusCode !== 200)
+                            stop_1 = true;
                         reponse = json(body, {});
-                        return [2 /*return*/, reponse['contacts'] ? reponse['contacts'].map(function (e) {
-                                return __assign({ text: e.family_name + ' ' + e.given_name, value: e.id }, e);
-                            }) : []];
+                        offset = offset + 1000;
+                        if (reponse['contacts'].length) {
+                            cts = reponse['contacts'].map(function (e) {
+                                return __assign({}, e, { text: e['given_name'] + ' ' + e['family_name'] });
+                            });
+                            contacts = contacts.concat(cts);
+                        }
+                        else
+                            stop_1 = true;
+                        _b.label = 5;
+                    case 5:
+                        if (stop_1 === false) return [3 /*break*/, 3];
+                        _b.label = 6;
+                    case 6: return [4 /*yield*/, cache.set("infusionsoft_" + id + "_contacts_cache", contacts)];
+                    case 7:
+                        _b.sent();
+                        _b.label = 8;
+                    case 8:
+                        contactsFilter = contacts.filter(function (e) {
+                            var existe = false;
+                            if (e.given_name.toLowerCase().indexOf(text.toLowerCase()) !== -1) {
+                                existe = true;
+                            }
+                            else if (e.family_name.toLowerCase().indexOf(text.toLowerCase()) !== -1) {
+                                existe = true;
+                            }
+                            else if (e.email_addresses && e.email_addresses.length > 0 && e.email_addresses.filter(function (e) {
+                                var existe = false;
+                                if (e.email.toLowerCase().indexOf(text.toLowerCase()) !== -1) {
+                                    existe = true;
+                                }
+                                return existe;
+                                //@todo : ICI on fait aussi la filtre des contacts par l'intèrmidiaire des numéros de téléphone 
+                            }).length !== 0) {
+                                existe = true;
+                            }
+                            return existe;
+                        });
+                        //Ajoute de pagination 
+                        return [2 /*return*/, paginate_1.default(contactsFilter, size, page)];
                 }
             });
         });
@@ -118,6 +227,7 @@ var infusionsoft = /** @class */ (function () {
                     case 1:
                         app = _b.sent();
                         token = json(app.accessToken, {});
+                        console.log(this.api + '/notes/' + note + '/?access_token=' + token['access_token']);
                         return [4 /*yield*/, request.get(this.api + '/notes/' + note + '/?access_token=' + token['access_token'])];
                     case 2:
                         _a = _b.sent(), error = _a.error, info = _a.info, body = _a.body;
@@ -131,20 +241,49 @@ var infusionsoft = /** @class */ (function () {
     };
     infusionsoft.prototype.tasks = function (id, note) {
         return __awaiter(this, void 0, void 0, function () {
-            var app, token, _a, error, info, body, reponse;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var app, token, _a, error, info, body, task, _b, error, info, body, users, itemTask, _i, _c, item, _d, error_1, info_1, body_1, task_1, data;
+            return __generator(this, function (_e) {
+                switch (_e.label) {
                     case 0: return [4 /*yield*/, application.item(id)];
                     case 1:
-                        app = _b.sent();
+                        app = _e.sent();
                         token = json(app.accessToken, {});
+                        console.log(this.api + '/tasks/' + note + '/?access_token=' + token['access_token']);
                         return [4 /*yield*/, request.get(this.api + '/tasks/' + note + '/?access_token=' + token['access_token'])];
                     case 2:
-                        _a = _b.sent(), error = _a.error, info = _a.info, body = _a.body;
-                        if (error && info.statusCode !== 200)
-                            throw new AppError('IC0007');
-                        reponse = json(body, {});
-                        return [2 /*return*/, reponse.id ? reponse : {}];
+                        _a = _e.sent(), error = _a.error, info = _a.info, body = _a.body;
+                        task = json(body, {});
+                        if (task && task.id) {
+                            return [2 /*return*/, task];
+                        }
+                        console.log(task);
+                        return [4 /*yield*/, request.get(this.api + '/users?access_token=' + token['access_token'])];
+                    case 3:
+                        _b = _e.sent(), error = _b.error, info = _b.info, body = _b.body;
+                        users = json(body, {});
+                        itemTask = null;
+                        if (!(users['users'] && users['users'].length)) return [3 /*break*/, 7];
+                        _i = 0, _c = users['users'];
+                        _e.label = 4;
+                    case 4:
+                        if (!(_i < _c.length)) return [3 /*break*/, 7];
+                        item = _c[_i];
+                        if (!item.id) return [3 /*break*/, 6];
+                        return [4 /*yield*/, request.get(this.api + '/tasks/?access_token=' + token['access_token'] + '&user_id=' + item.id)];
+                    case 5:
+                        _d = _e.sent(), error_1 = _d.error, info_1 = _d.info, body_1 = _d.body;
+                        task_1 = json(body_1, {});
+                        if (task_1 && task_1['tasks']) {
+                            data = task_1['tasks'].filter(function (e) { return e.id == note; });
+                            if (data.length) {
+                                itemTask = data[0];
+                            }
+                        }
+                        _e.label = 6;
+                    case 6:
+                        _i++;
+                        return [3 /*break*/, 4];
+                    case 7: return [2 /*return*/, itemTask && itemTask.id ? itemTask : {}];
                 }
             });
         });
@@ -307,6 +446,31 @@ var infusionsoft = /** @class */ (function () {
         });
     };
     /*
+     * Update de tache
+    */
+    infusionsoft.prototype.updateTasks = function (body, t) {
+        var error, info, body;
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, header, token;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        header = {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        };
+                        token = json(t, {});
+                        return [4 /*yield*/, request.post(this.api + '/tasks/?access_token=' + token['access_token'], body, header, true)];
+                    case 1:
+                        (_a = _b.sent(), error = _a.error, info = _a.info, body = _a.body);
+                        if (error && (info.statusCode !== 200 || info.statusCode !== 201))
+                            throw new AppError('EN0005');
+                        return [2 /*return*/, json(body, {})];
+                }
+            });
+        });
+    };
+    /*
      *	Création de tache infusionsoft
     */
     infusionsoft.prototype.createTasks = function (body, t) {
@@ -326,6 +490,32 @@ var infusionsoft = /** @class */ (function () {
                         (_a = _b.sent(), error = _a.error, info = _a.info, body = _a.body);
                         if (error && (info.statusCode !== 200 || info.statusCode !== 201))
                             throw new AppError('EN0005');
+                        console.log(json(body, {}));
+                        return [2 /*return*/, json(body, {})];
+                }
+            });
+        });
+    };
+    /*
+     * Update des notes infusionsoft
+    */
+    infusionsoft.prototype.updateNotes = function (body, t) {
+        var error, info, body;
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, header, token;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        header = {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        };
+                        token = json(t, {});
+                        return [4 /*yield*/, request.post(this.api + '/notes/?access_token=' + token['access_token'], body, header, true)];
+                    case 1:
+                        (_a = _b.sent(), error = _a.error, info = _a.info, body = _a.body);
+                        if (error && (info.statusCode !== 200 || info.statusCode !== 201))
+                            throw new AppError('EN0007');
                         return [2 /*return*/, json(body, {})];
                 }
             });

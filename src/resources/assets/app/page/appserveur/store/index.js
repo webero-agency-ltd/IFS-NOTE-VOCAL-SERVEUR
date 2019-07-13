@@ -1,8 +1,21 @@
-import Vuex from 'vuex'
-import Vue from 'vue';
+import api from '../libs/api' ; 
+import lang from '../libs/lang' ; 
 
-Vue.use(Vuex)
+class index {
 
-export default new Vuex.Store ({
-	strict: process.env.NODE_ENV !== 'production',
-})
+	constructor(){
+		this.stade = {
+			forms : [] , 
+		}
+	}
+
+	async setFlash( body ){
+		let [ err , { data } ] = await api( '/flash' , 'POST' , body ) ;
+		if ( err ) 
+			return [ err , null ] ; 
+		return [ null , data ]
+	}
+
+} 
+
+export default new index() ;

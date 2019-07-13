@@ -6,7 +6,7 @@
 		    @ok="handleOk"
 		    :confirmLoading="confirmLoading"
 		    @cancel="handleCancel">
-	      	<component v-if="component" v-bind:is="component"></component>
+	      	<component :data="data" v-if="component" v-bind:is="component"></component>
 	    </a-modal>
     </div>
 </template>
@@ -21,6 +21,7 @@
             	component : '' , 
 			    visible: false,
 			    confirmLoading: false,
+			    data : {} , 
             }
         },
         computed: {
@@ -45,6 +46,9 @@
 			this.on('modal',(options) => {
 				this.visible = true ; 
 				this.options = { ...options }
+				if ( this.options.data ) {
+					this.data = Object.assign({} , this.options.data )
+				}
 				this.component = this.options.component
 			})
 

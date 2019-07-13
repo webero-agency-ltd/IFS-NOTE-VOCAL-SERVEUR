@@ -12,12 +12,56 @@ class infusionsoft {
 	/*
  	 * Récupèration de tout les boards de trello 
 	*/
-	allContact( id ){
-		let [ err , { data } ] = await api( '/infusionsoft/contacts/' + id )  ; 
+	async allContact( id , text = '' ){
+		let [ err , { data } ] = await api( `/infusionsoft/contacts/${id}?size=20&text=${text}&page=1` )  ; 
+		console.log( data )
 		if ( err ) 
 			return [ err , null ]
-		this.stade.contacts = [ ...data ]
-		return [ null , this.stade.contacts ]
+		this.stade.contacts = [] ; 
+		this.stade.contacts = [ ...data['data'] ]
+		return [ null , data ]
 	}
 
-} 
+	/*
+	 * Récupération de la liste suivant d'un liste de trello  
+	*/
+	async moreContact( id , text , page ){
+		let [ err , { data } ] = await api( `/infusionsoft/contacts/${id}?size=20&text=${text}&page=${page}` )  ; 
+		console.log( data )
+		if ( err ) 
+			return [ err , null ]
+		let contact = this.stade.contacts ; 
+		this.stade.contacts = [] ; 
+		this.stade.contacts = [ ...contact , ...data['data'] ]
+		return [ null , data ]
+	}
+
+	/*
+	 * Création de notes infusionsoft 
+	*/
+	async note( body ){
+		let [ err , { data } ] = await api(  '/infusionsoft/note/' , 'POST' , body )  ; 
+		if ( err || !data || ( data && !data.id )) 
+			return [ err?err:data , null ]
+		return [ null , data ]
+	}
+
+	async itemNote( id , appId ){
+		let [ err , { data } ] = await api( '/infusionsoft/note/' + id + '/?appId='+appId )  ; 
+		console.log( err , data )
+		if ( err ) 
+			return [ err , null ]
+		return  [ err , data ]
+	}
+
+	async itemTask( id , appId ){
+		let [ err , { data } ] = await api( '/infusionsoft/task/' + id + '/?appId='+appId )  ; 
+		console.log( err , data )
+		if ( err ) 
+			return [ err , null ]
+		return  [ err , data ]
+	}
+	
+}
+
+export default new infusionsoft() ;

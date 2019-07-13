@@ -53,6 +53,21 @@ class note {
 	    return data ;  
 	}
 
+	async delete( id ){
+	    let where = {} ;
+		typeof(id)=="object"?where=id:where['id']=id;
+		let { Note } = global['db'] as DBInterface ;
+		let [ err , data ] = await to(Note.findAll({
+		    where 
+	    })) 
+	    if ( err )
+    		throw new AppError('ND0001');
+	    for( let item of data ){
+	    	let [ err , data ] = await to( item.destroy() ) 
+	    }
+	    return true ;
+	}
+
 	/*
 	 * Création de note ICI 
 	*/

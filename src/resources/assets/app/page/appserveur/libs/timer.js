@@ -16,7 +16,7 @@ class timerClass{
 	  	var secondsLabel = this.pad(this.totalSeconds % 60);
 	  	var minutesLabel = this.pad(parseInt(this.totalSeconds / 60));
 	  	if ( this.cbl ) {
-	  		this.cbl( minutesLabel + " : " + secondsLabel ) ; 
+	  		this.cbl( minutesLabel + "m : " + secondsLabel + " s" ) ; 
 	  	}
 	}
 	pad(val) {

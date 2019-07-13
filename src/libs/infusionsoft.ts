@@ -5,7 +5,9 @@ var AppError = require('../libs/AppError');
 var application = require('../libs/application');
 var team = require('../libs/team');
 var json = require('../libs/json');
-
+var cache = require('./cache');
+var faker = require('faker');
+import paginate from '../libs/paginate' ;  
 /*
  * Classe de manipulation des actions vers trello 
 */
@@ -16,6 +18,42 @@ class infusionsoft {
 
 	constructor() {
 		this.api = 'https://api.infusionsoft.com/crm/rest/v1' ; 
+	}
+
+	async createUser( id ){
+	    let app = await application.item( id )
+	    let jsont = json( app.accessToken , {} ) 
+	    let users = []
+
+	    //name.lastName(), name.firstName(), and name.suffix()
+	    for (var i = 0; i < 500 ; ++i) {
+			users = [ ...users , {
+			  "given_name": faker.name.lastName(),
+			  "family_name": faker.name.firstName(),
+			  "email_addresses": [
+				    {
+				      "email": faker.internet.email(),
+				      "field": "EMAIL1"
+				    },
+				    {
+				      "email": faker.internet.email(),
+				      "field": "EMAIL2"
+				    }
+			  	],
+			}] 
+	    }
+
+	    console.log( users ) ; 
+
+	    for( let item of users ){
+	    	let header = {
+		    	'Accept': 'application/json',
+            	'Content-Type': 'application/json'
+	    	}
+	    	var { error, info , body } = await request.post( this.api + '/contacts/?access_token='+jsont['access_token'] , item , header , true ) ; 
+	    	console.log( item , error , body )
+	    }
+	    return true;
 	}
 
 	/*
@@ -34,16 +72,57 @@ class infusionsoft {
 	/*
 	 * Récupération des listes des contacts d'infusionsoft 
 	*/
-	async contacts( id ){
-	    let app = await application.item( id )
+	async contacts( id , text ='' , size = 200 , page = 1 ){
+		let app = await application.item( id )
 	    let token = json( app.accessToken , {} ) 
-		var { error, info , body } = await request.get( this.api + '/contacts/?access_token='+token['access_token'] ) ; 
-		if ( error && info.statusCode !== 200 )
-	    	throw new AppError('IC0003');
-	    let reponse = json( body , {} ) ; 
-		return reponse['contacts']?reponse['contacts'].map( function (e) {
-			return { text : e.family_name + ' ' + e.given_name , value : e.id , ...e }
-		}):[];
+		let contacts = await cache.get( `infusionsoft_${id}_contacts_cache` , [] ) 
+		if ( contacts.length == 0 ) {
+			let offset = 0 ; 
+		    let total = 1000 ; 
+		    let stop = false ; 
+		    let reponse = { contacts : [] } ; 
+			do {
+				console.log( this.api + '/contacts/?access_token='+token['access_token'] + `&offset=${offset}&limit=1000` )
+				var { err, info , body } = await request.get( this.api + '/contacts/?access_token='+token['access_token'] + `&offset=${offset}&limit=1000` ) ; 
+				if ( err && info.statusCode !== 200 )
+			    	stop = true  
+		    	reponse = json( body , {} ) ; 
+		    	offset = offset + 1000 ;
+		    	if ( reponse['contacts'].length ){
+		    		let cts = reponse['contacts'].map( e => {
+		    			return { ...e , text : e['given_name'] +' '+ e['family_name'] };
+		    		})
+		    		contacts = [...contacts , ...cts ] 
+		    	}else
+			    	stop = true  
+			}while( stop === false ) ;
+
+			await cache.set( `infusionsoft_${id}_contacts_cache` , contacts )
+		}
+		//ici on fait la filtre du contact maintenant 
+		let contactsFilter = contacts.filter( (e) => {
+            let existe = false ; 
+            if ( e.given_name.toLowerCase().indexOf( text.toLowerCase() ) !== -1 ) {
+                existe = true ; 
+            }
+            else if ( e.family_name.toLowerCase().indexOf( text.toLowerCase() ) !== -1 ) {
+                existe = true ; 
+            }
+            else if ( e.email_addresses && e.email_addresses.length > 0 && e.email_addresses.filter( (e) => { 
+                let existe = false ; 
+                if ( e.email.toLowerCase().indexOf( text.toLowerCase() ) !== -1 ) {
+                    existe = true ; 
+                }
+                return existe 
+                //@todo : ICI on fait aussi la filtre des contacts par l'intèrmidiaire des numéros de téléphone 
+            }).length !== 0 ) {
+                existe = true ; 
+            }
+            return existe ;
+        });  
+        //Ajoute de pagination 
+		return paginate( contactsFilter , size , page ) ;
+
 	}
 
 	/*
@@ -52,6 +131,7 @@ class infusionsoft {
 	async notes( id , note ) {
 	    let app = await application.item( id )
 	    let token = json( app.accessToken , {} ) 
+	    console.log( this.api + '/notes/'+note+'/?access_token='+token['access_token'] )
 	    var { error, info , body } = await request.get( this.api + '/notes/'+note+'/?access_token='+token['access_token'] ) ; 
 		if ( error && info.statusCode !== 200 )
 	    	throw new AppError('IC0007');
@@ -62,11 +142,31 @@ class infusionsoft {
 	async tasks( id , note ) {
 	    let app = await application.item( id )
 	    let token = json( app.accessToken , {} ) 
+	    console.log( this.api + '/tasks/'+note+'/?access_token='+token['access_token'] )
 	    var { error, info , body } = await request.get( this.api + '/tasks/'+note+'/?access_token='+token['access_token'] ) ; 
-		if ( error && info.statusCode !== 200 )
-	    	throw new AppError('IC0007');
-	    let reponse = json( body , {} ) ;
-		return reponse.id?reponse:{};
+	   	let task = json( body , {} )
+	   	if ( task && task.id ) {
+	   		return task ;
+	   	}
+	    console.log( task );
+	    var { error, info , body } = await request.get( this.api + '/users?access_token='+token['access_token'] ) ; 
+	    let users = json( body , {} )	
+	    let itemTask = null ;
+	    if ( users['users'] &&  users['users'].length ) {
+	    	for( let item of users['users'] ){
+	    		if ( item.id ) {
+	  				let { error, info , body } = await request.get( this.api + '/tasks/?access_token='+token['access_token'] + '&user_id=' + item.id ) ; 
+	    			let task = json( body , {} )
+	    			if ( task && task['tasks'] )  {
+	    				let data = task['tasks'].filter( e => e.id == note )
+	    				if ( data.length ) {
+	    					itemTask = data[0] ;
+	    				}
+	    			}
+	    		}
+	    	}
+	    }
+		return itemTask && itemTask.id?itemTask:{};
 	}
 
 	/*
@@ -193,9 +293,9 @@ class infusionsoft {
 	}
 
 	/*
-	 *	Création de tache infusionsoft 
+	 * Update de tache 
 	*/
-	async createTasks( body , t ){
+	async updateTasks( body , t ){
 		let header = {
 		    'Accept': 'application/json',
             'Content-Type': 'application/json'
@@ -207,6 +307,37 @@ class infusionsoft {
 	    return json( body , {} );
 	}
 
+	/*
+	 *	Création de tache infusionsoft 
+	*/
+	async createTasks( body , t ){
+		let header = {
+		    'Accept': 'application/json',
+            'Content-Type': 'application/json'
+	    }
+	    let token = json( t , {} );
+	    var { error, info , body } = await request.post( this.api + '/tasks/?access_token='+token['access_token'] , body , header , true ) ; 
+		if ( error && ( info.statusCode !== 200 || info.statusCode !== 201 ) )
+	    	throw new AppError('EN0005');
+	    console.log( json( body , {} ) )
+	    return json( body , {} );
+	}
+
+	/*
+	 * Update des notes infusionsoft
+	*/
+	async updateNotes( body , t ){
+		let header = {
+		    'Accept': 'application/json',
+            'Content-Type': 'application/json'
+	    }
+	    let token = json( t , {} );
+	    var { error, info , body } = await request.post( this.api + '/notes/?access_token='+token['access_token'] , body , header , true ) ; 
+		if ( error && ( info.statusCode !== 200 || info.statusCode !== 201 ) )
+	    	throw new AppError('EN0007');
+	    return json( body , {} );
+	}
+	
 	/*
 	 *	Création de notes infusionsoft 
 	*/

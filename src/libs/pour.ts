@@ -29,6 +29,7 @@ class pour {
 	    if (!usr) 
 	    	throw new AppError('EI0001');
 	    let i = await application.item( app ) ;  
+	    console.log( app )
 	    if ( !i )  
 	    	throw new AppError('PC0001');
 	    let [ err , data ] = await to(usr.getPours({

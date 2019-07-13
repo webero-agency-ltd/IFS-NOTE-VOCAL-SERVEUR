@@ -85,6 +85,7 @@ var pour = /** @class */ (function () {
                         return [4 /*yield*/, application.item(app)];
                     case 2:
                         i = _b.sent();
+                        console.log(app);
                         if (!i)
                             throw new AppError('PC0001');
                         return [4 /*yield*/, promise_1.default(usr.getPours({

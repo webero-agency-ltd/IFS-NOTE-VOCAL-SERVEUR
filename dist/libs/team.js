@@ -83,6 +83,39 @@ var teal = /** @class */ (function () {
             });
         });
     };
+    teal.prototype.delete = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var where, Team, _a, err, data, _i, data_1, item, _b, err_1, data_2;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        where = {};
+                        typeof (id) == "object" ? where = id : where['id'] = id;
+                        Team = global['db'].Team;
+                        return [4 /*yield*/, promise_1.default(Team.findAll({
+                                where: where
+                            }))];
+                    case 1:
+                        _a = _c.sent(), err = _a[0], data = _a[1];
+                        if (err)
+                            throw new AppError('TD0004');
+                        _i = 0, data_1 = data;
+                        _c.label = 2;
+                    case 2:
+                        if (!(_i < data_1.length)) return [3 /*break*/, 5];
+                        item = data_1[_i];
+                        return [4 /*yield*/, promise_1.default(item.destroy())];
+                    case 3:
+                        _b = _c.sent(), err_1 = _b[0], data_2 = _b[1];
+                        _c.label = 4;
+                    case 4:
+                        _i++;
+                        return [3 /*break*/, 2];
+                    case 5: return [2 /*return*/, true];
+                }
+            });
+        });
+    };
     teal.prototype.update = function (id, obj) {
         return __awaiter(this, void 0, void 0, function () {
             var _a, where, Team, _b, err, data, T;

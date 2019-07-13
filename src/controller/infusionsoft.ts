@@ -3,12 +3,47 @@ import { DBInterface } from '../interface/DBInterface';
 import makeid from '../libs/makeid';
 import { ApplicationAttributes , ApplicationInstance } from '../models/application';
 import to from '../libs/promise';
-const site = require('../config/site') ;
 const request = require('request');
 const querystring = require('querystring');
-const infusionsoft = require('../libs/infusionsoft');
-const application = require('../libs/application');
-const note_application = require('../libs/note');
+const moment = require('moment') ;
+
+var site = require('../config/site') ;
+var note_application = require('../libs/note');
+var external = require('../libs/external') ;
+var application = require('../libs/application') ;
+var trello = require('../libs/trello') ;
+var infusionsoft = require('../libs/infusionsoft') ;
+var Pour = require('../libs/pour');
+
+/*
+ * Fonction a utiliser dans le DEV seulement 
+ * qui va nous permètre de générer des utilisateurs d'infusionsosft 
+*/
+export async function makeFakerUser( req:Request, res:Response ){ 
+	let { id } = req.params ; 
+	return res.success( await infusionsoft.createUser( id ) );
+}
+
+export async function note( req:Request, res:Response ) {
+	let lang = req.lang() ; 
+	//récupération 
+	let { title , compteId , description , type , pour , prioriter , date , contactId , update } = req.body ; 
+	let userid = req.user.id;  
+	console.log( '---------------------------' )
+	console.log( title , description , type , pour , prioriter , date , contactId , compteId ) ; 
+    let i = await application.item( compteId ) ;
+    if (!i) 
+    	throw new AppError('EN0002');
+	if ( pour !== 'default' ) {
+		let p = await Pour.item( pour ) ;
+		let body = { contact: { id : contactId } , description , due_date : date , title : title , priority : prioriter , user_id : parseInt( p.appId ) } ; 
+		console.log( body )
+	    return res.success( update?await infusionsoft.updateTasks( body , i.accessToken ):await infusionsoft.createTasks( body , i.accessToken ) );
+	}else if ( pour == 'default') {
+		let body = { contact_id: contactId , body : description , title : title } ; 
+	    return res.success( update?await infusionsoft.updateNotes( body , i.accessToken ):await infusionsoft.createNotes( body , i.accessToken ) );
+	}
+} 
 
 export async function membre( req:Request, res:Response ) {
 
@@ -40,7 +75,8 @@ export async function contacts( req:Request, res:Response ) {
 
 	let lang = req.lang() ; 
 	let { id } = req.params ; 
-	res.success( await infusionsoft.contacts( id ) ) ; 
+	let { text , page , size } = req.query ; 
+	res.success( await infusionsoft.contacts( id , text , size , page ) ) ; 
 	
 }
 

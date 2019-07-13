@@ -114,6 +114,30 @@ var trello = /** @class */ (function () {
         });
     };
     /*
+     * Récupération des card de trello
+    */
+    trello.prototype.card = function (_a) {
+        var card = _a.card, token = _a.token;
+        return __awaiter(this, void 0, void 0, function () {
+            var url, _b, error, info, body, reponse;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        url = this.api + 'cards/' + card + '?key=' + site.trelloKey + '&token=' + token;
+                        console.log(url);
+                        return [4 /*yield*/, request.get(url)];
+                    case 1:
+                        _b = _c.sent(), error = _b.error, info = _b.info, body = _b.body;
+                        if (!error && info.statusCode == 200) {
+                            reponse = json(body, []);
+                            return [2 /*return*/, { success: reponse }];
+                        }
+                        return [2 /*return*/, { error: error }];
+                }
+            });
+        });
+    };
+    /*
      * Membre des board de trello
     */
     trello.prototype.membres = function (_a) {

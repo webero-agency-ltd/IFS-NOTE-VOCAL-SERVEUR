@@ -9,7 +9,7 @@ class exoption {
 		}
 	}
 
-	findOption(){
+	async findOption(){
 		let [ err , { data } ] = await api( '/external' ) ;
 		if ( err ) 
 			return [ err , null ] ; 
@@ -17,11 +17,13 @@ class exoption {
 		return [ null , this.stade.external ]
 	}
 
-	createOption(){
-		let [ err , { data } ] = await api( '/external/note' , 'POST' , op ) ;
+	async createOption( body ){
+		let [ err , { data } ] = await api( '/external' , 'POST' , body ) ;
 		if ( err ) 
 			return [ err , null ] ; 
 		return this.findOption() ;
 	}
 
 } 
+
+export default new exoption() ;

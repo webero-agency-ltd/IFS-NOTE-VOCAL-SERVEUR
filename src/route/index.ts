@@ -24,8 +24,10 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	//controlleur de base de l'application qui vous affiche votre application  
 	app.get('/',ensureAuth,home.index.bind({db})) ;
 	app.get('/vocal-note',ensureAuth,home.index.bind({db})) ;
-	app.get('/transferwise',home.transferwise.bind({db})) ;
+	app.get('/transferwise', ensureAuth ,home.transferwise.bind({db})) ;
 	app.get('/refresh-token',home.refreshToken.bind({db})) ;
+	app.get('/read/:unique',home.read.bind({db})) ;
+	app.post('/flash',home.flash.bind({db})) ;
 	
 	//page d'authentification 
 	app.get('/login',strategy,login.page.bind({db})) ;
@@ -41,9 +43,10 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	});
 	app.get('/user/authenticated', function(req, res){
 		if ( req.user ) {
+			console.log( req.user ) ; 
 	  		return res.success( req.user );
 	  	}
-	  	return res.success( null );
+	  	return res.success( true );
 	});
 
 	app.get('/application',ensureAuth, hangel.bind( { func : application.index.bind({db}) } )) ;
@@ -55,6 +58,7 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	app.get('/application/trello/redirect/:id',ensureAuth,hangel.bind({ func : application.redirectTrello.bind({db}) })) ;
 	app.post('/application',ensureAuth,hangel.bind({ func : application.create.bind({db}) })) ;
 	app.get('/application/reauthorize/:type/:id',ensureAuth,hangel.bind({ func : application.reauthorize.bind({db,str}) })) ;
+	app.delete('/application/delete/:id',ensureAuth,hangel.bind({ func : application.destroy.bind({db,str}) })) ;
 	
 	app.get('/team/application/:id',ensureAuth,team.index.bind({db})) ;
 	app.get('/team/:id/:type/:contactid',ensureAuth,team.create.bind({db})) ;
@@ -68,10 +72,14 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	app.get('/infusionsoft/on/:id',hangel.bind({ func : infusionsoft.event.bind({db,str}) })) ;
 	app.post('/infusionsoft/on/:id',hangel.bind({ func : infusionsoft.event.bind({db,str}) })) ;
 	app.get('/infusionsoft/destroyHook/:id',hangel.bind({ func : infusionsoft.destroyHook.bind({db,str}) })) ;
+	app.get('/infusionsoft/make/faker/user/:id',hangel.bind({ func : infusionsoft.makeFakerUser.bind({db,str}) })) ;
 	app.get('/infusionsoft/setnote/:unique/:nativeId/:attache',hangel.bind({ func : infusionsoft.setnote.bind({db,str}) })) ;
+	app.post('/infusionsoft/note',hangel.bind({ func : infusionsoft.note.bind({db,str}) })) ;
+	
 	//route des notes
 	app.get('/note/:id',hangel.bind({ func : note.item.bind({db,str}) })) ;
 	app.get('/note/nativeId/:id/:attache',hangel.bind({ func : note.itemNativeId.bind({db,str}) })) ;
+	app.get('/note/itenUnique/:unique',hangel.bind({ func : note.itenUnique.bind({db,str}) })) ;
 	app.get('/note/check/:id',hangel.bind({ func : note.check.bind({db,str}) })) ;
 	app.get('/notes/:id',hangel.bind({ func : note.index.bind({db,str}) })) ;
 	//app.get('/close/:id',ensureAuth,note.close.bind({db,str})) ;
@@ -92,9 +100,11 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	app.get('/trello/boards/:id',ensureAuth,hangel.bind({ func : trello.boards.bind({db,str}) })) ;
 	app.get('/trello/lists/:id',ensureAuth,hangel.bind({ func : trello.lists.bind({db,str}) })) ;
 	app.get('/trello/label/:id',ensureAuth,hangel.bind({ func : trello.label.bind({db,str}) })) ;
+	app.get('/trello/card/:id',ensureAuth,hangel.bind({ func : trello.cards.bind({db,str}) })) ;
 	app.get('/trello/membre/:id',ensureAuth,hangel.bind({ func : trello.membre.bind({db,str}) })) ;
 	app.get('/trello/on/:id',hangel.bind({ func : trello.event.bind({db,str}) })) ;
 	app.post('/trello/on/:id',hangel.bind({ func : trello.event.bind({db,str}) })) ;
+	app.post('/trello/card',hangel.bind({ func : trello.cardAdd.bind({db,str}) })) ;
 
 	app.get('/external',ensureAuth,hangel.bind({ func : external.index.bind({db}) })) ;
 	app.post('/external',ensureAuth,hangel.bind({ func : external.create.bind({db}) })) ;

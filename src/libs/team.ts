@@ -34,6 +34,22 @@ class teal {
 	    return data as TeamAttributes ;
 	}
 
+	async delete( id ){
+		let where = {} ;
+		typeof(id)=="object"?where=id:where['id']=id;
+		let { Team } = global['db'] as DBInterface ;
+		//récupération de la team de l'utilisateur en question 
+		let [ err , data ] = await to( Team.findAll({
+		    where
+	    })) ;
+	    if ( err )
+    		throw new AppError('TD0004');
+    	for( let item of data ){
+	    	let [ err , data ] = await to( item.destroy() ) 
+	    }
+	    return true ;
+	}
+
 	async update( id , obj ){
 		// ApplicationId : i.id
 		let where = {} ;

@@ -1,150 +1,147 @@
 <template>
-	<div class="notespage">
-        <b-container>
-            <b-row style="width: 100%; margin-top: 20px; margin-bottom: 10px;">
-                <alert :errors="error" style="width: 100%;"></alert>
-            </b-row>
-            <b-row>
-                <b-col cols="12">
-                    <h3>{{$lang('appOptionTitleExternTrello')}}</h3>
-                </b-col>
-            </b-row>
-            <b-row style="margin-top: 2rem">
-                <b-col cols="12">
-                    <template>
-                        <div>
-                            <b-table striped hover :items="applicationsTrello" :fields="fields" >
-                                <template slot="id" slot-scope="data">
-                                    <b-form-radio v-model="option.trello" name="some-radios-trello" :value="data.item.id">{{data.item.id}}</b-form-radio>
-                                </template>
-                                <template v-if="option.trello==data.item.id" slot="action" slot-scope="data">
-                                    <b-button class="mt-3" @click="pourOption(data.item)">Option</b-button>
-                                </template>
-                                <template v-if="option.trello==data.item.id" slot="label" slot-scope="data">
-                                    <b-button class="mt-3" @click="labelOption(data.item)">Etiquette</b-button>
-                                </template>
-                            </b-table>
-                        </div>
+    <div :style="{ marginLeft: 'auto', marginRight: 'auto', background: '#fff', padding: '24px', minHeight: '380px' , maxWidth : '992px' }">
+        <a-row>
+            <a-col>
+                <h3>{{$lang('appOptionTitleExternTrello')}}</h3>
+                <a-table 
+                    rowKey="id"
+                    :columns="column"
+                    :dataSource="application.trellos">
+                    <template slot="id" slot-scope="id , record">
+                        <a-radio-group v-model="trello" @change="onChange">
+                            <a-radio :value="record.id">{{record.id}}</a-radio>
+                        </a-radio-group>
                     </template>
-                </b-col>
-            </b-row>
-            <b-row>
-                <b-col cols="12">
-                    <h3>{{$lang('appOptionTitleExternIFS')}}</h3>
-                </b-col>
-            </b-row>
-            <b-row style="margin-top: 2rem">
-                <b-col cols="12">
-                    <template>
-                        <div>
-                            <b-table striped hover :items="applicationsIFS" :fields="fields" >
-                                <template slot="id" slot-scope="data">
-                                    <b-form-radio v-model="option.infusionsoft" name="some-radios-infusionsoft" :value="data.item.id">{{data.item.id}}</b-form-radio>
-                                </template>
-                                <template v-if="option.infusionsoft==data.item.id" slot="action" slot-scope="data">
-                                    <b-button class="mt-3" @click="pourOption(data.item)">Option</b-button>
-                                </template>
-                            </b-table>
-                        </div>
+                    <template slot="action" slot-scope="action , record">
+                        <a-button v-if="option.external.trello==record.id" @click="pourOption( record )" type="primary" >Option</a-button>
+                        <a-button v-if="option.external.trello==record.id" @click="labelOption( record )" type="primary" >Etiquette</a-button>
                     </template>
-                </b-col>
-            </b-row>
-            <b-row>
-                <b-col cols="12">
-                    <b-button class="mt-3" @click="create">Valider</b-button>
-                </b-col>
-            </b-row>
-        </b-container>
+                </a-table>
+            </a-col>
+        </a-row>
+        <a-divider dashed />
+        <a-row>
+            <a-col>
+                <h3>{{$lang('appOptionTitleExternIFS')}}</h3>
+                <a-table 
+                    rowKey="id"
+                    :columns="column"
+                    :dataSource="application.infusionsofts">
+                    <template slot="id" slot-scope="id , record">
+                        <a-radio-group v-model="infusionsoft" @change="onChange">
+                            <a-radio :value="record.id">{{record.id}}</a-radio>
+                        </a-radio-group>
+                    </template>
+                    <template slot="action" slot-scope="action , record">
+                        <a-button v-if="option.external.infusionsoft==record.id" @click="pourOption( record )" type="primary" >Option</a-button>
+                    </template>
+                </a-table>
+            </a-col>
+        </a-row>
+        <a-row>
+            <a-col>
+                <a-button type="primary" icon="table" @click="create" block :loading="loading_btn" >Valider</a-button>
+            </a-col>
+        </a-row>
     </div>
 </template>
 <script>
 
-    import { createNamespacedHelpers } from 'vuex';
-    import store from '../store/';
+    import exoption from '../store/exoption' ; 
+    import application from '../store/application' ; 
     
-    import {
-        external,
-        mapExoptionFields ,
-        mapInfusionsoftMultiRowFields ,
-        mapApplicationMultiRowFields , 
-    } from '../store/pages/external';
-    
-    if (!store.state.external) store.registerModule(`external`, external);
-
-    const { 
-        mapMutations: mapApplicationMutations , 
-        mapActions: mapApplicationActions , 
-        mapGetters: mapApplicationGetters 
-    } = createNamespacedHelpers(`external/application`);
-
-    const { 
-        mapActions: mapExternalMutations, 
-        mapState: mapExternalState 
-    } = createNamespacedHelpers(`external`);
+    let column =  [
+        {
+            title: 'ID',
+            dataIndex: 'id',
+            width: 150,
+            scopedSlots: { customRender: 'id' },
+        },
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            width: 150,
+            scopedSlots: { customRender: 'name' },
+        },
+        {
+            title: 'Action',
+            dataIndex: 'action',
+            width: 150,
+            scopedSlots: { customRender: 'action' },
+        }
+    ]; 
 
 	export default {
 		props : [ ], 
 		data(){
             return {
-                infusionsoft : {} , 
-                compte : '' , 
-                items: [],
-                fields : [
-                    { key: "id", label: "ID" },
-                    { key: "name", label: "Name" },
-                    { key: "action", label: "Action" },
-                    { key: "label", label: "Label" },
-                ],
-                option : { infusionsoft : null , trello : null } , 
+                //
+                trello : null ,
+                infusionsoft : null ,
+
+                option : exoption.stade , 
+                column , 
+                application : application.stade , 
+                //button loader 
+                loading_btn : false , 
             }
         },
 
         computed: {
-            ...mapExternalState([`error`, `success`]),
-            ...mapApplicationMultiRowFields({ applications: `rows` }),
-            ...mapExoptionFields([`external`]),
-            ...mapApplicationGetters({  applicationsTrello : `rowsTrello` , applicationsIFS : `rowsIFS` })
+        
         },
 
         watch : {
-
-            external : function () {
-                console.log( this.external )
-                this.option = Object.assign({},this.external)
-            },
-
-            trelloBoards : function () {
-                this.items = this.trelloBoards.map(({ id , title }) => {
-                    return { id , title }
-                }) 
-            },
 
         },
 
         methods : { 
 
             labelOption : function ( option ) {
-                this.emit('modale',{title:this.$lang(`Edition des labels Trello`),component:'label-trello',footer:[]}) 
+                this.emit('modal',{
+                    title : this.$lang(`Edition des labels Trello`) , 
+                    component : 'label-trello' , 
+                    handleOk : 'pourLabelCreate'
+                })  
             },
 
             pourOption : function ( option ) {
 
                 if ( option.type == "infusionsoft" ) {
-                    this.emit('modale',{title:this.$lang(`Edition de 'POUR' de infusionsoft`),component:'pour-infusionsoft',footer:[]}) 
+                    this.emit('modal',{
+                        title : this.$lang(`Edition de 'POUR' de infusionsoft`) , 
+                        component : 'pourInfusionsoft' , 
+                        handleOk : 'pourCreateInfusionsoft'
+                    }) 
                 }else if ( option.type == "trello" ) {
-                    this.emit('modale',{title:this.$lang(`Edition de 'POUR' de trello`),component:'pour-trello',footer:[]}) 
+                    this.emit('modal',{
+                        title : this.$lang(`Edition de 'POUR' de trello`) , 
+                        component : 'pourTrello' , 
+                        handleOk : 'pourCreateTrello'
+                    })
                 }
 
             },
 
             async create(){
-                await this.$store.dispatch('external/exoption/SET_OPTION' , { namespace : 'external' , op : this.option }  ) ; 
+                this.loading_btn = true ; 
+                await exoption.createOption({ infusionsoft : parseInt(this.infusionsoft) , trello : parseInt(this.trello) }) ;
+                this.loading_btn = false ; 
+                this.init() ; 
             },  
 
             async init(){
-                await this.$store.dispatch('external/application/FIND_ALL', { namespace : 'external' }) ; 
-                await this.$store.dispatch('external/exoption/FIND_OPTION', { namespace : 'external' }) ; 
-            }
+                await application.allApplication() ;
+                await exoption.findOption() ;
+                //ajout de valeur par défaut de la checkbox
+                this.trello = parseInt(this.option.external.trello) ; 
+                this.infusionsoft = parseInt(this.option.external.infusionsoft) ; 
+            },
+
+            //////////////
+            onChange (e) {
+                console.log('radio checked', e.target.value)
+            },
 
         },
 		mounted(){

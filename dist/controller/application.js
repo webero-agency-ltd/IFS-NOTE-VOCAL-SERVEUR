@@ -34,13 +34,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+var promise_1 = __importDefault(require("../libs/promise"));
 /////////////////
 var site = require('../config/site');
 var request = require('request');
+var note = require('../libs/note');
 var application = require('../libs/application');
 var infusionsoft = require('../libs/infusionsoft');
 var trello = require('../libs/trello');
+var trello = require('../libs/trello');
+var team = require('../libs/team');
 function check(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var lang, _a, id, type, apiKey, _b, _c;
@@ -91,6 +98,39 @@ function index(req, res) {
     });
 }
 exports.index = index;
+function destroy(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var id, i, _a, err, data;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    id = req.params.id;
+                    return [4 /*yield*/, application.item(id)];
+                case 1:
+                    i = _b.sent();
+                    if (!i)
+                        throw new AppError('AD0002');
+                    //@todo : voire si on surpimme les notes dans infusionsoft ou pas 
+                    return [4 /*yield*/, note.delete({ ApplicationId: id })];
+                case 2:
+                    //@todo : voire si on surpimme les notes dans infusionsoft ou pas 
+                    _b.sent();
+                    return [4 /*yield*/, team.delete({ ApplicationId: id })];
+                case 3:
+                    _b.sent();
+                    return [4 /*yield*/, promise_1.default(i.destroy())];
+                case 4:
+                    _a = _b.sent(), err = _a[0], data = _a[1];
+                    if (err) {
+                        throw new AppError('AD0003');
+                    }
+                    //@ lancer une évenement pour le suprimer plus tard
+                    return [2 /*return*/, res.success(true)];
+            }
+        });
+    });
+}
+exports.destroy = destroy;
 //ici on a un redirection qui vien d'infusionsoft
 function redirect(req, res) {
     return __awaiter(this, void 0, void 0, function () {

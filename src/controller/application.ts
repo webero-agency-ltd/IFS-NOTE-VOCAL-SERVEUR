@@ -1,6 +1,6 @@
 import { Request , Response }  from 'express' ; 
 import { DBInterface } from '../interface/DBInterface';
-import to from '../libs/promise';
+import to from '../libs/promise'; 
 
 /*
  * Importation de tout les elements de modele a utiliser 
@@ -13,9 +13,12 @@ import { ApplicationAttributes , ApplicationInstance } from '../models/applicati
 
 const site = require('../config/site') ;
 const request = require('request');
-const application = require('../libs/application');
-const infusionsoft = require('../libs/infusionsoft');
-const trello = require('../libs/trello');
+var note = require('../libs/note');
+var application = require('../libs/application');
+var infusionsoft = require('../libs/infusionsoft');
+var trello = require('../libs/trello');
+var trello = require('../libs/trello');
+var team = require('../libs/team');
 
 
 export async function check( req:Request, res:Response ) {
@@ -37,6 +40,24 @@ export async function index( req:Request, res:Response ) {
 	let lang = req.lang() ;
 	return res.success( await application.all( req.user.id ) ); 
 }
+
+
+export async function destroy( req:Request, res:Response ) {
+	let { id } = req.params ; 
+    let i = await application.item( id ) ;
+    if (!i) 
+    	throw new AppError('AD0002');
+    //@todo : voire si on surpimme les notes dans infusionsoft ou pas 
+    await note.delete( { ApplicationId : id } ) ;
+    await team.delete( { ApplicationId : id } ) ;
+    let [ err , data ] = await to( i.destroy() ) 
+    if ( err ) {
+    	throw new AppError('AD0003');
+    } 
+	//@ lancer une évenement pour le suprimer plus tard
+	return res.success( true )
+}
+
 
 //ici on a un redirection qui vien d'infusionsoft
 export async function redirect( req:Request, res:Response ) {

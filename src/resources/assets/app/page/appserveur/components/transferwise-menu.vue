@@ -15,23 +15,6 @@
 
 <script>
     
-    import { createNamespacedHelpers } from 'vuex';
-    import store from '../store/';
-    
-    import {
-        generale,
-        mapApplicationFields ,
-        mapUsersFields ,
-        mapUsersMultiRowFields
-    } from '../store/pages/generale';
-    
-    if (!store.state.generale) store.registerModule(`generale`, generale);
-
-    const { 
-        mapMutations: mapApplicationMutations , 
-        mapActions: mapApplicationActions 
-    } = createNamespacedHelpers(`generale/application`);
-
     export default {
         props : [], 
         data(){
@@ -40,7 +23,7 @@
             }
         },
         computed: {
-            ...mapApplicationFields({ applicationsItem: `item` }),
+        
         },
         methods : {
 

@@ -6,11 +6,32 @@ class application {
 	constructor(){
 		this.stade = {
 			applications : [] , 
-			application : {} , 
+			trellos : [] , 
+			infusionsofts : [] , 
+			item : {} , 
 		}
 	}
 
-	addApplication( id , option ){
+	/*
+	 * Add borad a l'application trello
+	*/
+	async addBoard( op ){
+		let { id , compte , url } = op ; 
+		console.log( id , compte , url )
+        let [ err , { data } ] = await api(  '/trello/boards/'+id , 'POST' , { compteId : compte , url } ) ;
+        if ( err ) 
+			return [ err , null ]
+       	return [ null , true ]
+	}
+
+	async destroyApplication( id ){
+        let [ err , { data } ] = await api( '/application/delete/'+id , 'DELETE' ) ;
+        if ( err ) 
+			return [ err , null ]
+       	return [ null , true ]
+	}
+
+	async addApplication( option ){
 		let { compteId , name , type } = option ; 
         let body = {} ;
         if ( name && compteId ) {
@@ -31,7 +52,7 @@ class application {
 	/*
  	 * Reresh token manuelement 
 	*/
-	reAuthorize( id ){
+	async reAuthorize( id ){
 		let [ err , { data } ] = await api( `/application/reauthorize/all/${id}` ) ;
 		if ( err ) 
 			return [ err , null ]
@@ -42,22 +63,46 @@ class application {
 	/*
 	 * Récupération de tout les applications 
 	*/
-	allApplication(){
+	async allApplication(){
 		let [ err , { data } ] = await api( '/application' ) ;
 		if ( err ) 
 			return [ err , null ]
 		this.stade.applications = [ ...data ]
+		this.trellos()
+		this.infusionsofts()
 		return [ null , this.stade.applications ]
 	}
 
 	/*
 	 * Focus sur une application en particulier pour récupérer ces donners 
 	*/
-	itemApplication( id ){
+	async itemApplication( id ){
 		let [ err , { data } ] = await api( '/application/item/'+id ) ;
 		if ( err ) 
 			return [ err , null ]
-		this.stade.application =  Object.assign( {},{ ...data } ) ;
-		return [ null , this.stade.application ]
+		this.stade.item =  Object.assign( {},{ ...data } ) ;
+		return [ null , this.stade.item ]
+	}
+
+	/*
+	 * Liste de tout les applications trellos 
+	*/
+	trellos(){
+		if ( this.stade.applications.length ) {
+			return this.stade.trellos = this.stade.applications.filter( e => e.type == 'trello' )
+		}
+		return [] ; 
+	}
+
+	/*
+	 * Liste de tout les applications infusionsoft  
+	*/
+	infusionsofts(){
+		if ( this.stade.applications.length ) {
+			return this.stade.infusionsofts = this.stade.applications.filter( e => e.type == 'infusionsoft' )
+		}
+		return [] ; 
 	}
 } 
+
+export default new application() ;

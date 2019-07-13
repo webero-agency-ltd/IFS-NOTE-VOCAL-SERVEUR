@@ -1,22 +1,19 @@
 import Vue from 'vue';
 
-import pourTrello from '../components/pourTrello';
-Vue.component('pour-trello', pourTrello);
-
 import labelTrello from '../components/labelTrello'; 
-Vue.component('label-trello', labelTrello);
+Vue.component('labelTrello', labelTrello);
 
 import wisetransferApikey from '../components/wisetransferApikey'; 
 Vue.component('wisetransferApikey', wisetransferApikey);
 
+import pourTrello from '../components/pourTrello';
+Vue.component('pourTrello', pourTrello);
+
 import pourInfusionsoft from '../components/pourInfusionsoft';
-Vue.component('pour-infusionsoft', pourInfusionsoft);
+Vue.component('pourInfusionsoft', pourInfusionsoft);
 
 import menu from '../components/menu';
 Vue.component('menu-app', menu);
-
-import loader from '../components/loader';
-Vue.component('loader-app', loader);
 
 import menuExternal from '../components/menu-external';
 Vue.component('menu-external', menuExternal);
@@ -24,8 +21,8 @@ Vue.component('menu-external', menuExternal);
 import modal from '../components/modal';
 Vue.component('modal', modal);
 
-import alert from '../components/alert';
-Vue.component('alert', alert);
+import deleteApplication from '../components/deleteApplication'; 
+Vue.component('deleteApplication', deleteApplication);
 
 import createApplication from '../components/createApplication';
 Vue.component('create-application', createApplication);
@@ -54,6 +51,11 @@ import {
 	Form ,
 	Radio , 
 	Popover , 
+	Select  , 
+	DatePicker  , 
+	Spin  , 
+	Alert  , 
+	Badge
 } from 'ant-design-vue';
 
 Vue.component( Menu.name, Menu );
@@ -66,19 +68,20 @@ Vue.component( Layout.name, Layout );
 Vue.component( Layout.Header.name, Layout.Header );
 Vue.component( Layout.Content.name, Layout.Content );
 
-console.log( Row.name )
 Vue.component( Row.name, Row );
 Vue.component( Col.name, Col );
 
 Vue.component( Breadcrumb.name, Breadcrumb );
 
 Vue.component( Button.name, Button );
+Vue.component( Button.Group.name, Button.Group );
 
 Vue.component( Table.name, Table );
 
 Vue.component( Modal.name, Modal );
 
 Vue.component( Input.name, Input );
+Vue.component( Input.TextArea.name, Input.TextArea  );
 
 Vue.component( Card.name, Card );
 Vue.component( Card.Meta.name, Card.Meta );
@@ -95,6 +98,17 @@ Vue.component( Radio.Button.name, Radio.Button );
 Vue.component( Radio.Group.name, Radio.Group );
 
 Vue.component( Popover.name, Popover );
+
+Vue.component( Select.name, Select );
+Vue.component( Select.Option.name, Select.Option );
+
+Vue.component( DatePicker.name, DatePicker );
+
+Vue.component( Spin.name, Spin );
+
+Vue.component( Alert.name, Alert );
+
+Vue.component( Badge.name, Badge );
 
 let comp = {}
 

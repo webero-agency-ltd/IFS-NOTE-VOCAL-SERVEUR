@@ -3,3 +3,4 @@ info.md
 sftp-config.json
 package-lock.json
 node_modules/*
+dist/*

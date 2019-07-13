@@ -58,6 +58,18 @@ function transferwise(req, res) {
     res.render('transferwise.ejs', { lang: JSON.stringify(res.locals.lang), urlapplication: site.urlapp, portapplication: site.port });
 }
 exports.transferwise = transferwise;
+function flash(req, res) {
+    var lang = req.lang();
+    req.flash('message', req.body);
+    res.success(true);
+}
+exports.flash = flash;
+function read(req, res) {
+    var lang = req.lang();
+    var unique = req.params.unique;
+    res.render('read.ejs', { lang: JSON.stringify(res.locals.lang), unique: unique, urlapplication: site.urlapp, portapplication: site.port });
+}
+exports.read = read;
 function vocalNote(req, res) {
     var lang = req.lang();
     res.render('noteVocal.ejs', { lang: JSON.stringify(res.locals.lang), urlapplication: site.urlapp, portapplication: site.port });

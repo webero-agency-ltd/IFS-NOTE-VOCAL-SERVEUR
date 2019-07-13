@@ -28,7 +28,8 @@ module.exports = {
     appHomeTitle: 'Mes application',
     appNoteMobile: 'Note mobile',
     //Modale Création d'infusionsoft dans la page home
-    appCreateApplicationTitle: "Nouvelle Int\u00E9gration",
+    appCreateApplicationTitle: "Nouvelle Application",
+    appDeleteApplicationTitle: "Supression Application",
     appInfusionsoftName: 'Name',
     appInfusionsoftUrlId: 'Url ID',
     //trello lang
@@ -60,6 +61,14 @@ module.exports = {
     //langue de la création de label de l'application 
     externalOptionTrelloLabelId: "Labels trello",
     externalOptionTrelloDateLabel: "Date Add",
+    //success de création de note dans l'application  
+    success_note: "success de cr\u00E9ation de note vocal",
+    note_unexiste: "Le note n'existe pas",
+    //==========================
+    //Page = page_external
+    //==========================
+    page_external_title: "Ajouter une note",
+    page_external_description: "Veuillez remplir \u00E9tape par \u00E9tape le formulaire ci-dessous et cliquer sur valider pour envoyer votre message vocal",
     /*
      * Enregistrement des langues de tout les erreurs
     */
@@ -167,6 +176,14 @@ module.exports = {
         TWP0007: "Une erreur est produit dans transferwise *CODE:TWP0007*",
         TWP0008: "Une erreur est produit dans transferwise *CODE:TWP0008*",
         TWP0009: "Une erreur est produit dans transferwise *CODE:TWP0009*",
+        //erreur de suppresion de notes 
+        ND0001: "Une erreur est produit dans transferwise *CODE:ND0001*",
+        //erreur de supression de team 
+        TD0004: "Une erreur est produit dans transferwise *CODE:TD0004*",
+        //erreur dans la page destroy de l'application  
+        AD0002: "Une erreur est produit dans transferwise *CODE:AD0002*",
+        AD0003: "Une erreur est produit dans transferwise *CODE:AD0003*",
+        AD0004: "Une erreur est produit dans transferwise *CODE:AD0004*",
         //erreur sur trello 
         ART005: "Une Erreur de supression de hoot trello *CODE:ART005*",
     },

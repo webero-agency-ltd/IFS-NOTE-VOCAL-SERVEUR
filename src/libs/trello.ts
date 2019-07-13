@@ -2,7 +2,7 @@ var site = require('../config/site') ;
 var request = require('../libs/request') ;
 var json = require('../libs/json');
 var application = require('../libs/application');
-var team = require('../libs/team');
+var team = require('../libs/team'); 
 var AppError = require('../libs/AppError');
 
 /*
@@ -52,6 +52,21 @@ class trello {
 	    }
 	    return { error };
 	}
+
+	/*
+	 * Récupération des card de trello 
+	*/
+	async card({ card , token }){
+		let url = this.api + 'cards/' + card + '?key=' + site.trelloKey + '&token=' + token ; 
+		console.log( url )
+		let { error, info , body } = await request.get( url )
+		if ( !error && info.statusCode == 200 ) {
+			let reponse = json( body , [] )
+	    	return { success : reponse };
+	    }
+	    return { error };
+	}
+
 
 	/*
 	 * Membre des board de trello

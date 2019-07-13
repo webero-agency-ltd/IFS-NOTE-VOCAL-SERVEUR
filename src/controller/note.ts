@@ -15,6 +15,14 @@ export async function itemNativeId( req:Request, res:Response ) {
 	console.log( '--- itemNativeId ' ,  id  , attache )
 	return res.success( await note.find( { nativeId : id , attache } ) );
 }
+
+export async function itenUnique( req:Request, res:Response ) {
+	let lang = req.lang() ; 
+	let { unique } = req.params  ;
+	console.log( '--- itenUnique ' )
+	return res.success( await note.find( { unique } ) );
+}
+
 //liste de tout les notes d'un utilisateur en particulier 
 //@todo : il faut bien avoire une session pour faire la recherche pour ne pas afficher tout les notes 
 //d'un utilisateur qui n'est pas la votre
@@ -142,14 +150,6 @@ export async function upload( req:Request, res:Response ) {
 		let n = await note.create( { unique : NOTEID } , title , text , appId , type , userwhere , attache , nativeId ) 
 		return res.success( n )  ;
 	}
-	//Pour la création de notes depuis la page mobile mais spécialement pour trello  
-	if ( newId && newId !== '' && newId !== null && newId !== 'null' ) {
-		let newPath = await note.path( { id : appId } , newId ) ;
-		let rename = await this.str.renameFile( filePath , newPath ) ; 
-		if ( ! rename ) 
-			return res.error('N0003')
-		NOTEID = newId ; 
-	}
 
     busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
 		console.log( 'Pipe Upload files' )
@@ -159,7 +159,16 @@ export async function upload( req:Request, res:Response ) {
 	busboy.on('finish', async () => {	
 		console.log( 'FINISH Upload files' )
 		//upload terminer, on fait maintenant la 
-        res.success( await note.create( { unique : NOTEID , attache } , title , text , appId , type , userwhere , attache , nativeId ) )
+		//Pour la création de notes depuis la page mobile mais spécialement pour trello  
+		if ( newId && newId !== '' && newId !== null && newId !== 'null' ) {
+			let newPath = await note.path( { id : appId } , newId ) ;
+			let rename = await this.str.renameFile( filePath , newPath ) ; 
+			if ( ! rename ) 
+				return res.error('N0003')
+			NOTEID = newId ; 
+		}
+		let y = await note.create( { unique : NOTEID , attache } , title , text , appId , type , userwhere , attache , nativeId )
+        res.success( y )
     });
 
     return req.pipe(busboy);

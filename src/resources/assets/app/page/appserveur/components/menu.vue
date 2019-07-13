@@ -16,7 +16,7 @@
 		      		{{$lang('appMenuNotes')}}
 		      	</router-link>
 		    </a-menu-item>
-		    <a-menu-item v-if="applicationsItem.type=='trello'" key="option">
+		    <a-menu-item v-if="application.item.type=='trello'" key="option">
 		      	<router-link  :to="{name:'option', params : {id : $route.params.id}}" >
 		      		{{$lang('appMenuOptions')}}
 		      	</router-link>
@@ -26,32 +26,15 @@
 </template>
 
 <script>
-	/*
-		:defaultSelectedKeys="['2']"
-		:style="{ lineHeight: '64px' }"
-	*/
-	import { createNamespacedHelpers } from 'vuex';
-    import store from '../store/';
-    
-    import {
-        generale,
-        mapApplicationFields ,
-        mapUsersFields ,
-        mapUsersMultiRowFields
-    } from '../store/pages/generale';
-    
-    if (!store.state.generale) store.registerModule(`generale`, generale);
 
-    const { 
-        mapMutations: mapApplicationMutations , 
-        mapActions: mapApplicationActions 
-    } = createNamespacedHelpers(`generale/application`);
+    import application from '../store/application' ; 
 
 	export default {
 		props : [], 
 		data(){
             return {
             	current : ['application'] , 
+                application  : application.stade
             }
         },
 
@@ -62,7 +45,7 @@
 		},  
 
         computed: {
-            ...mapApplicationFields({ applicationsItem: `item` }),
+        
         },
         methods : {
 

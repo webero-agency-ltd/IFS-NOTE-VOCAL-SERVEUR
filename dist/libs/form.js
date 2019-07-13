@@ -67,6 +67,7 @@ var app = /** @class */ (function () {
                         itemNote = _d.sent();
                         if (!itemNote)
                             throw new AppError('F0001');
+                        console.log(data);
                         traits = data.filter(function (e) { return e.type !== undefined && e.name !== undefined && e.value !== undefined; });
                         console.log('------ create ');
                         console.log('------ noteId :  ', n);
