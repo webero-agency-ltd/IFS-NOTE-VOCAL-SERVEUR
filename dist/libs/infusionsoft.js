@@ -142,12 +142,13 @@ var infusionsoft = /** @class */ (function () {
     /*
      * Récupération des listes des contacts d'infusionsoft
     */
-    infusionsoft.prototype.contacts = function (id, text, size, page) {
+    infusionsoft.prototype.contacts = function (id, text, size, page, contact) {
         if (text === void 0) { text = ''; }
         if (size === void 0) { size = 200; }
         if (page === void 0) { page = 1; }
+        if (contact === void 0) { contact = null; }
         return __awaiter(this, void 0, void 0, function () {
-            var app, token, contacts, offset, total, stop_1, reponse, _a, err, info, body, cts, contactsFilter;
+            var app, token, contacts, offset, total, stop_1, reponse, _a, err, info, body, cts, defaultContact, contactsFilter;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0: return [4 /*yield*/, application.item(id)];
@@ -189,7 +190,13 @@ var infusionsoft = /** @class */ (function () {
                         _b.sent();
                         _b.label = 8;
                     case 8:
+                        defaultContact = {};
+                        contact = parseInt(contact);
                         contactsFilter = contacts.filter(function (e) {
+                            if (e.id === contact) {
+                                defaultContact = __assign({}, e);
+                                return false;
+                            }
                             var existe = false;
                             if (e.given_name.toLowerCase().indexOf(text.toLowerCase()) !== -1) {
                                 existe = true;
@@ -209,6 +216,8 @@ var infusionsoft = /** @class */ (function () {
                             }
                             return existe;
                         });
+                        //ajoute default 
+                        contactsFilter = [defaultContact].concat(contactsFilter);
                         //Ajoute de pagination 
                         return [2 /*return*/, paginate_1.default(contactsFilter, size, page)];
                 }

@@ -60,5 +60,6 @@ vue_1.default.component(ant_design_vue_1.DatePicker.name, ant_design_vue_1.DateP
 vue_1.default.component(ant_design_vue_1.Spin.name, ant_design_vue_1.Spin);
 vue_1.default.component(ant_design_vue_1.Alert.name, ant_design_vue_1.Alert);
 vue_1.default.component(ant_design_vue_1.Badge.name, ant_design_vue_1.Badge);
+vue_1.default.component(ant_design_vue_1.InputNumber.name, ant_design_vue_1.InputNumber);
 var comp = {};
 exports.default = comp;

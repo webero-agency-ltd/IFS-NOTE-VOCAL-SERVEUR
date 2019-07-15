@@ -75,8 +75,8 @@ export async function contacts( req:Request, res:Response ) {
 
 	let lang = req.lang() ; 
 	let { id } = req.params ; 
-	let { text , page , size } = req.query ; 
-	res.success( await infusionsoft.contacts( id , text , size , page ) ) ; 
+	let { text , page , size , def } = req.query ; 
+	res.success( await infusionsoft.contacts( id , text , size , page , def ) ) ; 
 	
 }
 

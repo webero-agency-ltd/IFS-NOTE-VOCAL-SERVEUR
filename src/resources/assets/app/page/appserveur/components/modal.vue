@@ -6,6 +6,7 @@
 		    @ok="handleOk"
 		    :confirmLoading="confirmLoading"
 		    @cancel="handleCancel">
+		    <div v-if="options.footer" slot="footer"></div>
 	      	<component :data="data" v-if="component" v-bind:is="component"></component>
 	    </a-modal>
     </div>
@@ -17,7 +18,9 @@
 		props : [], 
 		data(){
             return {
-            	options : {} , 
+            	options : {
+            		footer : true , 
+            	} , 
             	component : '' , 
 			    visible: false,
 			    confirmLoading: false,
@@ -45,7 +48,8 @@
 
 			this.on('modal',(options) => {
 				this.visible = true ; 
-				this.options = { ...options }
+				this.options = Object.assign({} ,  { ...options } )
+				console.log( this.options )
 				if ( this.options.data ) {
 					this.data = Object.assign({} , this.options.data )
 				}

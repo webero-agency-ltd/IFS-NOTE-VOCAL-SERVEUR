@@ -55,7 +55,8 @@ import {
 	DatePicker  , 
 	Spin  , 
 	Alert  , 
-	Badge
+	Badge ,
+	InputNumber ,
 } from 'ant-design-vue';
 
 Vue.component( Menu.name, Menu );
@@ -109,6 +110,8 @@ Vue.component( Spin.name, Spin );
 Vue.component( Alert.name, Alert );
 
 Vue.component( Badge.name, Badge );
+
+Vue.component( InputNumber.name, InputNumber );
 
 let comp = {}
 

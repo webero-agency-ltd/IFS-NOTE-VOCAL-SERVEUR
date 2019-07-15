@@ -175,15 +175,15 @@ function tasks(req, res) {
 exports.tasks = tasks;
 function contacts(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var lang, id, _a, text, page, size, _b, _c;
+        var lang, id, _a, text, page, size, def, _b, _c;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
                     lang = req.lang();
                     id = req.params.id;
-                    _a = req.query, text = _a.text, page = _a.page, size = _a.size;
+                    _a = req.query, text = _a.text, page = _a.page, size = _a.size, def = _a.def;
                     _c = (_b = res).success;
-                    return [4 /*yield*/, infusionsoft.contacts(id, text, size, page)];
+                    return [4 /*yield*/, infusionsoft.contacts(id, text, size, page, def)];
                 case 1:
                     _c.apply(_b, [_d.sent()]);
                     return [2 /*return*/];

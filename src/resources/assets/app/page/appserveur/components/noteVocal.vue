@@ -7,9 +7,9 @@
                 <span style="border: none;font-size: 20px; padding-left: 10px; "> {{time}} </span>
             </div>
             <a-button-group style="width: 50%; min-width: 250px ; margin-top: 1rem;  display: flex;  flex: 1;">
-                <a-button v-bind:class="{ active: btn.recordButton }" :loading="btn.recordLoader" :disabled="!btn.recordButton" @click="startRecording" style="display: block; flex: 1;" class="recorder">Record</a-button>
-                <a-button v-bind:class="{ active: btn.stopButton }" :disabled="!btn.stopButton" @click="stopRecording" style="display: block; flex: 1;" ghost class="recorder">Stop</a-button>
-                <a-button v-bind:class="{ active: btn.uploadButton }" :disabled="!btn.uploadButton" @click="startUpload" style="display: block; flex: 1;" ghost class="recorder">Télécharger</a-button>
+                <a-button v-bind:class="{ active: btn.recordButton }" :loading="btn.recordLoader" :disabled="!btn.recordButton" @click="startRecording" style="display: block; flex: 1;" class="btn-recorder">Record</a-button>
+                <a-button v-bind:class="{ active: btn.stopButton }" :disabled="!btn.stopButton" @click="stopRecording" style="display: block; flex: 1;" ghost class="btn-stop">Stop</a-button>
+                <a-button v-bind:class="{ active: btn.uploadButton }" :disabled="!btn.uploadButton" @click="startUpload" style="display: block; flex: 1;" ghost class="btn-upload">Télécharger</a-button>
             </a-button-group>
             <input @change="uploadFile" style="position: absolute; top: -30000px; left: -30000px;" type="file" id="audio-upload" name="avatar" accept="audio/*">
         </div>  
@@ -25,7 +25,7 @@
     import listen from '../libs/listen';
 
 	export default {
-		props : [], 
+		props : ['placedata'], 
 		data(){
             return {
                 AudioContext : null , 
@@ -44,7 +44,14 @@
                 }
             }
         },
-        watch : {},
+        watch : {
+            placedata : function () {
+                if ( this.placedata ) {
+                    let url =  window.urlapplication+'/audio/'+this.placedata;
+                    new listen( 'vocale-listen' , url , 'audio-liste-note-record' )
+                }
+            }
+        },
         methods : {
 
             stopRecording() {
@@ -142,9 +149,37 @@
 </script>
 
 <style>
-    .recorder.active{
+    .btn-recorder{
+        background-color: #ff0000 !important;
+        border-color: #da1212 !important;
+        color : #000 !important;
+    }
+    .btn-recorder:disabled {
+        color: #404040 !important;
+        background-color: #e7e8e8 !important;
+        border-color: #b7b7b7 !important;
+    }
+    .btn-upload{
         background-color: #02bb07 !important;
-        border-color: #037106;
-        color : #000;
+        border-color: #037106  !important;
+        color : #000 !important;
+    }
+    .btn-stop{
+        background-color: #00a1ff !important;
+        border-color: #0076bb;
+        color : #000 !important;
+    }
+    .btn-upload:disabled  {
+        color: #404040 !important;
+        background-color: #e7e8e8 !important;
+        border-color: #b7b7b7 !important;
+    }
+    .btn-stop:disabled {
+        color: #404040 !important;
+        background-color: #e7e8e8 !important;
+        border-color: #b7b7b7 !important;
+    }
+    .ant-select-dropdown-menu-item{
+        min-height: 32px;
     }
 </style>

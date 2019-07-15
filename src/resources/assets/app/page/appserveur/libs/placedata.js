@@ -1,7 +1,6 @@
 export default function placedata( opt , value ) {
     let objs = {} ; 
 	objs['soncasArray'] = [
-		{value : '' , key : ''} , 
 		{value : 0 , key : 'Sécurité'} , 
 		{value : 1 , key : 'Orgueil'} , 
 		{value : 2 , key : 'Nouveauté'} , 
@@ -52,6 +51,8 @@ export default function placedata( opt , value ) {
 		{value : 'sav' , key : 'SAV'} , 
 		{value : 'commercial' , key : 'COMMERCIAL'} , 
 		{value : 'autre' , key : 'AUTRE'} , 
+		{value : 'marketing' , key : 'Marketing'} , 
+		{value : 'technique' , key : 'Technique'} , 
 	]; 
 	if ( objs[opt] && !value ) 
 		return objs[opt]

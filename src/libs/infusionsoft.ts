@@ -72,7 +72,7 @@ class infusionsoft {
 	/*
 	 * Récupération des listes des contacts d'infusionsoft 
 	*/
-	async contacts( id , text ='' , size = 200 , page = 1 ){
+	async contacts( id , text ='' , size = 200 , page = 1 , contact = null ){
 		let app = await application.item( id )
 	    let token = json( app.accessToken , {} ) 
 		let contacts = await cache.get( `infusionsoft_${id}_contacts_cache` , [] ) 
@@ -96,11 +96,18 @@ class infusionsoft {
 		    	}else
 			    	stop = true  
 			}while( stop === false ) ;
-
 			await cache.set( `infusionsoft_${id}_contacts_cache` , contacts )
 		}
+		let defaultContact = {
+
+		}; 
+		contact = parseInt( contact );
 		//ici on fait la filtre du contact maintenant 
 		let contactsFilter = contacts.filter( (e) => {
+			if ( e.id === contact ) {
+				defaultContact = { ...e } ; 
+				return false;
+			}
             let existe = false ; 
             if ( e.given_name.toLowerCase().indexOf( text.toLowerCase() ) !== -1 ) {
                 existe = true ; 
@@ -120,6 +127,8 @@ class infusionsoft {
             }
             return existe ;
         });  
+        //ajoute default 
+        contactsFilter = [ defaultContact , ...contactsFilter ] ; 
         //Ajoute de pagination 
 		return paginate( contactsFilter , size , page ) ;
 

@@ -48,13 +48,14 @@ var infusionsoft = /** @class */ (function () {
     /*
      * Récupèration de tout les boards de trello
     */
-    infusionsoft.prototype.allContact = function (id, text) {
+    infusionsoft.prototype.allContact = function (id, text, def) {
         if (text === void 0) { text = ''; }
+        if (def === void 0) { def = null; }
         return __awaiter(this, void 0, void 0, function () {
             var _a, err, data;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, api_1.default("/infusionsoft/contacts/" + id + "?size=20&text=" + text + "&page=1")];
+                    case 0: return [4 /*yield*/, api_1.default("/infusionsoft/contacts/" + id + "?size=20&text=" + text + "&page=1&def=" + def)];
                     case 1:
                         _a = _b.sent(), err = _a[0], data = _a[1].data;
                         console.log(data);
@@ -70,12 +71,13 @@ var infusionsoft = /** @class */ (function () {
     /*
      * Récupération de la liste suivant d'un liste de trello
     */
-    infusionsoft.prototype.moreContact = function (id, text, page) {
+    infusionsoft.prototype.moreContact = function (id, text, page, def) {
+        if (def === void 0) { def = null; }
         return __awaiter(this, void 0, void 0, function () {
             var _a, err, data, contact;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, api_1.default("/infusionsoft/contacts/" + id + "?size=20&text=" + text + "&page=" + page)];
+                    case 0: return [4 /*yield*/, api_1.default("/infusionsoft/contacts/" + id + "?size=20&text=" + text + "&page=" + page + "&def=" + def)];
                     case 1:
                         _a = _b.sent(), err = _a[0], data = _a[1].data;
                         console.log(data);

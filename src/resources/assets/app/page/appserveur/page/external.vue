@@ -20,7 +20,7 @@
                         </a-radio-group>
                     </a-form-item> 
                     <a-form-item>
-                        <note-vocal></note-vocal>
+                        <note-vocal :placedata="placeVocal"></note-vocal>
                     </a-form-item>
                     <a-form-item v-if="pour.trello.length||pour.infusionsoft.length" :label="$lang('Pour ')" style="width: 100%;">
                         <a-radio-group class="select-pour" buttonStyle="solid" v-model="form.pour" style="width: 100%;">
@@ -33,15 +33,16 @@
                             showSearch
                             placeholder="Select a person"
                             optionFilterProp="children"
-                            :autoClearSearchValue="true" 
+                            v-bind:class="{ active: opensuggestion }"
+                            class="opensuggestion"
                             style="width: 100%"
                             @change="handleChange"
                             @search="handleSearch"
                             @blur="closesuggestionEvent"
                             @popupScroll="suggestionScroll"
                             @dropdownVisibleChange="dropdownVisibleChange"
-                            v-bind:class="{ active: opensuggestion }"
-                            class="opensuggestion"
+                            :autoClearSearchValue="true" 
+                            :defaultValue="defaultContact"
                             :filterOption="filterConctats">
                             <a-spin v-if="fetching" slot="notFoundContent" size="small"/>
                             <a-select-option :key="item.id" :value="item.id" v-for="item in suggestion">
@@ -110,14 +111,14 @@
                             </a-select-option>
                         </a-select> 
                     </a-form-item>
-                    <a-form-item :label="$lang('Vitesse Closing')">
+                    <a-form-item v-if="form.categorie=='commercial'" :label="$lang('Vitesse Closing')">
                         <a-select v-model="form.vitesseclosing">
                             <a-select-option v-for="item in placedata.vitesseclosingArray" :key="item.value" :value="item.value">
                                 {{item.key}}
                             </a-select-option>
                         </a-select> 
                     </a-form-item>
-                    <a-form-item :label="$lang('Soncas')">
+                    <a-form-item v-if="form.categorie=='commercial'" :label="$lang('Soncas')">
                         <a-select mode="multiple" v-model="form.socas">
                             <a-select-option v-for="item in placedata.soncasArray" :key="item.value" :value="item.value">
                                 {{item.key}}
@@ -127,8 +128,17 @@
                     <a-form-item :label="$lang('Commentaire')">
                         <a-textarea :placeholder="$lang('commentaire')" v-model="form.comment" :rows="4"/> 
                     </a-form-item>
-                    <a-form-item :label="$lang('Douleur émotionnelle')">
+                    <a-form-item v-if="form.categorie=='commercial'" :label="$lang('Douleur émotionnelle')">
                         <a-textarea :placeholder="$lang('douleur émotionnelle')" v-model="form.demotionnelle" :rows="4"/> 
+                    </a-form-item>
+                    <a-form-item v-if="form.categorie=='commercial'" :label="$lang('Plaisir')">
+                        <a-textarea :placeholder="$lang('plaisir')" v-model="form.plaisir" :rows="4"/> 
+                    </a-form-item>
+                    <a-form-item v-if="form.categorie=='commercial'" :label="$lang('Motivation')">
+                        <a-input-number style="width: 100%;" :min="0" :max="10" placeholder="Motivation 0 à 10" v-model="form.motivation" />
+                    </a-form-item>
+                    <a-form-item v-if="form.categorie=='commercial'" :label="$lang('Objections')">
+                        <a-textarea :placeholder="$lang('objections')" v-model="form.objections" :rows="4"/> 
                     </a-form-item>
                     <a-button type="primary" icon="table" @click="create" block :loading="loading_btn" >Valider</a-button>
                 </a-form>
@@ -189,7 +199,11 @@
                     note : null , 
                     //note vocal id 
                     NOTEID : null , 
+                    plaisir : '' ,
+                    motivation : '' ,
+                    objections : '' ,
                 },
+
                 prioriters : [
                     { name: 'Critical', id: 1 },
                     { name: 'Essential', id: 2 },
@@ -205,6 +219,8 @@
                 suggestionDOM : null , 
                 suggestionLongeur : 0 ,
                 suggestionLoadSearch : false , 
+                defaultContact : null , 
+                placeVocal : null , 
                 tempstemp : null ,
             }
         },
@@ -221,7 +237,7 @@
                     this.pour.infusionsoft && this.pour.infusionsoft[0] ? this.form.pour = this.pour.infusionsoft[0].id :'';
                     this.form.prioriter = 2 ; 
                     this.prioriterChanger() ;
-                    let [ e , d ] = await infusionsoft.allContact( this.option.external.infusionsoft ) ;
+                    let [ e , d ] = await infusionsoft.allContact( this.option.external.infusionsoft , '' , this.defaultContact ) ;
                     console.log( d ) ; 
                     this.form.contactTotal = d.maxpage ; 
                     console.log( 'compte : async function' , this.infusionsoft.contacts ) ; 
@@ -305,7 +321,7 @@
                 this.form.contactPage++  ;
                 this.fetching = true ; 
                 this.loading_more = true ; 
-                let [ e , s ] = await infusionsoft.moreContact( this.option.external.infusionsoft , this.contactSearch , this.form.contactPage ) ;
+                let [ e , s ] = await infusionsoft.moreContact( this.option.external.infusionsoft , this.contactSearch , this.form.contactPage , this.defaultContact ) ;
                 this.contacts = this.infusionsoft.contacts ; 
                 this.loading_more = false ; 
                 this.fetching = false ; 
@@ -321,9 +337,8 @@
                 this.contacts = [] ; 
                 clearTimeout( this.tempstemp )
                 this.tempstemp = setTimeout( async () => {
-                    console.log('SEARCH ...')
                     clearTimeout( this.tempstemp )
-                    let [ e , d ] =  await infusionsoft.allContact( this.option.external.infusionsoft , this.contactSearch , 1) ;
+                    let [ e , d ] =  await infusionsoft.allContact( this.option.external.infusionsoft , this.contactSearch , this.defaultContact ) ;
                     this.form.contactTotal = d.maxpage ;
                     this.contacts = this.infusionsoft.contacts ; 
                     this.fetching = false ; 
@@ -387,7 +402,10 @@
                 body = [ ...body , { type : 'text' , name : 'comptabilite' , value : comptabilite } ]
                 let categorie_select = this.form.categorie 
                 body = [ ...body , { type : 'text' , name : 'categorie' , value : categorie_select } ]
-                return body 
+                body = [ ...body , { type : 'text' , name : 'plaisir' , value : this.form.plaisir } ]
+                body = [ ...body , { type : 'text' , name : 'motivation' , value : this.form.motivation } ]
+                body = [ ...body , { type : 'text' , name : 'objections' , value : this.form.objections } ]
+                return body ;
             },
 
             formateDescription : function ( form ) {
@@ -426,7 +444,6 @@
 
             //création de card dans trello
             trelloCard : async function () {
-
                 this.loading_btn = true ; 
                 let body = {
                     title : this.formateTitle() , 
@@ -535,8 +552,15 @@
                 if ( n.attache == 'note' ) 
                     [ err , note ] = await infusionsoft.itemNote( n.nativeId , n.ApplicationId ) ;
                 else if ( n.attache == 'task' ) 
-                    [ err , note ] = await infusionsoft.itemTask( n.nativeId , n.ApplicationId ) ;
-                console.log( note )
+                    [ err , note ] = await infusionsoft.itemTask( n.nativeId , n.ApplicationId ) ;  
+
+                //defaultValueContact
+                //récupération des listes de tout les contacts 
+                //si dans la liste des contacts, on n'a pas le contact si contre 
+                //on ajoute dans le première argument 
+                //s'il existe, on transforme dans la premièer argument
+                this.defaultContact = note.contact.id ; 
+                this.compte = this.application.item.type ; 
                 if ( ! note.title ) 
                     return this.existe = false ;
                 this.existe = true ; 
@@ -545,11 +569,11 @@
 
             defaultForm( form ){
                 for( let item of form ){
-                    console.log( item )
-                    if ( item.name == 'soncas-select') {
-                        this.form[ item.name ] = item.value.split(',')
+                    if ( item.name == 'socas') {
+                        this.form[ item.name ] = item.value.split(',').map( e => parseInt( e ) )
                     }else{
-                        this.form[ item.name ] = item.value 
+                        let place = parseInt( this.form[ item.name ] )
+                        this.form[ item.name ] = isNaN( place ) ? item.value : place;
                     }
                 }
             },
@@ -562,14 +586,13 @@
                 if ( this.$route.params.id ) {
                     let [ err , noteItem ] = await note.find( this.$route.params.id ) ;
                     console.log( noteItem )
+                    this.placeVocal = noteItem.unique 
                     if ( err || !noteItem || (noteItem && !noteItem.nativeId) ) {
                         return this.existe = false ;
                         //note n'existe pas on vous redirige a la page nouvelle note 
                     }
                     await application.itemApplication( noteItem.ApplicationId ) ; 
                     //this.application.item
-                    this.compte = this.application.item.type ; 
-                    console.log( this.compte ) ; 
                     if ( noteItem.type == "infusionsoft" ) {
                         this.option.external.trello = null ; 
                         this.option.external.infusionsoft = noteItem.ApplicationId ; 
@@ -579,6 +602,7 @@
                         this.option.external.infusionsoft = null ;
                         this.option.external.trello = noteItem.ApplicationId ;
                         this.trellonote( noteItem )
+                        this.compte = this.application.item.type ; 
                     } 
                     //récupération des formulaires de l'application 
                     let [ errorForm , formNote ] = await form.all( noteItem.id ) ; 

@@ -111,13 +111,15 @@
                     this.emit('modal',{
                         title : this.$lang(`Edition de 'POUR' de infusionsoft`) , 
                         component : 'pourInfusionsoft' , 
-                        handleOk : 'pourCreateInfusionsoft'
+                        handleOk : 'pourCreateInfusionsoft' , 
+                        footer : true , 
                     }) 
                 }else if ( option.type == "trello" ) {
                     this.emit('modal',{
                         title : this.$lang(`Edition de 'POUR' de trello`) , 
                         component : 'pourTrello' , 
-                        handleOk : 'pourCreateTrello'
+                        handleOk : 'pourCreateTrello',
+                        footer : true , 
                     })
                 }
 

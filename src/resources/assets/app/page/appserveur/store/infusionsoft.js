@@ -12,8 +12,8 @@ class infusionsoft {
 	/*
  	 * Récupèration de tout les boards de trello 
 	*/
-	async allContact( id , text = '' ){
-		let [ err , { data } ] = await api( `/infusionsoft/contacts/${id}?size=20&text=${text}&page=1` )  ; 
+	async allContact( id , text = '' , def = null ){
+		let [ err , { data } ] = await api( `/infusionsoft/contacts/${id}?size=20&text=${text}&page=1&def=${def}` )  ; 
 		console.log( data )
 		if ( err ) 
 			return [ err , null ]
@@ -25,8 +25,8 @@ class infusionsoft {
 	/*
 	 * Récupération de la liste suivant d'un liste de trello  
 	*/
-	async moreContact( id , text , page ){
-		let [ err , { data } ] = await api( `/infusionsoft/contacts/${id}?size=20&text=${text}&page=${page}` )  ; 
+	async moreContact( id , text , page , def = null ){
+		let [ err , { data } ] = await api( `/infusionsoft/contacts/${id}?size=20&text=${text}&page=${page}&def=${def}` )  ; 
 		console.log( data )
 		if ( err ) 
 			return [ err , null ]

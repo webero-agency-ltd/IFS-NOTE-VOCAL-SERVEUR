@@ -2,7 +2,7 @@
     <a-layout-header class="header">
         <div class="logo" >
             <router-link :to="{name:'external'}">
-                <a-avatar  src="/assets/img/logo2.png" /> 
+                <a-avatar  src="/assets/img/logo.png" /> 
             </router-link>
         </div>
         <a-menu :style="{ lineHeight: '64px' , float : 'right' }" v-model="current"  mode="horizontal">
