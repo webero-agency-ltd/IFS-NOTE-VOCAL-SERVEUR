@@ -48,6 +48,7 @@ var moment = require('moment');
 var path = require('path');
 var execSync = require('child_process').execSync;
 var forearch_1 = __importDefault(require("../libs/forearch"));
+var userStore = require('../libs/user');
 function index(req, res) {
     var lang = req.lang();
     res.render('index.ejs', { lang: JSON.stringify(res.locals.lang), urlapplication: site.urlapp, portapplication: site.port, chromeId: site.chromeId });
@@ -169,3 +170,24 @@ function refreshToken(req, res) {
     });
 }
 exports.refreshToken = refreshToken;
+function user(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var lang, apiKey, u;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    lang = req.lang();
+                    apiKey = req.query.apiKey;
+                    if (req.user)
+                        return [2 /*return*/, res.success(req.user)];
+                    return [4 /*yield*/, userStore.find({ rememberToken: apiKey })];
+                case 1:
+                    u = _a.sent();
+                    if (!u)
+                        return [2 /*return*/, res.success(true)];
+                    return [2 /*return*/, res.success(u)];
+            }
+        });
+    });
+}
+exports.user = user;

@@ -6,7 +6,7 @@
                 <p>{{$lang('page_external_description')}}</p>
                 <a-divider dashed />
                 <a-form :layout="'vertical'">
-                    <a-form-item>
+                    <a-form-item v-show=" defaultNote.id == undefined">
                         <a-radio-group
                             buttonStyle="solid"
                             style="width: 100%;"
@@ -22,12 +22,12 @@
                     <a-form-item>
                         <note-vocal :placedata="placeVocal"></note-vocal>
                     </a-form-item>
-                    <a-form-item v-if="pour.trello.length||pour.infusionsoft.length" :label="$lang('Pour ')" style="width: 100%;">
+                    <a-form-item v-if="(pour.trello.length||pour.infusionsoft.length)&&defaultNote.id == undefined" :label="$lang('Pour ')" style="width: 100%;">
                         <a-radio-group class="select-pour" buttonStyle="solid" v-model="form.pour" style="width: 100%;">
                             <a-radio-button class="select-pour-option" v-for="item in (pour.trello.length?pour.trello:pour.infusionsoft)" :key="item.id" :value="item.id" :style="pour.trello.length?styleSelect(pour.trello):styleSelect(pour.infusionsoft)">{{item.name}}</a-radio-button>
                         </a-radio-group>
                     </a-form-item> 
-                    <a-form-item v-if="compte=='infusionsoft'" :label="$lang('Contact IFS ')">
+                    <a-form-item v-if="( compte=='infusionsoft' && defaultNote.id == undefined ) || action " :label="$lang('Contact IFS ')">
                         <a-select
                             dropdownClassName="suggestion_dropdown"
                             showSearch
@@ -57,17 +57,17 @@
                             </a-select-option>
                         </a-select>
                     </a-form-item> 
-                    <a-form-item v-if="compte=='trello'" :label="$lang('Priorité ')" style="width: 100%;">
+                    <a-form-item v-if="compte=='trello' && defaultNote.id == undefined " :label="$lang('Priorité ')" style="width: 100%;">
                         <a-radio-group @change="prioriterChanger" class="select-pour" buttonStyle="solid" v-model="form.prioriter" style="width: 100%;">
                             <a-radio-button class="select-pour-option" v-for="item in pour.labels" :key="item.id" :value="item.id" :style="styleSelect(pour.labels)">{{item.name}}</a-radio-button>
                         </a-radio-group>
                     </a-form-item>   
-                    <a-form-item v-if="compte=='infusionsoft'" :label="$lang('Priorité ')" style="width: 100%;">
+                    <a-form-item v-if="(compte=='infusionsoft' && defaultNote.id == undefined) || action " :label="$lang('Priorité ')" style="width: 100%;">
                         <a-radio-group @change="prioriterChanger" class="select-pour" buttonStyle="solid" v-model="form.prioriter" style="width: 100%;">
                             <a-radio-button class="select-pour-option ellipsis" v-for="item in prioriters" :key="item.id" :value="item.id" :style="styleSelect(prioriters)">{{item.name}}</a-radio-button>
                         </a-radio-group>
                     </a-form-item>   
-                    <a-form-item :label="$lang('Date ')">
+                    <a-form-item :label="$lang('Date ')" v-if="(defaultNote.id == undefined) || action " >
                         <a-date-picker style="width: 100%;" v-model="form.date" @change="changeDate"/>
                     </a-form-item>
                     <a-form-item :label="$lang('Categorie ')">
@@ -180,9 +180,9 @@
                     comptabilite_autre : '' ,
                     sav : 'Installation logiciel' , 
                     sav_autre : '' , 
-                    commercial : 'Envoyer devis' , 
+                    commercial : '' , 
                     commercial_autre : '' , 
-                    produit : 'Aumscan 4' , 
+                    produit : '' , 
                     vitesseclosing : 0 , 
                     socas : [] ,  
                     comment : '' , 
@@ -203,13 +203,11 @@
                     motivation : '' ,
                     objections : '' ,
                 },
-
                 prioriters : [
                     { name: 'Critical', id: 1 },
                     { name: 'Essential', id: 2 },
                     { name: 'Non-essential', id: 3 },
                 ],
-                
                 //le note vocal est enregistrer ici 
                 fetching : false , 
                 loading_btn : false , 
@@ -222,6 +220,10 @@
                 defaultContact : null , 
                 placeVocal : null , 
                 tempstemp : null ,
+                //information sur la default note 
+                defaultNote  : {} , 
+                //update or duplicate note 
+                action : (window.location.search.match(new RegExp('[?&]' + 'action' + '=([^&]+)')) || [, null])[1], 
             }
         },
         watch : {
@@ -371,7 +373,7 @@
             },
 
             formateTitle : function () {
-                return  placedata('categorieArray' , this.form.categorie)+" "+this.form.produit+" -"+( this.form.categorie !== 'autre' ? (this.form[this.form.categorie]=='_____'? this.form[this.form.categorie+"_autre"] : this.form[this.form.categorie]) : this.form.autre )
+                return placedata('categorieArray' , this.form.categorie)+" "+this.form.produit+" -"+( this.form.categorie !== 'autre' ? (this.form[this.form.categorie]=='_____'? this.form[this.form.categorie+"_autre"] : this.form[this.form.categorie]) : this.form.autre )
             }, 
 
             formateForm : function () {
@@ -443,7 +445,8 @@
             },
 
             //création de card dans trello
-            trelloCard : async function () {
+            trelloCard : async function ( update ) {
+                console.log( this.defaultNote , update ) ;
                 this.loading_btn = true ; 
                 let body = {
                     title : this.formateTitle() , 
@@ -454,7 +457,13 @@
                     date : this.form.date.format('YYYY-MM-DDTHH:mm:ssZ'), 
                 }
                 console.log( body ) ; 
-                let [ err , note ] = await trello.card( body )  ;
+                let err , note ; 
+                if ( this.defaultNote && this.defaultNote.id ) {
+                    body['nativeId'] = this.defaultNote.id ; 
+                    [ err , note ] = await trello.cardUpdate( body ) ;
+                }else{
+                    [ err , note ] = await trello.card( body ) ;
+                }
                 if ( err ) {
                     return this.errorCreate() ; 
                 } 
@@ -463,8 +472,9 @@
             },
 
             //création de note d'infusionsoft avec la mise a jour 
-            ifsnoteCreate : async function () {
-                if ( !this.form.contactId ) {
+            ifsnoteCreate : async function ( update ) {
+                console.log( this.defaultNote , update ) ;               
+                if ( !this.form.contactId && !update ) {
                     return alert(' Contact Infusionsoft oblogatoire')
                 }
                this.loading_btn = true ; 
@@ -477,7 +487,13 @@
                     date : this.form.date.format('YYYY-MM-DDTHH:mm:ssZ'), 
                     contactId : this.form.contactId , 
                 }
-                let [ err , note ] = await infusionsoft.note( body ) ;
+                let err , note ; 
+                if ( this.defaultNote && this.defaultNote.id ) {
+                    body['nativeId'] = this.defaultNote.id ; 
+                    [ err , note ] = await infusionsoft.noteUpdate( body ) ;
+                }else{
+                    [ err , note ] = await infusionsoft.note( body ) ;
+                }
                 if ( err ) {
                     this.errorCreate() ; 
                 } 
@@ -485,10 +501,10 @@
             },
 
             async create(){
-                if ( ! this.form.note ) 
-                    return alert(' Le vocal est obligatire')
+                if ( ! this.form.note && !this.placeVocal ) 
+                    return alert('Le vocal est obligatire')
                 let noteSave = null
-                this.compte=='trello'?noteSave = await this.trelloCard():noteSave = await this.ifsnoteCreate() ; 
+                this.compte=='trello'?noteSave = await this.trelloCard((this.$route.params.id !== undefined?true:false)):noteSave = await this.ifsnoteCreate((this.$route.params.id !== undefined?true:false)) ; 
                 if ( !noteSave || (!noteSave.url&&this.compte == 'trello') ) {
                     return this.errorCreate() ; 
                 }
@@ -508,10 +524,10 @@
                 url += '&text='+''
                 url += '&title='+''
                 console.log( url ) ; 
-                if ( false ) {
+                if ( this.$route.params.id !== undefined ) {
                     url += '&update='+true
                 }
-                if ( this.form.file ) {
+                if ( this.form.note ) {
                     url += '&file='+true
                 }else{
                     url += '&file='+false
@@ -544,6 +560,7 @@
                 if ( !note.name ) 
                     return this.existe = false ;
                 this.title = note.name ; 
+                this.defaultNote = Object.assign({} , note )
                 return note  
             },
 
@@ -553,7 +570,6 @@
                     [ err , note ] = await infusionsoft.itemNote( n.nativeId , n.ApplicationId ) ;
                 else if ( n.attache == 'task' ) 
                     [ err , note ] = await infusionsoft.itemTask( n.nativeId , n.ApplicationId ) ;  
-
                 //defaultValueContact
                 //récupération des listes de tout les contacts 
                 //si dans la liste des contacts, on n'a pas le contact si contre 
@@ -561,8 +577,10 @@
                 //s'il existe, on transforme dans la premièer argument
                 this.defaultContact = note.contact.id ; 
                 this.compte = this.application.item.type ; 
+                this.form.contactId = note.contact.id ; 
                 if ( ! note.title ) 
                     return this.existe = false ;
+                this.defaultNote = Object.assign({} , note )
                 this.existe = true ; 
                 return note  
             },
@@ -583,26 +601,37 @@
                 this.form.NOTEID = this.$route.params.id?this.$route.params.id:makeid(12) ;  
                 this.loader = false;
                 console.log( this.$route.params.id )
-                if ( this.$route.params.id ) {
+                if ( this.$route.params.id !== undefined ) {
                     let [ err , noteItem ] = await note.find( this.$route.params.id ) ;
                     console.log( noteItem )
                     this.placeVocal = noteItem.unique 
-                    if ( err || !noteItem || (noteItem && !noteItem.nativeId) ) {
+                    if ( err || !noteItem || (noteItem && !noteItem.ApplicationId) ) {
                         return this.existe = false ;
                         //note n'existe pas on vous redirige a la page nouvelle note 
                     }
                     await application.itemApplication( noteItem.ApplicationId ) ; 
-                    //this.application.item
                     if ( noteItem.type == "infusionsoft" ) {
                         this.option.external.trello = null ; 
                         this.option.external.infusionsoft = noteItem.ApplicationId ; 
                         this.ifsfindnote( noteItem )
                     } 
-                    if ( noteItem.type == "trello" ) {
+                    if ( noteItem.type == "trello" && ! this.action ) {
                         this.option.external.infusionsoft = null ;
                         this.option.external.trello = noteItem.ApplicationId ;
                         this.trellonote( noteItem )
                         this.compte = this.application.item.type ; 
+                    } 
+                    if ( noteItem.type == "trello" && this.action ) {
+                        //this.option.external.infusionsoft = null ;
+                        await exoption.findOption() ; 
+                        this.option.external.trello = null ;
+                        if ( !this.option.external.infusionsoft ) {
+                            //si l'utilisateur n'a pas de compte infurionsosft 
+                            //on le redirige pour en configuer un 
+                            return this.$router.push({ name: 'option' }) 
+                        }
+                        this.trellonote( noteItem )
+                        this.compte = 'infusionsoft' ; 
                     } 
                     //récupération des formulaires de l'application 
                     let [ errorForm , formNote ] = await form.all( noteItem.id ) ; 

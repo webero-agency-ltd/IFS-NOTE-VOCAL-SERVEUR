@@ -36,7 +36,6 @@ module.exports = async function ( app : Application , db : DBInterface ) :Promis
 	  	saveUninitialized: true,
 	  	resave: true
 	})); 
-	app.use(cors({ origin: 'https://trello.com' }));
 	//inection de remember token
 	app.use(require('./flash'));
 	app.use(require('./lang')) ;

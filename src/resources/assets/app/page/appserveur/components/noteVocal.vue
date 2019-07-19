@@ -48,6 +48,7 @@
             placedata : function () {
                 if ( this.placedata ) {
                     let url =  window.urlapplication+'/audio/'+this.placedata;
+                    console.log( url ) ; 
                     new listen( 'vocale-listen' , url , 'audio-liste-note-record' )
                 }
             }

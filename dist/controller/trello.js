@@ -53,6 +53,50 @@ function view(req, res) {
     });
 }
 exports.view = view;
+function cardUpdate(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var lang, _a, title, compteId, description, type, pour, prioriter, date, contactId, userid, p, i, data, label, body, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    lang = req.lang();
+                    _a = req.body, title = _a.title, compteId = _a.compteId, description = _a.description, type = _a.type, pour = _a.pour, prioriter = _a.prioriter, date = _a.date, contactId = _a.contactId;
+                    userid = req.user.id;
+                    console.log('---------------------------');
+                    console.log('cardUpdate');
+                    console.log('---------------------------');
+                    console.log(title, description, type, pour, prioriter, date, contactId, compteId);
+                    return [4 /*yield*/, Pour.item(pour)];
+                case 1:
+                    p = _d.sent();
+                    return [4 /*yield*/, application.item(compteId)];
+                case 2:
+                    i = _d.sent();
+                    if (!i)
+                        throw new AppError('EN0002');
+                    return [4 /*yield*/, Pour.item(prioriter)];
+                case 3:
+                    data = _d.sent();
+                    label = '';
+                    if (data) {
+                        label = data.appId;
+                    }
+                    body = { idList: p.cardId, name: title, desc: description, due: moment(date, 'YYYY-MM-DDTHH:mm:ssZ').clone().format('YYYY-MM-DD') };
+                    if (label) {
+                        body['idLabels'] = label;
+                    }
+                    if (p.appId !== 'generale') {
+                        body['idMembers'] = p.appId;
+                    }
+                    console.log(body);
+                    _c = (_b = res).success;
+                    return [4 /*yield*/, trello.createCards(body, i.accessToken)];
+                case 4: return [2 /*return*/, _c.apply(_b, [_d.sent()])];
+            }
+        });
+    });
+}
+exports.cardUpdate = cardUpdate;
 function cardAdd(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var lang, _a, title, compteId, description, type, pour, prioriter, date, contactId, userid, p, i, data, label, body, _b, _c;

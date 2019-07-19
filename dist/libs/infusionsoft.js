@@ -217,7 +217,7 @@ var infusionsoft = /** @class */ (function () {
                             return existe;
                         });
                         //ajoute default 
-                        contactsFilter = [defaultContact].concat(contactsFilter);
+                        contact ? contactsFilter = [defaultContact].concat(contactsFilter) : '';
                         //Ajoute de pagination 
                         return [2 /*return*/, paginate_1.default(contactsFilter, size, page)];
                 }

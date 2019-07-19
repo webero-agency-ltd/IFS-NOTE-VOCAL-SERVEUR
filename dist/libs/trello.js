@@ -326,6 +326,34 @@ var trello = /** @class */ (function () {
             });
         });
     };
+    /*
+     * Récupération de l'ID de card trello a partire d'un short URL
+    */
+    trello.prototype.findCardIdByUrl = function (urlSearch, board, token) {
+        return __awaiter(this, void 0, void 0, function () {
+            var noteID, url, _a, error, info, body, reponse, _i, reponse_1, _b, url_2, id;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        noteID = 'https://trello.com' + decodeURIComponent(urlSearch).split('_').join('/').replace('_', '/').normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+                        url = this.api + 'boards/' + board + '/cards?fields=id,url&key=' + site.trelloKey + '&token=' + token;
+                        return [4 /*yield*/, request.get(url)];
+                    case 1:
+                        _a = _c.sent(), error = _a.error, info = _a.info, body = _a.body;
+                        if (!error && info.statusCode == 200) {
+                            reponse = json(body, []);
+                            for (_i = 0, reponse_1 = reponse; _i < reponse_1.length; _i++) {
+                                _b = reponse_1[_i], url_2 = _b.url, id = _b.id;
+                                if (url_2 == noteID) {
+                                    return [2 /*return*/, id];
+                                }
+                            }
+                        }
+                        return [2 /*return*/, null];
+                }
+            });
+        });
+    };
     return trello;
 }());
 module.exports = new trello();

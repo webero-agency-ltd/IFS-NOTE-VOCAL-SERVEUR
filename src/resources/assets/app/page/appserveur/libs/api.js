@@ -1,15 +1,15 @@
 
-export default async function api( url , methode = 'GET', data = null  ) {
+export default async function api( url , method = 'GET', data = null  ) {
 
 	let op = { id : 1 } ; 
 	let da = { ...op }
 	url = window.urlapplication + url ;
   	let uploadResponse = null ; 
-  	if ( methode == 'GET' ) {
+  	if ( method == 'GET' ) {
   		uploadResponse = await fetch( url )
-  	}else if(methode == 'POST'){
+  	}else if(method == 'POST' || method == 'PUT' ){
   		uploadResponse = await fetch( url , {
-	        method: 'POST',
+	        method ,
 	        headers: {
 	            'Accept': 'application/json',
 	            'Content-Type': 'application/json'
@@ -18,7 +18,7 @@ export default async function api( url , methode = 'GET', data = null  ) {
 	    })
   	}else{
   		uploadResponse = await fetch( url , {
-	        method: methode
+	        method: method
 	    })
   	}
 

@@ -13,8 +13,10 @@
 		<% if( locals.flash && locals.flash.runscript && locals.flash.runscript.name && locals.flash.runscript.value ) {%>  
 	    	<script>
 	    		let op = {}
-				op[`<%-locals.flash.runscript.name  %>` ] =  `<%- locals.flash.runscript.value  %>`; 
-	    		chrome.runtime.sendMessage( "<%- chromeId %>"  ,  op );
+				op[`<%-locals.flash.runscript.name  %>` ] = `<%- locals.flash.runscript.value  %>`; 
+				console.log( op )
+				console.log(  "<%- chromeId %>"  )
+	    		chrome.runtime.sendMessage( "<%- chromeId %>" , op );
 	    	</script>
 	    <% } %> 
 		<div id="core"></div>

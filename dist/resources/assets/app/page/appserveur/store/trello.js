@@ -133,6 +133,23 @@ var trello = /** @class */ (function () {
             });
         });
     };
+    trello.prototype.cardUpdate = function (body, update) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, err, data;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        console.log('cardUpdate', body);
+                        return [4 /*yield*/, api_1.default('/trello/card', 'PUT', body)];
+                    case 1:
+                        _a = _b.sent(), err = _a[0], data = _a[1].data;
+                        if (err)
+                            return [2 /*return*/, [err, null]];
+                        return [2 /*return*/, [null, data]];
+                }
+            });
+        });
+    };
     trello.prototype.itemCard = function (id, appId) {
         return __awaiter(this, void 0, void 0, function () {
             var _a, err, data;

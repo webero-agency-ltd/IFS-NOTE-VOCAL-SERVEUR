@@ -61,6 +61,14 @@ class trello {
 		return [ null , data ]
 	}
 
+	async cardUpdate( body , update ){
+		console.log( 'cardUpdate' , body )
+		let [ err , { data } ] = await api( '/trello/card' , 'PUT' , body  ) ;
+		if ( err ) 
+			return [ err , null ]
+		return [ null , data ]
+	}
+
 	async itemCard( id , appId ){
 		let [ err , { data } ] = await api( '/trello/card/' + id  + '/?appId='+appId )  ; 
 		if ( err ) 

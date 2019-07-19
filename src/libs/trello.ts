@@ -173,6 +173,24 @@ class trello {
 	    	throw new AppError('ART008');
 	    return json( body , [] )
 	}
+
+	/*
+	 * Récupération de l'ID de card trello a partire d'un short URL 
+	*/
+	async findCardIdByUrl( urlSearch , board , token ){
+		let noteID = 'https://trello.com'+decodeURIComponent( urlSearch ).split('_').join('/').replace('_' , '/').normalize('NFD').replace(/[\u0300-\u036f]/g, "") 
+		let url = this.api + 'boards/' + board + '/cards?fields=id,url&key=' + site.trelloKey + '&token=' + token ; 
+		let { error, info , body } = await request.get( url )
+		if ( !error && info.statusCode == 200 ) {
+			let reponse = json( body , [] )
+			for( let { url , id } of reponse ){
+				if ( url == noteID ) {
+					return id ;
+				}
+			}
+	    }
+	    return null ;
+	}
 	
 }
 

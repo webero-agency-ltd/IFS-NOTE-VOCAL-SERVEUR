@@ -42,6 +42,7 @@ var note = require('../libs/note');
 var user = require('../libs/user');
 var application = require('../libs/application');
 var AppError = require('../libs/AppError');
+var trello = require('../libs/trello');
 function itemNativeId(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var lang, _a, id, attache, _b, _c;
@@ -247,7 +248,7 @@ function upload(req, res) {
                         file.pipe(fs.createWriteStream(filePath));
                     });
                     busboy.on('finish', function () { return __awaiter(_this, void 0, void 0, function () {
-                        var newPath, rename, y;
+                        var newPath, rename, i, y;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0:
@@ -263,8 +264,24 @@ function upload(req, res) {
                                         return [2 /*return*/, res.error('N0003')];
                                     NOTEID = newId;
                                     _a.label = 3;
-                                case 3: return [4 /*yield*/, note.create({ unique: NOTEID, attache: attache }, title, text, appId, type, userwhere, attache, nativeId)];
+                                case 3:
+                                    if (!(type == "trello" && !nativeId)) return [3 /*break*/, 6];
+                                    //@todo : Récupération de tout les listes de card trello qui existe
+                                    console.log('---- type trello');
+                                    console.log(nativeId);
+                                    console.log(NOTEID);
+                                    console.log('---- type trello');
+                                    return [4 /*yield*/, application.item(appId)];
                                 case 4:
+                                    i = _a.sent();
+                                    if (!i)
+                                        throw new AppError('EN0002');
+                                    return [4 /*yield*/, trello.findCardIdByUrl(NOTEID, i.compteId, i.accessToken)];
+                                case 5:
+                                    nativeId = _a.sent();
+                                    _a.label = 6;
+                                case 6: return [4 /*yield*/, note.create({ unique: NOTEID, attache: attache }, title, text, appId, type, userwhere, attache, nativeId)];
+                                case 7:
                                     y = _a.sent();
                                     res.success(y);
                                     return [2 /*return*/];

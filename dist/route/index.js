@@ -67,6 +67,7 @@ module.exports = function (app, db, str) {
             app.get('/read/:unique', home.read.bind({ db: db }));
             app.post('/flash', home.flash.bind({ db: db }));
             //page d'authentification 
+            app.get('/user/authenticated', hangel.bind({ func: home.user.bind({ db: db }) }));
             app.get('/login', strategy_1.default, login.page.bind({ db: db }));
             app.post('/login', strategy_1.default, login.create.bind({ db: db }));
             app.get('/signup', signup.page.bind({ db: db }));
@@ -77,13 +78,6 @@ module.exports = function (app, db, str) {
                 res.clearCookie("remember_me");
                 req.logout();
                 res.redirect('/');
-            });
-            app.get('/user/authenticated', function (req, res) {
-                if (req.user) {
-                    console.log(req.user);
-                    return res.success(req.user);
-                }
-                return res.success(true);
             });
             app.get('/application', ensureAuth_1.default, hangel.bind({ func: application.index.bind({ db: db }) }));
             app.get('/application/item/:id', ensureAuth_1.default, hangel.bind({ func: application.item.bind({ db: db }) }));
@@ -108,6 +102,7 @@ module.exports = function (app, db, str) {
             app.get('/infusionsoft/make/faker/user/:id', hangel.bind({ func: infusionsoft.makeFakerUser.bind({ db: db, str: str }) }));
             app.get('/infusionsoft/setnote/:unique/:nativeId/:attache', hangel.bind({ func: infusionsoft.setnote.bind({ db: db, str: str }) }));
             app.post('/infusionsoft/note', hangel.bind({ func: infusionsoft.note.bind({ db: db, str: str }) }));
+            app.put('/infusionsoft/note', ensureAuth_1.default, hangel.bind({ func: infusionsoft.noteUpdate.bind({ db: db }) }));
             //route des notes
             app.get('/note/:id', hangel.bind({ func: note.item.bind({ db: db, str: str }) }));
             app.get('/note/nativeId/:id/:attache', hangel.bind({ func: note.itemNativeId.bind({ db: db, str: str }) }));
@@ -134,6 +129,7 @@ module.exports = function (app, db, str) {
             app.get('/trello/on/:id', hangel.bind({ func: trello.event.bind({ db: db, str: str }) }));
             app.post('/trello/on/:id', hangel.bind({ func: trello.event.bind({ db: db, str: str }) }));
             app.post('/trello/card', hangel.bind({ func: trello.cardAdd.bind({ db: db, str: str }) }));
+            app.put('/trello/card', hangel.bind({ func: trello.cardUpdate.bind({ db: db, str: str }) }));
             app.get('/external', ensureAuth_1.default, hangel.bind({ func: external.index.bind({ db: db }) }));
             app.post('/external', ensureAuth_1.default, hangel.bind({ func: external.create.bind({ db: db }) }));
             app.post('/external/note', ensureAuth_1.default, hangel.bind({ func: external.note.bind({ db: db }) }));

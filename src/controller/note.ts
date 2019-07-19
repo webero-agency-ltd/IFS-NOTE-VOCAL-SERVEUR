@@ -8,6 +8,7 @@ var note = require('../libs/note');
 var user = require('../libs/user'); 
 var application = require('../libs/application'); 
 var AppError = require('../libs/AppError');
+var trello = require('../libs/trello');
 
 export async function itemNativeId( req:Request, res:Response ) {
 	let lang = req.lang() ; 
@@ -166,6 +167,17 @@ export async function upload( req:Request, res:Response ) {
 			if ( ! rename ) 
 				return res.error('N0003')
 			NOTEID = newId ; 
+		}
+		if ( type == "trello" && !nativeId ) {
+			//@todo : Récupération de tout les listes de card trello qui existe
+			console.log( '---- type trello')
+			console.log( nativeId )
+			console.log( NOTEID )
+			console.log( '---- type trello')
+			let i = await application.item( appId ) ;
+		    if (!i) 
+		    	throw new AppError('EN0002');
+			nativeId = await trello.findCardIdByUrl( NOTEID , i.compteId  , i.accessToken )
 		}
 		let y = await note.create( { unique : NOTEID , attache } , title , text , appId , type , userwhere , attache , nativeId )
         res.success( y )

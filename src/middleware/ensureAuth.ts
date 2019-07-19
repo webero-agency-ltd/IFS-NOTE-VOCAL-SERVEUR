@@ -6,6 +6,10 @@ export default function ensureAuth( req : Request , res : Response , next : Next
 	if ( req.isAuthenticated() ) {
 		return next();
 	}else{
+		let { apiKey } = req.query ; 
+		if ( apiKey ) {
+			return next();
+		}
 		//si l'utilisateur n'est pas connecté, on le redirege vers la page login 
 		//@todo: s'il y a des redirection, on ajoute dans la redirection apres l'authentification 
 		//la précedent URL a la quelle on voulaiz y aller avant 

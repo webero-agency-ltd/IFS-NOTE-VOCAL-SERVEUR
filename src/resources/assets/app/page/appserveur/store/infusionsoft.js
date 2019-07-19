@@ -40,7 +40,15 @@ class infusionsoft {
 	 * Création de notes infusionsoft 
 	*/
 	async note( body ){
-		let [ err , { data } ] = await api(  '/infusionsoft/note/' , 'POST' , body )  ; 
+		let [ err , { data } ] = await api( '/infusionsoft/note/' , 'POST' , body )  ; 
+		if ( err || !data || ( data && !data.id )) 
+			return [ err?err:data , null ]
+		return [ null , data ]
+	}
+
+	async noteUpdate( body ){
+		console.log( 'noteUpdate' , body )
+		let [ err , { data } ] = await api( '/infusionsoft/note/' , 'PUT' , body )  ; 
 		if ( err || !data || ( data && !data.id )) 
 			return [ err?err:data , null ]
 		return [ null , data ]

@@ -74,7 +74,6 @@ module.exports = function (app, db) {
                 saveUninitialized: true,
                 resave: true
             }));
-            app.use(cors({ origin: 'https://trello.com' }));
             //inection de remember token
             app.use(require('./flash'));
             app.use(require('./lang'));

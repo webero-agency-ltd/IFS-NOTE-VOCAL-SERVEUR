@@ -64,6 +64,61 @@ function makeFakerUser(req, res) {
     });
 }
 exports.makeFakerUser = makeFakerUser;
+function noteUpdate(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var lang, _a, title, compteId, description, type, pour, prioriter, date, contactId, update, userid, i, p, body, _b, _c, _d, body, _e, _f, _g;
+        return __generator(this, function (_h) {
+            switch (_h.label) {
+                case 0:
+                    lang = req.lang();
+                    _a = req.body, title = _a.title, compteId = _a.compteId, description = _a.description, type = _a.type, pour = _a.pour, prioriter = _a.prioriter, date = _a.date, contactId = _a.contactId, update = _a.update;
+                    userid = req.user.id;
+                    console.log('---------------------------');
+                    console.log('noteUpdate');
+                    console.log('---------------------------');
+                    console.log(title, description, type, pour, prioriter, date, contactId, compteId);
+                    return [4 /*yield*/, application.item(compteId)];
+                case 1:
+                    i = _h.sent();
+                    if (!i)
+                        throw new AppError('EN0002');
+                    if (!(pour !== 'default')) return [3 /*break*/, 7];
+                    return [4 /*yield*/, Pour.item(pour)];
+                case 2:
+                    p = _h.sent();
+                    body = { contact: { id: contactId }, description: description, due_date: date, title: title, priority: prioriter, user_id: parseInt(p.appId) };
+                    console.log(body);
+                    _c = (_b = res).success;
+                    if (!update) return [3 /*break*/, 4];
+                    return [4 /*yield*/, infusionsoft.updateTasks(body, i.accessToken)];
+                case 3:
+                    _d = _h.sent();
+                    return [3 /*break*/, 6];
+                case 4: return [4 /*yield*/, infusionsoft.createTasks(body, i.accessToken)];
+                case 5:
+                    _d = _h.sent();
+                    _h.label = 6;
+                case 6: return [2 /*return*/, _c.apply(_b, [_d])];
+                case 7:
+                    if (!(pour == 'default')) return [3 /*break*/, 12];
+                    body = { contact_id: contactId, body: description, title: title };
+                    _f = (_e = res).success;
+                    if (!update) return [3 /*break*/, 9];
+                    return [4 /*yield*/, infusionsoft.updateNotes(body, i.accessToken)];
+                case 8:
+                    _g = _h.sent();
+                    return [3 /*break*/, 11];
+                case 9: return [4 /*yield*/, infusionsoft.createNotes(body, i.accessToken)];
+                case 10:
+                    _g = _h.sent();
+                    _h.label = 11;
+                case 11: return [2 /*return*/, _f.apply(_e, [_g])];
+                case 12: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.noteUpdate = noteUpdate;
 function note(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var lang, _a, title, compteId, description, type, pour, prioriter, date, contactId, update, userid, i, p, body, _b, _c, _d, body, _e, _f, _g;

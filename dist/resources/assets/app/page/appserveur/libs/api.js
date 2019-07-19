@@ -46,8 +46,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-function api(url, methode, data) {
-    if (methode === void 0) { methode = 'GET'; }
+function api(url, method, data) {
+    if (method === void 0) { method = 'GET'; }
     if (data === void 0) { data = null; }
     return __awaiter(this, void 0, void 0, function () {
         var op, da, uploadResponse, json_1, e_1, json_2, e_2;
@@ -58,15 +58,15 @@ function api(url, methode, data) {
                     da = __assign({}, op);
                     url = window.urlapplication + url;
                     uploadResponse = null;
-                    if (!(methode == 'GET')) return [3 /*break*/, 2];
+                    if (!(method == 'GET')) return [3 /*break*/, 2];
                     return [4 /*yield*/, fetch(url)];
                 case 1:
                     uploadResponse = _a.sent();
                     return [3 /*break*/, 6];
                 case 2:
-                    if (!(methode == 'POST')) return [3 /*break*/, 4];
+                    if (!(method == 'POST' || method == 'PUT')) return [3 /*break*/, 4];
                     return [4 /*yield*/, fetch(url, {
-                            method: 'POST',
+                            method: method,
                             headers: {
                                 'Accept': 'application/json',
                                 'Content-Type': 'application/json'
@@ -77,7 +77,7 @@ function api(url, methode, data) {
                     uploadResponse = _a.sent();
                     return [3 /*break*/, 6];
                 case 4: return [4 /*yield*/, fetch(url, {
-                        method: methode
+                        method: method
                     })];
                 case 5:
                     uploadResponse = _a.sent();

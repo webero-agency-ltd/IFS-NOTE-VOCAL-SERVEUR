@@ -11,6 +11,7 @@ const moment = require('moment');
 const path = require('path') ;
 const execSync = require('child_process').execSync;
 import forearch from '../libs/forearch';
+var userStore = require('../libs/user');
 
 export function index( req:Request, res:Response ) {
 	let lang = req.lang() ; 
@@ -41,7 +42,6 @@ export function vocalNote( req:Request, res:Response ) {
 
 //actualisation de token infusionsoft 
 export async function refreshToken( req:Request, res:Response ) {
-
 	let { Application , User , Team } = this.db as DBInterface ;
 	//récupération de tout les token application infusionsoft du system 
 	//tout sans exeption d'utilisateur en partuculier 
@@ -100,6 +100,7 @@ export async function refreshToken( req:Request, res:Response ) {
 	});
 
 	findnotes.end(function () { 
+		//@Note : pour visualiser si le commande est bien enregistrer : "atq"
 		//création du fichier log et qui serait visible seulement par l'adinistrateur 
 		fs.writeFile( path.join(__dirname , '../token/'+moment().format("MM_ddd_YYYY_hh_mm_ss_a")+'_log.json' ) , JSON.stringify( application ) , 'utf8', (err)=>{
 			let cmd = `echo "curl ${site.urlapp}/refresh-token" | at now + 180 minutes`;
@@ -112,7 +113,17 @@ export async function refreshToken( req:Request, res:Response ) {
 			res.success( i ) ; 
 		});
 	})
-	
 	findnotes.run() ; 
+}
 
+
+export async function user( req:Request, res:Response ) {
+	let lang = req.lang() ; 
+	let { apiKey } = req.query ; 
+	if ( req.user ) 
+		return res.success( req.user );
+	let u = await userStore.find( { rememberToken : apiKey } ) ;
+    if (!u) 
+		return res.success( true );
+	return res.success( u );
 }

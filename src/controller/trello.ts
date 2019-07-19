@@ -19,6 +19,37 @@ export async function view( req:Request, res:Response ) {
 	res.render( 'trello.ejs' ) 
 }
 
+export async function cardUpdate( req:Request, res:Response ) {
+	let lang = req.lang() ; 
+	//récupération 
+	let { title , compteId , description , type , pour , prioriter , date , contactId } = req.body ; 
+	let userid = req.user.id;  
+	console.log( '---------------------------' )
+	console.log( 'cardUpdate' )
+	console.log( '---------------------------' )
+	console.log( title , description , type , pour , prioriter , date , contactId , compteId ) ; 
+    let p = await Pour.item( pour ) ; 
+    let i = await application.item( compteId ) ;
+    if (!i) 
+    	throw new AppError('EN0002');
+	//récupération de l'id du label s'il existe
+    let data = await Pour.item( prioriter ) ;
+    let label = '' ; 
+	if ( data ) {
+		label = data.appId ; 
+	}
+	//création de note trello
+    let body = { idList : p.cardId , name : title , desc : description , due : moment( date , 'YYYY-MM-DDTHH:mm:ssZ' ).clone().format('YYYY-MM-DD') } ; 
+	if ( label ) {
+		body['idLabels'] = label ; 
+	}
+	if ( p.appId !== 'generale' ) {
+		body['idMembers'] = p.appId ; 
+	} 
+	console.log( body ) ; 
+    return res.success( await trello.createCards( body , i.accessToken ) );
+} 
+
 export async function cardAdd( req:Request, res:Response ) {
 	let lang = req.lang() ; 
 	//récupération 

@@ -128,7 +128,7 @@ class infusionsoft {
             return existe ;
         });  
         //ajoute default 
-        contactsFilter = [ defaultContact , ...contactsFilter ] ; 
+        contact? contactsFilter = [ defaultContact , ...contactsFilter ] : '' ; 
         //Ajoute de pagination 
 		return paginate( contactsFilter , size , page ) ;
 

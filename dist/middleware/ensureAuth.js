@@ -7,6 +7,10 @@ function ensureAuth(req, res, next) {
         return next();
     }
     else {
+        var apiKey = req.query.apiKey;
+        if (apiKey) {
+            return next();
+        }
         //si l'utilisateur n'est pas connecté, on le redirege vers la page login 
         //@todo: s'il y a des redirection, on ajoute dans la redirection apres l'authentification 
         //la précedent URL a la quelle on voulaiz y aller avant 

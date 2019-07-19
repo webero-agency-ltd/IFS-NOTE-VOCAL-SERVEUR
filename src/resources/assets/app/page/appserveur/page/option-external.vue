@@ -101,6 +101,7 @@
                 this.emit('modal',{
                     title : this.$lang(`Edition des labels Trello`) , 
                     component : 'label-trello' , 
+                    footer : true , 
                     handleOk : 'pourLabelCreate'
                 })  
             },

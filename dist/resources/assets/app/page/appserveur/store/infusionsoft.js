@@ -109,6 +109,23 @@ var infusionsoft = /** @class */ (function () {
             });
         });
     };
+    infusionsoft.prototype.noteUpdate = function (body) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, err, data;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        console.log('noteUpdate', body);
+                        return [4 /*yield*/, api_1.default('/infusionsoft/note/', 'PUT', body)];
+                    case 1:
+                        _a = _b.sent(), err = _a[0], data = _a[1].data;
+                        if (err || !data || (data && !data.id))
+                            return [2 /*return*/, [err ? err : data, null]];
+                        return [2 /*return*/, [null, data]];
+                }
+            });
+        });
+    };
     infusionsoft.prototype.itemNote = function (id, appId) {
         return __awaiter(this, void 0, void 0, function () {
             var _a, err, data;

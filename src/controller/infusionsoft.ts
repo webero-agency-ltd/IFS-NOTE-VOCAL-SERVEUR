@@ -24,6 +24,29 @@ export async function makeFakerUser( req:Request, res:Response ){
 	return res.success( await infusionsoft.createUser( id ) );
 }
 
+export async function noteUpdate( req:Request, res:Response ) {
+	let lang = req.lang() ; 
+	//récupération 
+	let { title , compteId , description , type , pour , prioriter , date , contactId , update } = req.body ; 
+	let userid = req.user.id;  
+	console.log( '---------------------------' )
+	console.log( 'noteUpdate' )
+	console.log( '---------------------------' )
+	console.log( title , description , type , pour , prioriter , date , contactId , compteId ) ; 
+    let i = await application.item( compteId ) ;
+    if (!i) 
+    	throw new AppError('EN0002');
+	if ( pour !== 'default' ) {
+		let p = await Pour.item( pour ) ;
+		let body = { contact: { id : contactId } , description , due_date : date , title : title , priority : prioriter , user_id : parseInt( p.appId ) } ; 
+		console.log( body )
+	    return res.success( update?await infusionsoft.updateTasks( body , i.accessToken ):await infusionsoft.createTasks( body , i.accessToken ) );
+	}else if ( pour == 'default') {
+		let body = { contact_id: contactId , body : description , title : title } ; 
+	    return res.success( update?await infusionsoft.updateNotes( body , i.accessToken ):await infusionsoft.createNotes( body , i.accessToken ) );
+	}
+} 
+
 export async function note( req:Request, res:Response ) {
 	let lang = req.lang() ; 
 	//récupération 

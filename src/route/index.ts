@@ -30,6 +30,7 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	app.post('/flash',home.flash.bind({db})) ;
 	
 	//page d'authentification 
+	app.get('/user/authenticated', hangel.bind( { func :  home.user.bind({db}) } ) );
 	app.get('/login',strategy,login.page.bind({db})) ;
 	app.post('/login',strategy,login.create.bind({db})) ;
 	app.get('/signup',signup.page.bind({db})) ;
@@ -41,13 +42,7 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	  	req.logout();
 	  	res.redirect('/');
 	});
-	app.get('/user/authenticated', function(req, res){
-		if ( req.user ) {
-			console.log( req.user ) ; 
-	  		return res.success( req.user );
-	  	}
-	  	return res.success( true );
-	});
+	
 
 	app.get('/application',ensureAuth, hangel.bind( { func : application.index.bind({db}) } )) ;
 	app.get('/application/item/:id',ensureAuth,hangel.bind({ func : application.item.bind({db}) })) ;
@@ -75,6 +70,7 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	app.get('/infusionsoft/make/faker/user/:id',hangel.bind({ func : infusionsoft.makeFakerUser.bind({db,str}) })) ;
 	app.get('/infusionsoft/setnote/:unique/:nativeId/:attache',hangel.bind({ func : infusionsoft.setnote.bind({db,str}) })) ;
 	app.post('/infusionsoft/note',hangel.bind({ func : infusionsoft.note.bind({db,str}) })) ;
+	app.put('/infusionsoft/note',ensureAuth,hangel.bind({ func : infusionsoft.noteUpdate.bind({db}) })) ;
 	
 	//route des notes
 	app.get('/note/:id',hangel.bind({ func : note.item.bind({db,str}) })) ;
@@ -105,6 +101,7 @@ module.exports = async function ( app : Application , db : DBInterface , str ) :
 	app.get('/trello/on/:id',hangel.bind({ func : trello.event.bind({db,str}) })) ;
 	app.post('/trello/on/:id',hangel.bind({ func : trello.event.bind({db,str}) })) ;
 	app.post('/trello/card',hangel.bind({ func : trello.cardAdd.bind({db,str}) })) ;
+	app.put('/trello/card',hangel.bind({ func : trello.cardUpdate.bind({db,str}) })) ; 
 
 	app.get('/external',ensureAuth,hangel.bind({ func : external.index.bind({db}) })) ;
 	app.post('/external',ensureAuth,hangel.bind({ func : external.create.bind({db}) })) ;
