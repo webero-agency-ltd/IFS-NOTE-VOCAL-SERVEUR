@@ -66,7 +66,7 @@ class infusionsoft {
 		if ( error && info.statusCode !== 200 ) 
 	    	throw new AppError('IM0003');
 	    let reponse = json( body , {} ) ; 
-		return reponse['users']?reponse['users']:[];
+		return reponse['users']?reponse['users'].filter( e => e.status == 'Active' ):[];
 	}
 
 	/*
@@ -198,11 +198,26 @@ class infusionsoft {
 	    //récupération de l'id de l'utilisateur qui a crée le token, pour l'enregistrer 
 	    //dans la base de donner des contact
 	    let jsont = json( body , {} ) 
-		var { error, info , body } = await request.get( this.api + '/users/?access_token='+jsont['access_token'] ) ;
+		var { error, info , body } = await request.get( this.api + '/oauth/connect/userinfo/?access_token='+jsont['access_token'] ) ;
+		if ( error && info.statusCode !== 200 ) 
+	    	throw new AppError('ARE004');
+	    let authsuser = json( body , {} )
+
+	    var { error, info , body } = await request.get( this.api + '/users/?access_token='+jsont['access_token'] ) ;
 		if ( error && info.statusCode !== 200 ) 
 	    	throw new AppError('ARE004');
 	    let reponse = json( body , {} )
+
 		if ( reponse['users'] ) {
+			console.log("reponse['users']reponse['users']") ; 
+			console.log( this.api + '/oauth/connect/userinfo/?access_token='+jsont['access_token'] ) ; 
+			console.log( authsuser ) ; 
+			console.log( reponse ) ; 
+			let user = reponse['users'].find(function(element) {
+			  	return element.email_address == authsuser.email ;
+			});
+			console.log( user ) ; 
+			console.log("reponse['users']reponse['users']") ; 
 			await team.update( { ApplicationId : id } , { contactid: reponse['users'][0].id } ) ; 
 			//apres on selectionne si cette application a un hook, si pas, on le crée
 			console.log( '_____________________________________' )

@@ -151,6 +151,7 @@ function refreshToken(req, res) {
                         });
                     });
                     findnotes.end(function () {
+                        //@Note : pour visualiser si le commande est bien enregistrer : "atq"
                         //création du fichier log et qui serait visible seulement par l'adinistrateur 
                         fs.writeFile(path.join(__dirname, '../token/' + moment().format("MM_ddd_YYYY_hh_mm_ss_a") + '_log.json'), JSON.stringify(application), 'utf8', function (err) {
                             var cmd = "echo \"curl " + site.urlapp + "/refresh-token\" | at now + 180 minutes";

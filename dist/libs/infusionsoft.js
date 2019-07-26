@@ -134,7 +134,7 @@ var infusionsoft = /** @class */ (function () {
                         if (error && info.statusCode !== 200)
                             throw new AppError('IM0003');
                         reponse = json(body, {});
-                        return [2 /*return*/, reponse['users'] ? reponse['users'] : []];
+                        return [2 /*return*/, reponse['users'] ? reponse['users'].filter(function (e) { return e.status == 'Active'; }) : []];
                 }
             });
         });
@@ -303,9 +303,9 @@ var infusionsoft = /** @class */ (function () {
     infusionsoft.prototype.findtoken = function (_a) {
         var id = _a.id, code = _a.code;
         return __awaiter(this, void 0, void 0, function () {
-            var redirect_uri, url, form, _b, error, info, body, jsont, _c, error, info, body, reponse, _d, error, info, body, hooks, reverified, existed, _i, hooks_1, _e, hookUrl, eventKey, key, status_1, _f, reverified_1, _g, hookUrl, eventKey, key, status_2, form_1, headers, _h, error, info, body, events, _j, events_1, e, form_2, headers, _k, error, info, body;
-            return __generator(this, function (_l) {
-                switch (_l.label) {
+            var redirect_uri, url, form, _b, error, info, body, jsont, _c, error, info, body, authsuser, _d, error, info, body, reponse, user, _e, error, info, body, hooks, reverified, existed, _i, hooks_1, _f, hookUrl, eventKey, key, status_1, _g, reverified_1, _h, hookUrl, eventKey, key, status_2, form_1, headers, _j, error, info, body, events, _k, events_1, e, form_2, headers, _l, error, info, body;
+            return __generator(this, function (_m) {
+                switch (_m.label) {
                     case 0:
                         redirect_uri = site.urlapp + '/application/infusionsoft/redirect?id=' + id;
                         url = 'https://api.infusionsoft.com/token';
@@ -318,7 +318,7 @@ var infusionsoft = /** @class */ (function () {
                         };
                         return [4 /*yield*/, request.post(url, form)];
                     case 1:
-                        _b = _l.sent(), error = _b.error, info = _b.info, body = _b.body;
+                        _b = _m.sent(), error = _b.error, info = _b.info, body = _b.body;
                         if (error && info.statusCode !== 200)
                             throw new AppError('ARE002');
                         return [4 /*yield*/, application.update(id, { accessToken: body })
@@ -326,29 +326,44 @@ var infusionsoft = /** @class */ (function () {
                             //dans la base de donner des contact
                         ];
                     case 2:
-                        _l.sent();
+                        _m.sent();
                         jsont = json(body, {});
-                        return [4 /*yield*/, request.get(this.api + '/users/?access_token=' + jsont['access_token'])];
+                        return [4 /*yield*/, request.get(this.api + '/oauth/connect/userinfo/?access_token=' + jsont['access_token'])];
                     case 3:
-                        _c = _l.sent(), error = _c.error, info = _c.info, body = _c.body;
+                        _c = _m.sent(), error = _c.error, info = _c.info, body = _c.body;
+                        if (error && info.statusCode !== 200)
+                            throw new AppError('ARE004');
+                        authsuser = json(body, {});
+                        return [4 /*yield*/, request.get(this.api + '/users/?access_token=' + jsont['access_token'])];
+                    case 4:
+                        _d = _m.sent(), error = _d.error, info = _d.info, body = _d.body;
                         if (error && info.statusCode !== 200)
                             throw new AppError('ARE004');
                         reponse = json(body, {});
-                        if (!reponse['users']) return [3 /*break*/, 14];
+                        if (!reponse['users']) return [3 /*break*/, 15];
+                        console.log("reponse['users']reponse['users']");
+                        console.log(this.api + '/oauth/connect/userinfo/?access_token=' + jsont['access_token']);
+                        console.log(authsuser);
+                        console.log(reponse);
+                        user = reponse['users'].find(function (element) {
+                            return element.email_address == authsuser.email;
+                        });
+                        console.log(user);
+                        console.log("reponse['users']reponse['users']");
                         return [4 /*yield*/, team.update({ ApplicationId: id }, { contactid: reponse['users'][0].id })];
-                    case 4:
-                        _l.sent();
+                    case 5:
+                        _m.sent();
                         //apres on selectionne si cette application a un hook, si pas, on le crée
                         console.log('_____________________________________');
                         console.log(this.api + '/hooks/?access_token=' + jsont['access_token']);
                         return [4 /*yield*/, request.get(this.api + '/hooks/?access_token=' + jsont['access_token'])];
-                    case 5:
-                        _d = _l.sent(), error = _d.error, info = _d.info, body = _d.body;
+                    case 6:
+                        _e = _m.sent(), error = _e.error, info = _e.info, body = _e.body;
                         hooks = json(body, {});
                         reverified = [];
                         existed = [];
                         for (_i = 0, hooks_1 = hooks; _i < hooks_1.length; _i++) {
-                            _e = hooks_1[_i], hookUrl = _e.hookUrl, eventKey = _e.eventKey, key = _e.key, status_1 = _e.status;
+                            _f = hooks_1[_i], hookUrl = _f.hookUrl, eventKey = _f.eventKey, key = _f.key, status_1 = _f.status;
                             if (hookUrl == "https://therapiequantique.net/infusionsoft/on/" + id && status_1 == 'Verified') {
                                 existed = existed.concat([{ hookUrl: hookUrl, eventKey: eventKey, key: key, status: status_1 }]);
                             }
@@ -356,24 +371,24 @@ var infusionsoft = /** @class */ (function () {
                                 reverified = reverified.concat([{ hookUrl: hookUrl, eventKey: eventKey, key: key, status: status_1 }]);
                             }
                         }
-                        if (!reverified.length) return [3 /*break*/, 9];
+                        if (!reverified.length) return [3 /*break*/, 10];
                         console.log('-----VERIFICATION DE STATUS EN COURS------');
-                        _f = 0, reverified_1 = reverified;
-                        _l.label = 6;
-                    case 6:
-                        if (!(_f < reverified_1.length)) return [3 /*break*/, 9];
-                        _g = reverified_1[_f], hookUrl = _g.hookUrl, eventKey = _g.eventKey, key = _g.key, status_2 = _g.status;
+                        _g = 0, reverified_1 = reverified;
+                        _m.label = 7;
+                    case 7:
+                        if (!(_g < reverified_1.length)) return [3 /*break*/, 10];
+                        _h = reverified_1[_g], hookUrl = _h.hookUrl, eventKey = _h.eventKey, key = _h.key, status_2 = _h.status;
                         form_1 = {};
                         headers = { 'Content-Type': 'application/json' };
                         return [4 /*yield*/, request.post(this.api + ("/hooks/" + key + "/verify/?access_token=") + jsont['access_token'], form_1, headers)];
-                    case 7:
-                        _h = _l.sent(), error = _h.error, info = _h.info, body = _h.body;
-                        console.log('--', hookUrl);
-                        _l.label = 8;
                     case 8:
-                        _f++;
-                        return [3 /*break*/, 6];
+                        _j = _m.sent(), error = _j.error, info = _j.info, body = _j.body;
+                        console.log('--', hookUrl);
+                        _m.label = 9;
                     case 9:
+                        _g++;
+                        return [3 /*break*/, 7];
+                    case 10:
                         console.log(existed.length, reverified.length);
                         console.log('===========================================');
                         if (existed.length || reverified.length) {
@@ -425,11 +440,11 @@ var infusionsoft = /** @class */ (function () {
                             "task.delete",
                             "task.edit",
                         ];
-                        _j = 0, events_1 = events;
-                        _l.label = 10;
-                    case 10:
-                        if (!(_j < events_1.length)) return [3 /*break*/, 13];
-                        e = events_1[_j];
+                        _k = 0, events_1 = events;
+                        _m.label = 11;
+                    case 11:
+                        if (!(_k < events_1.length)) return [3 /*break*/, 14];
+                        e = events_1[_k];
                         form_2 = {
                             hookUrl: "https://therapiequantique.net/infusionsoft/on/" + id,
                             eventKey: e,
@@ -437,19 +452,19 @@ var infusionsoft = /** @class */ (function () {
                         console.log(e);
                         headers = { 'Content-Type': 'application/json' };
                         return [4 /*yield*/, request.post(this.api + '/hooks/?access_token=' + jsont['access_token'], form_2, headers, true)];
-                    case 11:
-                        _k = _l.sent(), error = _k.error, info = _k.info, body = _k.body;
-                        _l.label = 12;
                     case 12:
-                        _j++;
-                        return [3 /*break*/, 10];
+                        _l = _m.sent(), error = _l.error, info = _l.info, body = _l.body;
+                        _m.label = 13;
                     case 13:
+                        _k++;
+                        return [3 /*break*/, 11];
+                    case 14:
                         //var { error, info , body } = await request.destroy( this.api + '/hooks/8/?access_token='+jsont['access_token'] , form , headers , true ) ;
                         console.log(body);
                         console.log(json(body, {}));
                         console.log('_____________________________________');
                         return [2 /*return*/, true];
-                    case 14: throw new AppError('ARE005');
+                    case 15: throw new AppError('ARE005');
                 }
             });
         });
